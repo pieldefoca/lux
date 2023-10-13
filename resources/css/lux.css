@@ -1,0 +1,17 @@
+@config('../../tailwind.config.js');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ql-container {
+    @apply rounded-b-md;
+}
+
+.ql-editor {
+    @apply rounded-b-md bg-stone-100 min-h-[40vh] transition-colors duration-300 hover:bg-white focus:bg-white;
+}
+
+.ql-toolbar {
+    @apply rounded-t-md;
+}

@@ -1,0 +1,33 @@
+{
+	"name": "pieldefoca/lux",
+	"version": "0.1",
+	"description": "Admin panel for laravel",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "David Aloa",
+			"email": "betibaskonia@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Pieldefoca\\Lux\\": "src"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Pieldefoca\\Lux\\LuxServiceProvider"
+			]
+		}
+	},
+	"require-dev": {
+		"orchestra/testbench": "^8.0"
+	},
+	"require": {
+		"livewire/livewire": "^3.0",
+		"laravel/fortify": "^1.18",
+		"spatie/laravel-translatable": "^6.5"
+	}
+}
