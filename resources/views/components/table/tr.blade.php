@@ -3,15 +3,17 @@
 ])
 
 <tr
-    @class([
-        'even:bg-stone-100',
-        'selected bg-stone-50' => $this->hasBulkActions() && in_array($model->id, $this->selected)
-    ])
+    {{
+        $attributes->class([
+            'even:bg-stone-100',
+            'selected bg-stone-50' => $this->hasBulkActions() && in_array($model->id, $this->selected)
+        ])
+    }}
 >
     @if($this->hasBulkActions())
-        <td>
+        <x-lux::table.td>
             <input type="checkbox" wire:model.live="selected" value="{{ $model->id }}" />
-        </td>
+        </x-lux::table.td>
     @endif
 
     {{ $slot }}

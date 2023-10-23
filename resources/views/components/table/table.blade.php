@@ -3,94 +3,98 @@
     'emptyMessage' => 'No hay resultados',
 ])
 
-@if($this->rows->isEmpty())
-    <x-admin.card>
-        <div class="flex flex-col items-center justify-center space-y-6 py-8">
-            <x-dynamic-component :component="'admin.tabler-icons.' . $emptyIcon" class="w-28 h-28 opacity-10" />
-            <p class="text-stone-500">{{ $emptyMessage }}</p>
-            {{ $createFirstButton ?? '' }}
-        </div>
-    </x-admin.card>
-@else
-    <div>
-        <x-admin.locale-selector />
+<div>
+    <x-lux::locale-selector />
 
-        <x-admin.card without-padding>
-            <div
-                @class([
-                    'p-4',
-                    'border-2 border-dashed border-stone-800 rounded-t-md bg-stone-100' => $this->hasBulkActions() && $this->selectPage
-                ])
-            >
-                @if ($this->hasBulkActions() && $this->selectPage)
-                    <div class="flex items-center justify-between">
-                        <div class="text-xs">
-                            @unless ($this->selectAll)
+    <x-lux::card>
+        <div
+            @class([
+                'rounded-t-md px-4 py-4',
+                'bg-amber-50' => $this->hasBulkActions() && $this->hasAnyRowSelected()
+            ])
+        >
+            @if ($this->hasBulkActions() && $this->hasAnyRowSelected())
+                <div class="flex items-center justify-between">
+                    <div class="text-xs">
+                        @unless ($this->areAllRowsSelected())
                             <div>
                                 <span>
                                     <strong>{{ $this->rows->count() }}</strong>
-                                    <span class="lowercase">{{ trans_choice('admin.selectedRows', $this->rows->count()) }}</span>.
+                                    <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', $this->rows->count()) }}</span>.
                                 </span>
                                 <button wire:click="selectAll" class="underline">Seleccionar las {{ $this->rows->total() }} filas.</button>
                             </div>
-                            @else
-                            <div>
+                        @else
+                            <div class="flex items-center">
                                 <span>
                                     <strong>{{ $this->rows->total() }}</strong>
-                                    <span class="lowercase">{{ trans_choice('admin.selectedRows', $this->rows->count()) }}</span>.
+                                    <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', $this->rows->count()) }}</span>.
                                 </span>
-                                <button wire:click="unselectAll" class="ml-1">Deseleccionar todo.</button>
+                                
+                                <x-lux::button.link wire:click="clearSelection" class="relative ml-1 text-xs">Deseleccionar todo</x-lux::button.link>
                             </div>
-                            @endif
-                        </div>
-
-                        <div x-data>
-                            <x-admin.dropdown>
-                                <x-admin.dropdown.item>
-                                    <x-admin.input.group label="Cambiar estado">
-                                        <select></select>
-                                    </x-admin.input.group>
-                                </x-admin.dropdown.item>
-                            </x-admin.dropdown>
-                            <x-admin.table.bulk-delete-button
-                                x-on:click="
-                                    sliders = []
-                                    rows = await $wire.$call('getRowsProperty')
-                                    sliders = rows.data.filter(slider => $wire.selected.includes(slider.id.toString()))
-                                "
-                            />
-                        </div>
+                        @endif
                     </div>
-                @else
-                    <div class="flex items-center justify-between">
-                        <div class="group relative inline-block">
-                            <input
-                                type="text"
-                                wire:model.live.debounce="filters.search"
-                                placeholder="Buscar..."
-                                class="w-72 rounded-md border-2 border-stone-300 px-2 py-2 text-xs outline-none transition-colors duration-300 hover:border-stone-800 hover:bg-stone-100 focus:border-stone-800 focus:bg-stone-100 focus:ring-2 focus:ring-stone-300"
-                            />
-                            <x-lux::tabler-icons.search class="absolute top-1/2 right-3 -translate-y-1/2 w-5 h-5 opacity-50 transition-opacity group-hover:opacity-100" />
-                        </div>
 
+                    <div class="flex items-center space-x-3">
+                        @isset($bulkActions)
+                            <x-lux::dropdown trigger-text="Acciones">
+                                {{ $bulkActions }}
+                            </x-lux::dropdown>
+                        @endisset
+                        <x-lux::table.bulk-delete-button
+                            x-on:click.stop.prevent="
+                                Swal.fire({
+                                    title: 'Eliminar categorías del blog',
+                                    text: '¿Seguro que quieres eliminar las categorías seleccionadas?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    customClass: {
+                                        confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
+                                        cancelButton: 'hover:underline',
+                                        actions: 'space-x-6',
+                                    },
+                                    buttonsStyling: false,
+                                    confirmButtonText: 'Eliminar',
+                                    cancelButtonText: 'Cancelar',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        $wire.call('deleteSelected')
+                                    }
+                                })
+                            "    
+                        />
+                    </div>
+                </div>
+            @else
+                <div class="flex items-center justify-between">
+                    <x-lux::input.search wire:model.live.debounce="filters.search" />
+
+                    <div>
                         <div>
-                            <div>
-
-                            </div>
-
-                            {{ $actions ?? '' }}
+                            <x-lux::dropdown></x-lux::dropdown>
                         </div>
-                    </div>
-                @endif
-            </div>
 
+                        {{ $actions ?? '' }}
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        @if($this->rows->isEmpty())
+            <div class="flex flex-col items-center justify-center space-y-6 py-8">
+                <x-dynamic-component :component="'lux::tabler-icons.' . $emptyIcon" class="w-28 h-28 opacity-10" />
+                <p class="text-stone-500">{{ $emptyMessage }}</p>
+                {{ $createFirstButton ?? '' }}
+            </div>
+        @else
             <table class="admin-table w-full">
                 <thead>
                     <tr class="bg-stone-100">
                         @if($this->hasBulkActions())
-                        <th>
+                        <x-lux::table.th>
                             <input type="checkbox" wire:model.live="selectPage" />
-                        </th>
+                        </x-lux::table.th>
                         @endif
 
                         {{ $head }}
@@ -111,9 +115,10 @@
                 </select>
 
                 <div class="flex-grow">
-                    {{ $this->rows->links('admin.pagination') }}
+                    {{-- {{ $this->rows->links('lux::pagination') }} --}}
                 </div>
             </div>
-        </x-admin.card>
-    </div>
-@endif
+        @endif
+
+    </x-lux::card>
+</div>

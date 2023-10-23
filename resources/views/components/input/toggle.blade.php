@@ -23,5 +23,6 @@
             class="absolute top-[2px] w-6 h-[1.55rem] rounded-full transition-all duration-300"
         ></div>
     </button>
+
     <input x-ref="input" type="checkbox" {{ $attributes }} style="display: none;" />
 </div>

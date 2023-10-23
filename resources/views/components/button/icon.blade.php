@@ -1,5 +1,6 @@
 @props([
     'action', // edit, view, delete
+    'small' => false,
 ])
 
 <button
@@ -13,10 +14,10 @@
     }}
 >
     @if($action === 'edit')
-    <x-tabler-icons.edit />
+        <x-lux::tabler-icons.edit @class(['w-5 h-5' => $small]) />
     @elseif($action === 'delete')
-    <x-tabler-icons.trash />
+        <x-lux::tabler-icons.trash @class(['w-5 h-5' => $small]) />
     @elseif($action === 'view')
-    <x-tabler-icons.eye />
+        <x-lux::tabler-icons.eye @class(['w-5 h-5' => $small]) />
     @endif
 </button>

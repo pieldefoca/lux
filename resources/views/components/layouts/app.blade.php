@@ -50,13 +50,35 @@
 						Inicio
 					</x-lux::sidebar.item>
 
-					{{-- <x-lux::sidebar.item
+					<x-lux::sidebar.item
 						icon="slideshow"
-						:link="route('admin.sliders.index')"
-						:active="Route::is('admin.sliders.index')"
+						:link="route('lux.sliders.index')"
+						:active="Route::is('lux.sliders.*')"
 					>
 						Sliders
-					</x-lux::sidebar.item> --}}
+					</x-lux::sidebar.item>
+
+					<x-lux::sidebar.group 
+						label="Blog"
+						:active="Route::is('lux.blog.*')"
+					>
+						<x-lux::sidebar.item
+							icon="category-2"
+							:link="route('lux.blog.categories.index')"
+							:active="Route::is('lux.blog.categories.*')"
+						>
+							Categorías
+						</x-lux::sidebar.item>
+
+						<x-lux::sidebar.item
+							icon="news"
+							:link="route('lux.blog.posts.index')"
+							:active="Route::is('lux.blog.posts.*')"
+						>
+							Posts
+						</x-lux::sidebar.item>
+
+					</x-lux::sidebar.group>
 
 					<x-lux::sidebar.item
 						icon="address-book"
@@ -120,7 +142,7 @@
                     'w-[calc(100%-16rem)] ml-64': !sidebarCollapsed,
                     'w-full ml-0': sidebarCollapsed,
                 }"
-					class="fixed flex items-center justify-between px-12 py-2 bg-white/80 backdrop-blur shadow transition-all duration-300"
+					class="fixed flex items-center justify-between px-12 py-2 bg-white/80 backdrop-blur shadow transition-all duration-300 z-10"
 			>
 				<div class="flex items-center space-x-6">
 					<button
@@ -158,6 +180,7 @@
 	</div>
 
 	@livewireScriptConfig
+	@stack('js')
 	@vite(['resources/js/lux.js'])
 </body>
 </html>

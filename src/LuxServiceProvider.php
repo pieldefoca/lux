@@ -2,7 +2,11 @@
 
 namespace Pieldefoca\Lux;
 
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\ComponentAttributeBag;
+use Pieldefoca\Lux\Models\Locale;
 
 class LuxServiceProvider extends ServiceProvider
 {
@@ -35,5 +39,13 @@ class LuxServiceProvider extends ServiceProvider
 		$this->loadViewsFrom(__DIR__.'/../resources/views', 'lux');
 		$this->loadTranslationsFrom(__DIR__.'/../lang', 'lux');
 		$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+		View::share('luxLocales', Locale::all());
+
+		ComponentAttributeBag::macro('localizedWireModel', function($locale) {
+			foreach($this->whereStartsWith('wire:model') as $attribute => $value) {
+				return "{$attribute}={$value}.{$locale}";
+			}
+		});
 	}
 }

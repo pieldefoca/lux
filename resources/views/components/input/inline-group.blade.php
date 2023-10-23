@@ -6,7 +6,7 @@
     'translatable' => false,
 ])
 
-<div class="grid grid-cols-3 pb-6 border-b border-stone-200" {{ $attributes }}>
+<div class="grid grid-cols-3 pb-6 border-b border-stone-200 last:border-b-0" {{ $attributes }}>
     <div class="flex flex-col mb-px">
         @if($label)
             <div class="flex items-center justify-between">
@@ -20,13 +20,6 @@
 
                     @if($required || $translatable)
                         <div class="flex items-center space-x-1">
-                            @if($translatable && $this->hasMultipleLocales)
-                                <div class="flex items-center justify-center space-x-1 px-1 py-px bg-stone-100 border border-stone-200 rounded">
-                                    <img src="{{ $this->currentLocale->flagUrl }}" class="w-2 h-2" />
-                                    <span class="text-[8px]">{{ $this->currentLocale->code }}</span>
-                                </div>
-                            @endif
-
                             @if($required)
                                 <span class="px-1 py-px bg-blue-100 border border-blue-200 rounded text-[8px] text-stone-700">Obligatorio</span>
                             @endif
@@ -35,6 +28,13 @@
                                 <span class="px-1 py-px bg-yellow-100 rounded border border-yellow-200" title="Campo traducible">
                                     <x-lux::tabler-icons.language class="w-3 h-3" />
                                 </span>
+
+                                @if($this->hasMultipleLocales)
+                                    <div class="flex items-center justify-center space-x-1 px-1 py-px bg-stone-100 border border-stone-200 rounded">
+                                        <img src="{{ $this->currentLocale->flagUrl }}" class="w-2 h-2" />
+                                        <span class="text-[8px]">{{ $this->currentLocale->code }}</span>
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     @endif

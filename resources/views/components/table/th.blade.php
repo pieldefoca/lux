@@ -1,20 +1,20 @@
 @props([
-    'sortableBy' => null,
+    'sort' => null,
     // 'direction' => null,
     'multiColumn' => null,
 ])
 
 @php
-$direction = $this->sorts[$sortableBy] ?? null;
+$direction = $this->sorts[$sort] ?? null;
 @endphp
 
 <th
     {{ $attributes->merge(['class' => 'px-4 py-3 border-y border-stone-300 text-left'])->only('class') }}
 >
-    @unless ($sortableBy)
+    @unless ($sort)
         <span class="text-left text-xs font-bold">{{ $slot }}</span>
     @else
-        <button wire:click="sortBy('{{ $sortableBy }}')" {{ $attributes->except('class') }} class="flex items-center space-x-2 text-left text-xs font-bold group focus:outline-none">
+        <button wire:click="sortBy('{{ $sort }}')" {{ $attributes->except('class') }} class="flex items-center space-x-2 text-left text-xs font-bold group focus:outline-none">
             <span>{{ $slot }}</span>
 
             <span
