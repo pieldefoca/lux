@@ -19,4 +19,6 @@ Route::prefix(config('lux.prefix'))
 		// Route::get('/blog/posts/{post}/editar')->name('lux.blog.posts.edit');
 
 		Route::get('/contacto', Pieldefoca\Lux\Livewire\Contact\Form::class)->name('lux.contact.form');
+
+		Route::get('/traducciones', Pieldefoca\Lux\Livewire\Translations\Index::class)->name('lux.translations.index');
 	});

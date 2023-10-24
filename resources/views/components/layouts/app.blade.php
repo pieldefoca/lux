@@ -88,14 +88,13 @@
 						Contacto
 					</x-lux::sidebar.item>
 
-					{{-- <x-lux::sidebar.group label="Blog" active="admin.blog.posts.index, admin.blog.posts.create, admin.blog.posts.edit, admin.blog.categories.index">
-						<x-lux::sidebar.item icon="category" :link="route('admin.blog.categories.index')" :active="Route::is('admin.blog.categories.index')">
-							Categorías
-						</x-lux::sidebar.item>
-						<x-lux::sidebar.item icon="news" :link="route('admin.blog.posts.index')" :active="Route::is('admin.blog.posts.index', 'admin.blog.posts.create')">
-							Posts
-						</x-lux::sidebar.item>
-					</x-lux::sidebar.group> --}}
+					<x-lux::sidebar.item
+						icon="language"
+						:link="route('lux.translations.index')"
+						:active="Route::is('lux.translations.index')"
+					>
+						Traducciones
+					</x-lux::sidebar.item>
 				</ul>
 			</div>
 
