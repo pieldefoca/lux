@@ -9,8 +9,9 @@ use Illuminate\Validation\Rules\Enum;
 use Pieldefoca\Lux\Livewire\LuxModal;
 use Pieldefoca\Lux\Enum\SliderPosition;
 use Pieldefoca\Lux\Models\BlogCategory;
-use Pieldefoca\Lux\Livewire\Attributes\Media;
 use Pieldefoca\Lux\Traits\HasMediaFields;
+use Pieldefoca\Lux\Livewire\Attributes\Media;
+use Pieldefoca\Lux\Livewire\Attributes\Translatable;
 
 class FormModal extends LuxModal
 {
@@ -23,10 +24,12 @@ class FormModal extends LuxModal
     #[Rule(['image' => 'exclude'])]
     public $image = [];
 
-    #[Rule('required', message: 'Escribe un nombre')]
+    // #[Rule(['name.es' => 'required'], message: ['name.es.required' => 'Escribe un nombre'])]
+    #[Translatable(message: 'Escribe un nombre')]
     public $name = [];
 
-    #[Rule('required', message: 'Escribe una url')]
+    // #[Rule(['slug.es' => 'required'], message: ['slug.es.required' => 'Escribe una URL'])]
+    #[Translatable(message: 'Escribe una URL')]
     public $slug = [];
 
     #[Rule('nullable|boolean')]

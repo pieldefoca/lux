@@ -33,7 +33,6 @@ class Table extends LuxTable
         $this->addFilter('active', '');
     }
 
-
     #[Computed]
     public function rows()
     {
@@ -69,6 +68,11 @@ class Table extends LuxTable
         $this->clearSelection();
 
         $this->notifySuccess('🤙🏾 Has actualizado el estado de las categorías correctamente');
+    }
+
+    public function delete(BlogCategory $category)
+    {
+        $category->delete();
     }
 
     public function render()

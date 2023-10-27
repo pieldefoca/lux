@@ -15,7 +15,7 @@
             translatable
             required
             label="Nombre"
-            error="{{ $errors->first('name') }}"
+            error="{{ $errors->first('name.*') }}"
         >
             <x-lux::input.text wire:model.live="name" />
         </x-lux::input.inline-group>
@@ -24,7 +24,7 @@
             translatable
             required
             label="URL"
-            error="{{ $errors->first('slug') }}"
+            error="{{ $errors->first('slug.*') }}"
         >
             <x-lux::input.text wire:model="slug" />
         </x-lux::input.inline-group>

@@ -1,5 +1,6 @@
 <?php
 
+use Pieldefoca\Lux\Models\Locale;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix(config('lux.prefix'))
@@ -19,4 +20,6 @@ Route::prefix(config('lux.prefix'))
 		// Route::get('/blog/posts/{post}/editar')->name('lux.blog.posts.edit');
 
 		Route::get('/contacto', Pieldefoca\Lux\Livewire\Contact\Form::class)->name('lux.contact.form');
+
+		Route::get('/mi-perfil', Pieldefoca\Lux\Livewire\Profile::class)->name('lux.profile');
 	});

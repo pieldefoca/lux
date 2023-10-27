@@ -3,10 +3,6 @@
     'active',
 ])
 
-@php
-$active = Route::is(str($active)->explode(',')->map(fn($route) => trim($route))->toArray());
-@endphp
-
 <li
     x-data="{
         open: @js($active),

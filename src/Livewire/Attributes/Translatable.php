@@ -9,8 +9,31 @@ use Pieldefoca\Lux\Models\Locale;
 class Translatable extends LivewireAttribute
 {
     public function __construct(
-        public $emptyValue = ''
+        public $emptyValue = '',
+        public $required = true,
+        public $message = null,
     ) {}
+
+    public function boot()
+    {
+        foreach(Locale::all() as $locale) {
+            if($this->required && $locale->default) {
+                $this->component->addRulesFromOutside([
+                    "{$this->getName()}.{$locale->code}" => 'required'
+                ]);
+
+                if($this->message) {
+                    $this->component->addMessagesFromOutside([
+                        "{$this->getName()}.{$locale->code}" => $this->message,
+                    ]);
+                }
+            } else {
+                $this->component->addRulesFromOutside([
+                    "{$this->getName()}.{$locale->code}" => 'nullable',
+                ]);
+            }
+        }
+    }
 
     public function render()
     {

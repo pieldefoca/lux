@@ -14,12 +14,16 @@ return [
     'eliminar-fichero' => 'Eliminar fichero',
     'eliminar-imagen' => 'Eliminar imagen',
     'eliminar-video' => 'Eliminar vídeo',
+    'estas-editando-tu-perfil' => 'Estás editando tu perfil',
 
     // @G
     'guardar' => 'Guardar',
 
     // @H
     'hola' => '👋🏽 Hola',
+
+    // @M
+    'mi-perfil' => 'Mi perfil',
 
     // @N
     'nueva-categoria' => 'Nueva categoría',

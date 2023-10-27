@@ -41,70 +41,19 @@
 			</div>
 
 			<div class="flex-grow px-3 py-3 overflow-y-auto">
-				<ul class="space-y-2">
-					<x-lux::sidebar.item
-						icon="home-2"
-						:link="route('lux.dashboard')"
-						:active="Route::is('lux.dashboard')"
-					>
-						Inicio
-					</x-lux::sidebar.item>
-
-					<x-lux::sidebar.item
-						icon="slideshow"
-						:link="route('lux.sliders.index')"
-						:active="Route::is('lux.sliders.*')"
-					>
-						Sliders
-					</x-lux::sidebar.item>
-
-					<x-lux::sidebar.group 
-						label="Blog"
-						:active="Route::is('lux.blog.*')"
-					>
-						<x-lux::sidebar.item
-							icon="category-2"
-							:link="route('lux.blog.categories.index')"
-							:active="Route::is('lux.blog.categories.*')"
-						>
-							Categorías
-						</x-lux::sidebar.item>
-
-						<x-lux::sidebar.item
-							icon="news"
-							:link="route('lux.blog.posts.index')"
-							:active="Route::is('lux.blog.posts.*')"
-						>
-							Posts
-						</x-lux::sidebar.item>
-
-					</x-lux::sidebar.group>
-
-					<x-lux::sidebar.item
-						icon="address-book"
-						:link="route('lux.contact.form')"
-						:active="Route::is('lux.contact.form')"
-					>
-						Contacto
-					</x-lux::sidebar.item>
-
-					{{-- <x-lux::sidebar.group label="Blog" active="admin.blog.posts.index, admin.blog.posts.create, admin.blog.posts.edit, admin.blog.categories.index">
-						<x-lux::sidebar.item icon="category" :link="route('admin.blog.categories.index')" :active="Route::is('admin.blog.categories.index')">
-							Categorías
-						</x-lux::sidebar.item>
-						<x-lux::sidebar.item icon="news" :link="route('admin.blog.posts.index')" :active="Route::is('admin.blog.posts.index', 'admin.blog.posts.create')">
-							Posts
-						</x-lux::sidebar.item>
-					</x-lux::sidebar.group> --}}
-				</ul>
+				<x-lux::sidebar />
 			</div>
 
 			<div class="p-3">
 				<div x-data="{open: false}" x-on:click.outside="open = false" class="relative">
 					<button x-on:click="open = !open" type="button" class="group flex items-center justify-between space-x-2 w-full px-3 py-1.5 bg-white shadow rounded cursor-pointer transition-colors duration-300 hover:bg-stone-50">
 						<div class="flex items-center space-x-2">
-							<div class="grid place-items-center w-7 h-7 rounded-full bg-stone-300">
-								<span>{{ str(auth()->user()->name)->substr(0, 1)->upper() }}</span>
+							<div class="grid place-items-center w-7 h-7 rounded-full bg-stone-300i overflow-hidden">
+								@if($avatarUrl = auth()->user()->avatarUrl)
+									<img src="{{ $avatarUrl }}" class="w-full h-full object-cover" />
+								@else
+									<span>{{ str(auth()->user()->name)->substr(0, 1)->upper() }}</span>
+								@endif
 							</div>
 
 							<span class="text-xs">{{ auth()->user()->name }}</span>
@@ -115,17 +64,20 @@
 						</div>
 					</button>
 
-					<div x-show="open" x-transition class="absolute bottom-0 left-0 w-full mb-12 px-3 py-2.5 bg-white rounded-md shadow">
-						<ul class="text-sm">
-							<li class="rounded-md transition-colors duration-300 hover:bg-stone-800 hover:text-white">
+					<div x-show="open" x-transition class="absolute bottom-0 left-0 w-full mb-12 px-1 py-1 bg-white rounded-md shadow">
+						<ul class="space-y-1 text-sm">
+							<x-lux::user-menu.item>
+								<a href="{{ route('lux.profile') }}">
+									<x-lux::user-menu.button icon="user-circle" label="Mi perfil" />
+								</a>
+							</x-lux::user-menu.item>
+
+							<x-lux::user-menu.item>
 								<form action="/logout" method="POST">
 									@csrf
-									<button type="submit" class="flex items-center space-x-2 w-full px-2 py-1.5 text-left">
-										<x-lux::tabler-icons.door-exit class="w-4 h-4" />
-										<span>Salir</span>
-									</button>
+									<x-lux::user-menu.button icon="door-exit" label="Salir" />
 								</form>
-							</li>
+							</x-lux::user-menu.item>
 						</ul>
 					</div>
 				</div>

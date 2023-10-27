@@ -34,6 +34,10 @@ class LuxServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../public' => public_path('vendor/lux'),
             ], 'lux-assets');
+
+			$this->publishes([
+				__DIR__.'/../resources/views/components/sidebar/index.blade.php' => resource_path('views/components/lux/sidebar/index.blade.php')
+			], 'lux-components');
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 		$this->loadViewsFrom(__DIR__.'/../resources/views', 'lux');
