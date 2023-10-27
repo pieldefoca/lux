@@ -1,6 +1,6 @@
 <?php
 
-namespace Pieldefoca\Lux\Livewire;
+namespace [namespace];
 
 use Livewire\Attributes\On;
 use Pieldefoca\Lux\Livewire\LuxForm;
@@ -29,6 +29,6 @@ class Form extends LuxForm
 
     public function render()
     {
-        return view('lux::livewire.');
+        return view('[view]');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pieldefoca\Lux\Livewire;
+namespace [namespace];
 
 use Pieldefoca\Lux\Livewire\LuxComponent;
 
@@ -10,6 +10,6 @@ class Edit extends LuxComponent
 
     public function render()
     {
-        return view('lux::livewire.');
+        return view('[view]');
     }
 }

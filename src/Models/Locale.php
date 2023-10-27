@@ -16,7 +16,10 @@ class Locale extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['default' => 'boolean'];
+    protected $casts = [
+        'default' => 'boolean',
+        'active' => 'boolean',
+    ];
 
     public $translatable = ['name'];
 
@@ -25,6 +28,11 @@ class Locale extends Model
         return Attribute::make(
             get: fn() => asset("vendor/lux/img/flags/{$this->flag}")
         );
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
     }
 
     public static function default()

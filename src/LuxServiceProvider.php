@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux;
 
+use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -38,6 +39,10 @@ class LuxServiceProvider extends ServiceProvider
 			$this->publishes([
 				__DIR__.'/../resources/views/components/sidebar/index.blade.php' => resource_path('views/components/lux/sidebar/index.blade.php')
 			], 'lux-components');
+
+			$this->commands([
+				MakeLux::class,
+			]);
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 		$this->loadViewsFrom(__DIR__.'/../resources/views', 'lux');
