@@ -38,7 +38,7 @@ class Translatable extends LivewireAttribute
     public function render()
     {
         $defaultLocale = Locale::default();
-        $currentValue = $this->getValue();
+        $currentValue = $this->getValue() ?? [];
 
         foreach(Locale::all() as $locale) {
             if(!array_key_exists($locale->code, $currentValue) || empty($currentValue[$locale->code])) {

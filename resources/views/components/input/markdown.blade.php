@@ -1,0 +1,22 @@
+<div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/1.11/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/1.11/simplemde.min.js"></script>
+    
+    <div
+        x-data="{
+            value: @entangle($attributes->wire('model')),
+            init() {
+                let editor = new SimpleMDE({ element: this.$refs.editor })
+    
+                editor.value(this.value)
+    
+                editor.codemirror.on('change', () => {
+                    this.value = editor.value()
+                })
+            },
+        }"
+        class="prose w-full"
+    >
+        <textarea x-ref="editor"></textarea>
+    </div>
+</div>

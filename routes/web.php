@@ -1,7 +1,26 @@
 <?php
 
+use Pieldefoca\Lux\Models\Page;
 use Pieldefoca\Lux\Models\Locale;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use Pieldefoca\Lux\Http\Middleware\PageMiddleware;
+
+foreach(Page::all() as $page) {
+	$slugs = $page->getTranslations('slug');
+
+	if(empty($slugs) && $page->is_home_page) {
+		Route::view('', $page->view)->middleware(PageMiddleware::class);
+		foreach(Locale::all() as $locale) {
+			Route::view("/{$locale->code}", $page->view);
+		}
+	}
+
+	foreach($slugs as $locale => $slug) {
+		$path = Locale::default()->code === $locale ? $slug : "{$locale}/{$slug}";
+		Route::view($path, $page->view)->middleware(PageMiddleware::class);
+	}
+}
 
 Route::prefix(config('lux.prefix'))
 	->middleware(['web', 'auth'])
@@ -22,4 +41,7 @@ Route::prefix(config('lux.prefix'))
 		Route::get('/contacto', Pieldefoca\Lux\Livewire\Contact\Form::class)->name('lux.contact.form');
 
 		Route::get('/mi-perfil', Pieldefoca\Lux\Livewire\Profile::class)->name('lux.profile');
+
+		Route::get('/paginas', Pieldefoca\Lux\Livewire\Pages\Index::class)->name('lux.pages.index');
+		Route::get('/paginas/{page}/editar', Pieldefoca\Lux\Livewire\Pages\Edit::class)->name('lux.pages.edit');
 	});

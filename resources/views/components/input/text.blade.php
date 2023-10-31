@@ -1,9 +1,9 @@
 @props([
     'compact' => false, 
-    'leadingAddOn' => null,
-    'trailingAddOn' => null,
-    'inlineLeadingAddOn' => null,
-    'inlineTrailingAddOn' => null,
+    'leadingAddon' => null,
+    'trailingAddon' => null,
+    'inlineLeadingAddon' => null,
+    'inlineTrailingAddon' => null,
 ])
 @aware(['translatable' => false])
 
@@ -25,15 +25,15 @@ $locales = $translatable
             'ring-2 ring-stone-500': focused,
         }"
     >
-        @if($leadingAddOn)
+        @if($leadingAddon)
             <div class="grid place-items-center px-2 bg-stone-200 border-r border-stone-300 text-xs">
-                {{ $leadingAddOn }}
+                {{ $leadingAddon }}
             </div>
         @endif
 
-        @if($inlineLeadingAddOn)
-            <div x-ref="inlineLeadingAddOn" class="grid place-items-center pl-2 bg-stone-100 text-sm transition-colors duration-300 group-hover:bg-white">
-                {{ $inlineLeadingAddOn }}
+        @if($inlineLeadingAddon)
+            <div x-ref="inlineLeadingAddon" class="grow-0 shrink-0 basis-auto grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300">
+                {{ $inlineLeadingAddon }}
             </div>
         @endif
 
@@ -47,23 +47,23 @@ $locales = $translatable
             @endif
             {{
                 $attributes->class([
-                    'w-full px-2 py-2 bg-stone-100 text-sm transition-colors duration-300 outline-none hover:bg-white',
+                    'flex-auto w-full px-2 py-2 bg-stone-100 text-sm transition-colors duration-300 outline-none hover:bg-white',
                 ])
             }}
         />
 
-        @if($trailingAddOn)
+        @if($trailingAddon)
             <div 
-                x-ref="trailingAddOn" 
+                x-ref="trailingAddon" 
                 class="grid place-items-center px-2 border-l border-stone-300 bg-stone-200 text-xs transition-colors duration-300"
             >
-                {{ $trailingAddOn }}
+                {{ $trailingAddon }}
             </div>
         @endif
 
-        @if($inlineTrailingAddOn)
-            <div x-ref="inlineTrailingAddOn" class="grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300 group-hover:bg-white">
-                {{ $inlineTrailingAddOn }}
+        @if($inlineTrailingAddon)
+            <div x-ref="inlineTrailingAddon" class="grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300 group-hover:bg-white">
+                {{ $inlineTrailingAddon }}
             </div>
         @endif
     </div>
