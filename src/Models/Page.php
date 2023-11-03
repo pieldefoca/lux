@@ -23,4 +23,11 @@ class Page extends Model
     ];
 
     public $translatable = ['slug', 'title', 'description'];
+
+    public function localizedRoute($locale = null)
+    {
+        if(is_null($locale)) $locale = app()->currentLocale();
+
+        return '/' . $locale . '/' .$this->translate('slug', $locale);
+    }
 }

@@ -36,12 +36,12 @@
             <div x-tabs:panel class="space-y-6">
                 <form class="space-y-6">
                     {{ $errors }}
-            
+
                     <x-lux::input.inline-group required label="Nombre" :error="$errors->first('name')">
                         <x-lux::input.text wire:model="name" />
                     </x-lux::input.inline-group>
-            
-                    <x-lux::input.inline-group required translatable label="Página de inicio" :error="$errors->first('is_home_page')">
+
+                    <x-lux::input.inline-group label="Página de inicio" help="¿Es esta la página de inicio?" :error="$errors->first('is_home_page')">
                         <div class="space-y-2">
                             <x-lux::input.toggle wire:model.live="is_home_page" />
                             @if(!empty($currentHomeMessage))
@@ -52,11 +52,11 @@
                             @endif
                         </div>
                     </x-lux::input.inline-group>
-            
+
                     <x-lux::input.inline-group required translatable label="URL" :error="$errors->first('slug')">
                         <x-lux::input.slug wire:model.blur="slug" :prefix="config('app.url').'/'.$currentLocaleCode.'/'" />
                     </x-lux::input.inline-group>
-            
+
                     <x-lux::input.inline-group required label="Vista">
                         <x-lux::input.select native wire:model="view">
                             @foreach($this->views as $view)
@@ -64,19 +64,19 @@
                             @endforeach
                         </x-lux::input.select>
                     </x-lux::input.inline-group>
-            
+
                     <x-lux::input.inline-group translatable label="Título (SEO)" :error="$errors->first('title')">
                         <x-lux::input.text wire:model="title" />
                     </x-lux::input.inline-group>
-            
+
                     <x-lux::input.inline-group translatable label="Descripción (SEO)" :error="$errors->first('description')">
                         <x-lux::input.textarea wire:model="description" />
                     </x-lux::input.inline-group>
-            
-                    <x-lux::input.inline-group required translatable label="Visible" :error="$errors->first('visible')">
+
+                    <x-lux::input.inline-group label="Visible" help="¿Quieres publicar esta página?" :error="$errors->first('visible')">
                         <x-lux::input.toggle wire:model="visible" />
                     </x-lux::input.inline-group>
-                </form>            
+                </form>
             </div>
 
             <div x-tabs:panel>

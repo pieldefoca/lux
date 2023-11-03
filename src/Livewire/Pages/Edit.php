@@ -109,7 +109,7 @@ class Edit extends LuxComponent
     {
         $validated = $this->validate();
 
-        $oldSlugs = $this->page->getTranslations('slug');
+        dd($this->translations);
 
         $this->page->update($validated);
 

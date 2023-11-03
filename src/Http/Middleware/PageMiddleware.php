@@ -32,7 +32,7 @@ class PageMiddleware
             ->map(fn($locale) => $locale->code);
 
         foreach($locales as $locale) {
-            if(str($request->path())->startsWith("{$locale}/")) {
+            if(str($request->path())->startsWith("{$locale}/") || $request->path() === $locale) {
                 app()->setLocale($locale);
             }
         }
