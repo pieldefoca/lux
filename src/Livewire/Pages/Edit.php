@@ -8,11 +8,16 @@ use Pieldefoca\Lux\Models\Page;
 use Livewire\Attributes\Computed;
 use Pieldefoca\Lux\Models\Locale;
 use Illuminate\Support\Facades\File;
+use Pieldefoca\Lux\Facades\Translator;
 use Pieldefoca\Lux\Livewire\LuxComponent;
+use Pieldefoca\Lux\Livewire\Attributes\MediaGallery;
 use Pieldefoca\Lux\Livewire\Attributes\Translatable;
+use Pieldefoca\Lux\Traits\HasMediaFields;
 
 class Edit extends LuxComponent
 {
+    use HasMediaFields;
+
     public Page $page;
 
     #[Rule('required', message: 'Escribe un nombre')]
@@ -40,6 +45,9 @@ class Edit extends LuxComponent
 
     public $translations = [];
 
+    #[MediaGallery(collection: 'media', translatable: true)]
+    public $media = [];
+
     public function mount()
     {
         $this->name = $this->page->name;
@@ -50,7 +58,9 @@ class Edit extends LuxComponent
         $this->is_home_page = $this->page->is_home_page;
         $this->visible = $this->page->visible;
 
-        $this->translations = $this->getTranslations();
+        $this->getTranslations();
+
+        $this->initMediaFields($this->page);
     }
 
     public function updatedIsHomePage($value)
@@ -99,17 +109,26 @@ class Edit extends LuxComponent
 
     public function getTranslations()
     {
-        $locale = $this->currentLocaleCode ?? Locale::default()->code;
+        $filename = $this->page->langFilename;
 
-        return include(lang_path("{$locale}/{$this->view}.php"));
+        foreach(Locale::all() as $locale) {
+            $this->translations[$locale->code] = include(lang_path("{$locale->code}/{$filename}"));
+        }
     }
 
     #[On('save-page')]
     public function save()
     {
+        dd($this->media);
+        // $this->page->clearMediaCollection('media');
+        // $this->page->addMedia(public_path('img/fire.svg'))
+        //     ->preservingOriginal()
+        //     ->withCustomProperties([
+        //         'key' => 'home.home-101',
+        //     ])
+        //     ->toMediaCollection('media');
+        // return;
         $validated = $this->validate();
-
-        dd($this->translations);
 
         $this->page->update($validated);
 
@@ -118,6 +137,10 @@ class Edit extends LuxComponent
                 ->where('is_home_page', true)
                 ->first()
                 ?->update(['is_home_page' => false]);
+        }
+
+        foreach($this->translations as $locale => $localeTranslations) {
+            Translator::saveTranslations($localeTranslations, lang_path($locale . '/' . $this->page->langFilename));
         }
 
         $this->notifySuccess('🤙🏾 Has editado la página correctamente');

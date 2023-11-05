@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
 use Pieldefoca\Lux\Models\Locale;
+use Pieldefoca\Lux\Support\Translator;
 
 class LuxServiceProvider extends ServiceProvider
 {
@@ -18,10 +19,20 @@ class LuxServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
+		$this->registerFacades();
+
 		config([
 			'livewire.layout' => 'lux::components.layouts.app',
 			'livewire.class_namespace' => 'Pieldefoca\\Lux\\Livewire',
 		]);
+
+		$this->app['config']['filesystems.disks.luxPages'] = [
+			'driver' => 'local', 
+			'root' => public_path('pages'), 
+			'url' => env('APP_URL').'/pages', 
+			'visibility' => 'public', 
+			'throw' => false, 
+		];
 
 		if($this->app->runningInConsole()) {
 			$this->publishes([
@@ -56,5 +67,10 @@ class LuxServiceProvider extends ServiceProvider
 				return "{$attribute}={$value}.{$locale}";
 			}
 		});
+	}
+
+	protected function registerFacades()
+	{
+		$this->app->bind('lux-translator', fn($app) => new Translator());
 	}
 }

@@ -11,6 +11,12 @@ foreach($wireModel as $attribute => $value) {
     $wireModel = $attribute;
     $model = $value;
 }
+$splits = str($model)->explode('.');
+$index = null;
+if(count($splits) > 1) {
+    $model = $splits[0];
+    $index = $splits[1];
+}
 $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 $videoExtensions = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mkv'];
 $locales = $translatable
@@ -20,8 +26,21 @@ $locales = $translatable
 
 @foreach($locales as $locale)
     @php
-        $field = $translatable ? $attributes->wire('model').'.'.$locale->code : $attributes->wire('model');
-        $url = $translatable ? $this->$model[$locale->code][4] : $this->$model[4];
+        $url = '';
+        $nameWireModel = '';
+        $altWireModel = '';
+        $titleWireModel = '';
+        if($translatable) {
+            $url = is_null($index) ? $this->$model[$locale->code][4] : $this->$model[$index][$locale->code][4];
+            $nameWireModel = is_null($index) ? $model.'.'.$locale->code.'.1' : $model.'.'.$index.'.'.$locale->code.'.1';
+            $altWireModel = is_null($index) ? $model.'.'.$locale->code.'.2' : $model.'.'.$index.'.'.$locale->code.'.2';
+            $titleWireModel = is_null($index) ? $model.'.'.$locale->code.'.3' : $model.'.'.$index.'.'.$locale->code.'.3';
+        } else {
+            $url = $this->$model[4];
+            $nameWireModel = $model.'.1';
+            $altWireModel = $model.'.2';
+            $titleWireModel = $model.'.3';
+        }
         $fileExtension = pathinfo($url, PATHINFO_EXTENSION);
         $isImage = $url && str($fileExtension)->startsWith($imageExtensions);
         $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
@@ -35,13 +54,13 @@ $locales = $translatable
 
             <div class="flex-grow space-y-2">
                 <x-lux::input.group label="Nombre">
-                    <x-lux::input.text :translatable="false" wire:model="{{ $translatable ? $model.'.'.$locale->code.'.1' : $model.'.1' }}" />
+                    <x-lux::input.text :translatable="false" wire:model="{{ $nameWireModel }}" />
                 </x-lux::input.group>
                 <x-lux::input.group label="Alt">
-                    <x-lux::input.text :translatable="false" wire:model="{{ $translatable ? $model.'.'.$locale->code.'.2' : $model.'.2' }}" />
+                    <x-lux::input.text :translatable="false" wire:model="{{ $altWireModel }}" />
                 </x-lux::input.group>
                 <x-lux::input.group label="Title">
-                    <x-lux::input.text :translatable="false" wire:model="{{ $translatable ? $model.'.'.$locale->code.'.3' : $model.'.3' }}" />
+                    <x-lux::input.text :translatable="false" wire:model="{{ $titleWireModel }}" />
                 </x-lux::input.group>
             </div>
         </div>
@@ -77,7 +96,7 @@ $locales = $translatable
             x-ref="input"
             type="file"
             @if($translatable)
-                wire:model="{{$model}}.{{$locale->code}}.0"
+                wire:model="{{ is_null($index) ? $model.'.'.$locale->code.'.0' : $model.'.'.$index.'.'.$locale->code.'.0' }}"
             @else
                 wire:model="{{$model}}.0"
             @endif

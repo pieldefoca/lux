@@ -21,9 +21,10 @@
             }
             input.focus()
             input.selectionStart = input.selectionEnd = start + cursorOffset
-        }
+            setTimeout(() => input.dispatchEvent(new Event('input')))
+        },
     }"
-    class="w-full border border-stone-300 rounded-md"
+    {{ $attributes->class(['w-full border border-stone-300 rounded-md']) }}
 >
     <div class="flex items-center space-x-4 px-2 pt-1 border-b border-stone-100">
         <div>
@@ -51,5 +52,10 @@
         </div>
     </div>
 
-    <textarea x-ref="input" {{ $attributes->wire('model') }} rows="3" class="block w-full p-2 outline-none rounded-md resize-none text-xs focus:ring-1 focus:ring-black"></textarea>
+    <textarea 
+        x-ref="input" 
+        {{ $attributes->wire('model') }} 
+        rows="3" 
+        class="block w-full p-2 outline-none rounded-md resize-none text-xs focus:ring-1 focus:ring-black"
+    ></textarea>
 </div>

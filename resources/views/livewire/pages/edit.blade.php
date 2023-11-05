@@ -80,10 +80,40 @@
             </div>
 
             <div x-tabs:panel>
-                <div class="max-w-xl mx-auto space-y-4">
-                    @foreach($translations as $index => $translation)
-                        <x-lux::input.rich-text-simple wire:model="translations.{{$index}}" />
-                    @endforeach
+                <div class="mb-3">
+                    <div class="inline-flex items-center space-x-1 px-2 py-1 border border-amber-200 rounded bg-amber-50">
+                        <span class="text-xs">Estás editando:</span> 
+                        <div class="flex items-center space-x-1">
+                            <img src="{{ asset('vendor/lux/img/flags/'.$currentLocaleCode.'.svg') }}" class="w-3 h-3" />
+                            <p class="text-xs">{{ $currentLocaleCode }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <x-lux::card title="Textos" class="p-4">
+                        <div class="space-y-4 pt-2">
+                            @foreach($translations as $locale => $localeTranslations)
+                                @foreach($localeTranslations as $index => $translation)
+                                    <x-lux::input.translation 
+                                        wire:model="translations.{{$locale}}.{{$index}}" 
+                                        @class(['hidden' => $this->currentLocaleCode !== $locale])
+                                    />
+                                @endforeach
+                            @endforeach
+                        </div>
+                    </x-lux::card>
+
+                    <x-lux::card title="Imágenes / Vídeos / Documentos" class="p-4">
+                        <div class="pt-2">
+                            @if($media)
+                                @foreach($media as $index => $items)
+                                    <x-lux::input.media :translatable="true" wire:model="media.{{$index}}" />
+                                @endforeach
+                            @else
+                            @endif
+                        </div>
+                    </x-lux::card>
                 </div>
             </div>
         </div>
