@@ -1,7 +1,60 @@
 # Instalación
 
+1. Crear un fichero `auth.json` en la raíz de la aplicación
+```json
+{
+    "github-oauth": {
+        "github.com": "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"
+    }
+}
+```
+
+2. Añadir el repositorio en `composer.json`
+```json
+"repositories": [
+     {
+         "type": "vcs",
+         "url": "https://github.com/pieldefoca/lux"
+     }
+],
+```
+
+3. Instalar el paquete
 ```shell
 composer require pieldefoca/lux
+```
+
+4. Ejecutar las migraciones
+```shell
+php artisan migrate
+```
+
+5. Instalar tailwind
+[https://tailwindcss.com/docs/guides/laravel]
+
+6. Crear el fichero `resources/css/lux.css` y añadir el import:
+```css
+@import "../../vendor/pieldefoca/lux/resources/css/lux.css";
+```
+
+7. Añadir los inputs en `vite.config.js`:
+```js
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/css/lux.css',
+                'resources/js/lux.js',
+            ],
+            refresh: true,
+        }),
+    ],
+```
+
+8. Publicar el fichero de configuración y los assets
+```shell
+php artisan vendor:publish --tag=lux-config --tag=lux-assets
 ```
 
 # Traducciones

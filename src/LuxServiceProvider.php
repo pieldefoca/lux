@@ -2,13 +2,11 @@
 
 namespace Pieldefoca\Lux;
 
-use Pieldefoca\Lux\Console\Commands\MakeLux;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Blade;
+use Pieldefoca\Lux\Support\Translator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
-use Pieldefoca\Lux\Models\Locale;
-use Pieldefoca\Lux\Support\Translator;
+use Pieldefoca\Lux\Console\Commands\LuxUser;
+use Pieldefoca\Lux\Console\Commands\MakeLux;
 
 class LuxServiceProvider extends ServiceProvider
 {
@@ -47,20 +45,15 @@ class LuxServiceProvider extends ServiceProvider
                 __DIR__.'/../public' => public_path('vendor/lux'),
             ], 'lux-assets');
 
-			$this->publishes([
-				__DIR__.'/../resources/views/components/sidebar/index.blade.php' => resource_path('views/components/lux/sidebar/index.blade.php')
-			], 'lux-components');
-
 			$this->commands([
 				MakeLux::class,
+				LuxUser::class,
 			]);
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 		$this->loadViewsFrom(__DIR__.'/../resources/views', 'lux');
 		$this->loadTranslationsFrom(__DIR__.'/../lang', 'lux');
 		$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-
-		View::share('luxLocales', Locale::all());
 
 		ComponentAttributeBag::macro('localizedWireModel', function($locale) {
 			foreach($this->whereStartsWith('wire:model') as $attribute => $value) {

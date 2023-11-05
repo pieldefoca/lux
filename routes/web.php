@@ -6,20 +6,24 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Pieldefoca\Lux\Http\Middleware\PageMiddleware;
 
-foreach(Page::all() as $page) {
-	$slugs = $page->getTranslations('slug');
-
-	if(empty($slugs) && $page->is_home_page) {
-		Route::view('', $page->view)->middleware(PageMiddleware::class)->name('home');
-		foreach(Locale::all() as $locale) {
-			Route::view("/{$locale->code}", $page->view)->name('home');
+try {
+	foreach(Page::all() as $page) {
+		$slugs = $page->getTranslations('slug');
+	
+		if(empty($slugs) && $page->is_home_page) {
+			Route::view('', $page->view)->middleware(PageMiddleware::class)->name('home');
+			foreach(Locale::all() as $locale) {
+				Route::view("/{$locale->code}", $page->view)->name('home');
+			}
+		}
+	
+		foreach($slugs as $locale => $slug) {
+			$path = Locale::default()->code === $locale ? $slug : "{$locale}/{$slug}";
+			Route::view($path, $page->view)->middleware(PageMiddleware::class)->name($page->view);
 		}
 	}
-
-	foreach($slugs as $locale => $slug) {
-		$path = Locale::default()->code === $locale ? $slug : "{$locale}/{$slug}";
-		Route::view($path, $page->view)->middleware(PageMiddleware::class)->name($page->view);
-	}
+} catch(\Exception $e) {
+	logger()->info('Pages table does not exist!');
 }
 
 Route::prefix(config('lux.prefix'))

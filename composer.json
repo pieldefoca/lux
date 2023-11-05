@@ -21,7 +21,8 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Pieldefoca\\Lux\\LuxServiceProvider"
+				"Pieldefoca\\Lux\\LuxServiceProvider",
+				"Pieldefoca\\Lux\\Providers\\FortifyServiceProvider"
 			]
 		}
 	},
@@ -32,6 +33,7 @@
 		"livewire/livewire": "^3.0",
 		"laravel/fortify": "^1.18",
 		"spatie/laravel-translatable": "^6.5",
-		"spatie/laravel-medialibrary": "^10.0.0"
+		"spatie/laravel-medialibrary": "^10.0.0",
+		"laravel/prompts": "^0.1.13"
 	}
 }
