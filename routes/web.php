@@ -39,7 +39,7 @@ Route::prefix(config('lux.prefix'))
 		// Route::get('/blog/etiquetas')->name('lux.blog.tags.index');
 
 		Route::get('/blog/posts', Pieldefoca\Lux\Livewire\Blog\Posts\Index::class)->name('lux.blog.posts.index');
-		// Route::get('/blog/posts/nuevo')->name('lux.blog.posts.create');
+		Route::get('/blog/posts/nuevo', Pieldefoca\Lux\Livewire\Blog\Posts\Create::class)->name('lux.blog.posts.create');
 		// Route::get('/blog/posts/{post}/editar')->name('lux.blog.posts.edit');
 
 		Route::get('/contacto', Pieldefoca\Lux\Livewire\Contact\Form::class)->name('lux.contact.form');

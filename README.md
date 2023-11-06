@@ -53,8 +53,33 @@ php artisan migrate
 ```
 
 8. Publicar el fichero de configuración y los assets
+
 ```shell
 php artisan vendor:publish --tag=lux-config --tag=lux-assets
+```
+
+9. Compilar los assets
+
+```shell
+npm run dev
+```
+
+10. Siguientes pasos:
+* Crear un usuario
+* Definir el logo
+
+# Crear un usuario
+
+```shell
+php artisan lux:user
+```
+
+# Logo
+
+Definir la url del logo en `config/lux.php`
+
+```php
+'logo' => asset('img/logo.svg'),
 ```
 
 # Traducciones

@@ -43,6 +43,11 @@ class BlogCategory extends Model implements HasMedia
         return BlogCategoryFactory::new();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
+
     public function getImageUrl($locale = null): ?string
     {
         if(is_null($locale)) {

@@ -41,7 +41,6 @@ $locales = $translatable
                 locale: @js($locale),
                 placeholder: @js($placeholder),
                 init() {
-                    console.log('init')
                     this.selected = this.multiple ? [] : {}
                     $nextTick(() => {
                         if(this.multiple) {
