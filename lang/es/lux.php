@@ -23,6 +23,8 @@ return [
     'hola' => '👋🏽 Hola',
 
     // @M
+    'media-manager-subtitle' => 'Gestiona las imágenes, vídeos y ficheros de la web',
+    'media-manager-title' => 'Medios',
     'mi-perfil' => 'Mi perfil',
 
     // @N

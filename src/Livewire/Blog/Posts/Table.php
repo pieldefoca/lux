@@ -2,12 +2,12 @@
 
 namespace Pieldefoca\Lux\Livewire\Blog\Posts;
 
-use Illuminate\Support\Facades\Pipeline;
 use Pieldefoca\Lux\Models\Post;
 use Livewire\Attributes\Computed;
 use Pieldefoca\Lux\Enum\PostStatus;
 use Pieldefoca\Lux\Livewire\LuxTable;
 use Pieldefoca\Lux\Livewire\Table\Traits\Searchable;
+use Pieldefoca\Lux\Livewire\Table\Traits\Reorderable;
 use Pieldefoca\Lux\Livewire\Table\Traits\WithFilters;
 use Pieldefoca\Lux\Livewire\Table\Traits\WithSorting;
 use Pieldefoca\Lux\Livewire\Table\Traits\WithBulkActions;
@@ -18,6 +18,7 @@ class Table extends LuxTable
     use WithFilters;
     use Searchable;
     use WithSorting;
+    use Reorderable;
 
     public $model = Post::class;
 

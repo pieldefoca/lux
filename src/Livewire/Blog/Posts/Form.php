@@ -17,13 +17,14 @@ use Pieldefoca\Lux\Models\BlogCategory;
 use Pieldefoca\Lux\Traits\HasMediaFields;
 use Pieldefoca\Lux\Livewire\Attributes\Media;
 use Pieldefoca\Lux\Livewire\Attributes\Slugify;
+use Pieldefoca\Lux\Livewire\Attributes\MediaGallery;
 use Pieldefoca\Lux\Livewire\Attributes\Translatable;
 
 class Form extends LuxForm
 {
     use WithFileUploads;
     use HasMediaFields;
-    
+
     public ?Post $post;
 
     #[Media(collection: 'featuredImage', translatable: true)]
@@ -40,6 +41,9 @@ class Form extends LuxForm
 
     #[Translatable]
     public $body = [];
+
+    #[MediaGallery('gallery')]
+    public $gallery = [];
 
     public function mount(): void
     {
@@ -76,6 +80,7 @@ class Form extends LuxForm
     #[On('save-post')]
     public function save(): void
     {
+        dd($this->featuredImage);
         $this->validate();
 
         if($this->editing) {

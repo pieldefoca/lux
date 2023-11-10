@@ -50,4 +50,6 @@ Route::prefix(config('lux.prefix'))
 		Route::get('/paginas/{page}/editar', Pieldefoca\Lux\Livewire\Pages\Edit::class)->name('lux.pages.edit');
 		
 		Route::get('/traducciones', Pieldefoca\Lux\Livewire\Translations\Index::class)->name('lux.translations.index');
+
+		Route::get('/media', Pieldefoca\Lux\Livewire\MediaManager\Index::class)->name('lux.media.index');
 	});

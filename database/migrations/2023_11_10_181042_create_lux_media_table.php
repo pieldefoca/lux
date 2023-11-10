@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lux_pages', function (Blueprint $table) {
+        Schema::create('lux_media', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->json('slug');
-            $table->string('view');
+            $table->json('name');
+            $table->json('filename');
+            $table->string('disk')->nullable();
+            $table->json('alt')->nullable();
             $table->json('title')->nullable();
-            $table->json('description')->nullable();
-            $table->boolean('is_home_page')->default(false);
-            $table->boolean('visible')->default(true);
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lux_pages');
+        Schema::dropIfExists('lux_media');
     }
 };

@@ -30,7 +30,7 @@
                                     <strong>{{ $this->rows->total() }}</strong>
                                     <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', $this->rows->count()) }}</span>.
                                 </span>
-                                
+
                                 <x-lux::button.link wire:click="clearSelection" class="relative ml-1 text-xs">Deseleccionar todo</x-lux::button.link>
                             </div>
                         @endif
@@ -62,20 +62,39 @@
                                         $wire.call('deleteSelected')
                                     }
                                 })
-                            "    
+                            "
                         />
                     </div>
                 </div>
             @else
                 <div class="flex items-center justify-between">
-                    <x-lux::input.search wire:model.live.debounce="filters.search" />
+                    <div class="flex items-center space-x-4">
+                        @if($this->isReorderable())
+                            @if($this->isReordering())
+                                <button wire:click="finishReordering" type="button" class="flex items-center space-x-px px-1 py-px rounded transition-colors duration-300 hover:bg-black hover:text-white">
+                                    <x-lux::tabler-icons.check class="w-5 h-5" />
+                                    <span class="text-xs">Aceptar</span>
+                                </button>
+                            @else
+                                <button wire:click="startReordering" title="Reordenar" type="button" class="group flex flex-col items-center p-1 rounded text-stone-600 -translate-x-1 transition-colors duration-300 hover:bg-black">
+                                    <x-lux::tabler-icons.reorder class="w-5 h-5 transition-colors duration-300 group-hover:text-white" />
+                                </button>
+                            @endif
+                        @endif
 
-                    <div>
+                        <x-lux::input.search wire:model.live.debounce="filters.search" />
+                    </div>
+
+                    <div class="flex items-center space-x-4">
                         <div>
                             <x-lux::dropdown></x-lux::dropdown>
                         </div>
 
-                        {{ $actions ?? '' }}
+                        <div class="flex items-center">
+                            <div>
+                                {{ $actions ?? '' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             @endif
@@ -91,17 +110,19 @@
             <table class="admin-table w-full">
                 <thead>
                     <tr class="bg-stone-100">
-                        @if($this->hasBulkActions())
-                        <x-lux::table.th>
-                            <input type="checkbox" wire:model.live="selectPage" />
-                        </x-lux::table.th>
+                        @if($this->hasBulkActions() || $this->isReorderable())
+                            <x-lux::table.th>
+                                @if($this->hasBulkActions() && !$this->isReordering())
+                                    <input type="checkbox" wire:model.live="selectPage" />
+                                @endif
+                            </x-lux::table.th>
                         @endif
 
                         {{ $head }}
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody @if($this->isReorderable() && $this->isReordering()) drag-root="reorder" @endif>
                     {{ $body }}
                 </tbody>
             </table>

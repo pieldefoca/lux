@@ -14,11 +14,22 @@
     </x-lux::input.inline-group>
 
     <x-lux::input.inline-group required label="Categoría">
-        <x-lux::input.select 
+        <x-lux::input.select
             multiple
             wire:model="categories"
             options="categoryOptions"
         />
+    </x-lux::input.inline-group>
+
+    <x-lux::input.inline-group label="Galería">
+        <div class="flex flex-col">
+            <input wire:model="gallery" type="file" multiple />
+            <div>
+                @foreach($gallery as $media)
+                    {{-- <img src="{{ $media->temporaryUrl() }}" class="w-12 h-12" /> --}}
+                @endforeach
+            </div>
+        </div>
     </x-lux::input.inline-group>
 
     <x-lux::input.inline-group translatable required label="Contenido" :error="$errors->first('body.*')">

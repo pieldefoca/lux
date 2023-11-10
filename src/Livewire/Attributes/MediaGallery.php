@@ -16,28 +16,38 @@ class MediaGallery extends LivewireAttribute
 
     public function update($field, $value)
     {
-        $splits = explode('.', $field);
-        $index = $splits[1];
-        $component = $this->getComponent();
-        $locale = $component->currentLocaleCode;
-        $newValue = $this->getValue();
-        if(str($field)->endsWith('.0')) {
-            if($value instanceof TemporaryUploadedFile) {
-                $fileName = pathinfo($value->getClientOriginalName(), PATHINFO_FILENAME);
-                if($this->translatable) {
-                    $newValue[$index][$locale][0] = $value;
-                    $newValue[$index][$locale][1] = $fileName;
-                    $newValue[$index][$locale][4] = $value->temporaryUrl();
-                } else {
-                    $newValue[0] = $value;
-                    $newValue[1] = $fileName;
-                    $newValue[4] = $value->temporaryUrl();
-                }
+        $currentValue = $this->getValue();
 
-                $this->setValue($newValue);
-            }
-        }
+        array_push($currentValue, ...$value);
+
+        $this->setValue([]);
+        // $this->setValue($currentValue);
     }
+
+    // public function update($field, $value)
+    // {
+    //     $splits = explode('.', $field);
+    //     $index = $splits[1];
+    //     $component = $this->getComponent();
+    //     $locale = $component->currentLocaleCode;
+    //     $newValue = $this->getValue();
+    //     if(str($field)->endsWith('.0')) {
+    //         if($value instanceof TemporaryUploadedFile) {
+    //             $fileName = pathinfo($value->getClientOriginalName(), PATHINFO_FILENAME);
+    //             if($this->translatable) {
+    //                 $newValue[$index][$locale][0] = $value;
+    //                 $newValue[$index][$locale][1] = $fileName;
+    //                 $newValue[$index][$locale][4] = $value->temporaryUrl();
+    //             } else {
+    //                 $newValue[0] = $value;
+    //                 $newValue[1] = $fileName;
+    //                 $newValue[4] = $value->temporaryUrl();
+    //             }
+
+    //             $this->setValue($newValue);
+    //         }
+    //     }
+    // }
 
     public function render()
     {
@@ -53,7 +63,7 @@ class MediaGallery extends LivewireAttribute
                         $value = array_key_exists($defaultLocale->code, $media)
                             ? (empty($media[$defaultLocale->code]) ? $emptyValue : $media[$defaultLocale->code])
                             : $emptyValue;
-        
+
                         $media = array_merge($media, [
                             $locale->code => $value,
                         ]);

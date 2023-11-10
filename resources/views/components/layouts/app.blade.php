@@ -133,6 +133,7 @@
 
 	@livewireScriptConfig
 	@stack('js')
-	@vite(['resources/js/lux.js'])
+	<script defer src="https://unpkg.com/@alpinejs/ui@3.13.2-beta.1/dist/cdn.min.js"></script>
+	@vite(['resources/js/lux.js', 'resources/js/draggable.js'])
 </body>
 </html>
