@@ -57,7 +57,7 @@ class MediaGallery extends LivewireAttribute
         $emptyValue = [null, '', '', '', ''];
 
         if($this->translatable) {
-            foreach($currentValue as $index => $media) {
+            foreach($currentValue as $locale => $media) {
                 foreach(Locale::all() as $locale) {
                     if(!array_key_exists($locale->code, $media) || empty($media[$locale->code])) {
                         $value = array_key_exists($defaultLocale->code, $media)

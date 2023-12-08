@@ -11,7 +11,7 @@
     }}
 >
     @if($icon)
-    <x-dynamic-component component="admin.tabler-icons.{{$icon}}" class="w-5 h-5" />
+    <x-dynamic-component component="lux::tabler-icons.{{$icon}}" class="w-5 h-5" />
     @endif
 
     <span>{{ $slot }}</span>

@@ -16,20 +16,17 @@ class Translatable extends LivewireAttribute
 
     public function boot()
     {
-        foreach(Locale::all() as $locale) {
-            if($this->required && $locale->default) {
-                $this->component->addRulesFromOutside([
-                    "{$this->getName()}.{$locale->code}" => 'required'
-                ]);
+        $rules = $this->component->getRules();
 
-                if($this->message) {
-                    $this->component->addMessagesFromOutside([
-                        "{$this->getName()}.{$locale->code}" => $this->message,
-                    ]);
-                }
-            } else {
+        $propertyName = $this->getName();
+
+        if(array_key_exists($propertyName, $rules)) {
+            if(in_array('required', $rules[$propertyName])) {
+                $otherRules = array_filter($rules[$propertyName], fn($rule) => $rule !== 'required');
+                $defaultLocale = Locale::default()->code;
                 $this->component->addRulesFromOutside([
-                    "{$this->getName()}.{$locale->code}" => 'nullable',
+                    "$propertyName" => array_merge($otherRules, ['nullable']),
+                    "{$propertyName}.{$defaultLocale}" => ['required'],
                 ]);
             }
         }

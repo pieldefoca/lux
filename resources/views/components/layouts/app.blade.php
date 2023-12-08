@@ -36,8 +36,10 @@
 			}"
 		>
 			<div class="flex items-center justify-between p-3 border-b border-stone-200">
-				<h1>{{ config('app.name') }}</h1>
-				<x-lux::logo class="w-6" />
+				<a href="/" target="_blank">
+					<h1>{{ config('app.name') }}</h1>
+				</a>
+				<x-lux::logo class="h-9" />
 			</div>
 
 			<div class="flex-grow px-3 py-3 overflow-y-auto">
@@ -48,7 +50,7 @@
 				<div x-data="{open: false}" x-on:click.outside="open = false" class="relative">
 					<button x-on:click="open = !open" type="button" class="group flex items-center justify-between space-x-2 w-full px-3 py-1.5 bg-white shadow rounded cursor-pointer transition-colors duration-300 hover:bg-stone-50">
 						<div class="flex items-center space-x-2">
-							<div class="grid place-items-center w-7 h-7 rounded-full bg-stone-300i overflow-hidden">
+							<div class="grid place-items-center w-7 h-7 rounded-full bg-stone-300 overflow-hidden">
 								@if($avatarUrl = auth()->user()->avatarUrl)
 									<img src="{{ $avatarUrl }}" class="w-full h-full object-cover" />
 								@else
@@ -75,7 +77,7 @@
 							<x-lux::user-menu.item>
 								<form action="/logout" method="POST">
 									@csrf
-									<x-lux::user-menu.button icon="door-exit" label="Salir" />
+									<x-lux::user-menu.button type="submit" icon="door-exit" label="Salir" />
 								</form>
 							</x-lux::user-menu.item>
 						</ul>
@@ -133,6 +135,8 @@
 
 	@livewireScriptConfig
 	@stack('js')
+	<script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
 	<script defer src="https://unpkg.com/@alpinejs/ui@3.13.2-beta.1/dist/cdn.min.js"></script>
 	@vite(['resources/js/lux.js', 'resources/js/draggable.js'])
 </body>

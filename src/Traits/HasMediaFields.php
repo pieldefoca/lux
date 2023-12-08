@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Traits;
 
+use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use Pieldefoca\Lux\Models\Locale;
 use Pieldefoca\Lux\Livewire\Attributes\Media;
@@ -11,6 +12,18 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 trait HasMediaFields
 {
     use WithFileUploads;
+
+    #[On('media-selected')]
+    public function mediaSelected($field, $mediaIds)
+    {
+        $mediaProperties = $this->getSingleMediaProperties();
+
+        foreach($mediaProperties as $property) {
+            if($field === $property['name']) {
+                $this->$field[$this->currentLocaleCode] = $mediaIds;
+            }
+        }
+    }
 
     public function initMediaFields($model): void
     {
@@ -27,31 +40,11 @@ trait HasMediaFields
             extract($property); // $name, $collection, $translatable
 
             if($translatable) {
-                foreach(Locale::all() as $locale) {
-                    $media = $model->getFirstMedia($collection, ['locale' => $locale->code]);
-
-                    $this->$name[$locale->code] = is_null($media)
-                        ? []
-                        : [
-                            $media->getUrl(),
-                            $media->name,
-                            $media->getCustomProperty('alt'),
-                            $media->getCustomProperty('title'),
-                            $media->getUrl(),
-                        ];
-                }
+                $this->$name = $model->getMediaTranslations($collection);
             } else {
                 $media = $model->getFirstMedia($collection);
 
-                $this->$name = is_null($media)
-                    ? []
-                    : [
-                        $media->getUrl(),
-                        $media->name,
-                        $media->getCustomProperty('alt'),
-                        $media->getCustomProperty('title'),
-                        $media->getUrl(),
-                    ];
+                $this->$name = is_null($media) ? [] : $media;
             }
         }
     }

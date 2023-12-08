@@ -7,7 +7,6 @@ window.onload = function() {
 var dragRoot;
 
 function initDrag() {
-    console.log('initin')
     dragRoot = document.querySelector('[drag-root]');
 
     if(!dragRoot) return

@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Livewire\Pages;
 
+use Illuminate\Support\Facades\File;
 use Livewire\Attributes\Js;
 use Pieldefoca\Lux\Models\Page;
 use Livewire\Attributes\Computed;
@@ -13,6 +14,11 @@ class Index extends LuxComponent
     public function pages()
     {
         return Page::all();
+    }
+
+    public function toggleVisibility(Page $page)
+    {
+        $page->toggleVisibility();
     }
 
     public function render()

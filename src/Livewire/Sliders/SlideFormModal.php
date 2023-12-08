@@ -35,7 +35,6 @@ class SlideFormModal extends LuxModal
     {
         $this->editing = false;
         $this->slide = null;
-        $this->background = [];
         $this->title = [];
         $this->subtitle = [];
         $this->action_text = [];
@@ -68,7 +67,8 @@ class SlideFormModal extends LuxModal
             $this->slide = Slide::create(array_merge($validated, ['slider_id' => $this->slider->id]));
         }
 
-        $this->saveMediaFields($this->slide);
+        $this->slide->addMedia($this->background, 'background');
+        // $this->saveMediaFields($this->slide);
 
         $this->notifySuccess($this->editing ? '🤙🏾 Has actualizado la diapositiva correctamente' : '👍🏽 Has creado la diapositiva correctamente');
 

@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Traits;
 
+use Livewire\Attributes\On;
 use Pieldefoca\Lux\Models\Locale;
 
 trait UsesLocale
@@ -29,6 +30,7 @@ trait UsesLocale
         $this->hasMultipleLocales = false;
     }
 
+    #[On('select-locale')]
     public function selectLocale($locale)
     {
         $this->currentLocale = Locale::where('code', $locale)->first();

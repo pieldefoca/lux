@@ -9,7 +9,8 @@ abstract class SidebarElement
 {
     public $label = '';
     public $tablerIcon = '';
-    public $activeAt = [];
+    public $activeOn = [];
+    public $alwaysActive = false;
 
     public function withLabel($label)
     {
@@ -25,9 +26,9 @@ abstract class SidebarElement
         return $this;
     }
 
-    public function activeAt($routes)
+    public function activeOn($routes)
     {
-        $this->activeAt = $routes;
+        $this->activeOn = $routes;
 
         return $this;
     }
@@ -39,6 +40,8 @@ abstract class SidebarElement
 
     public function isActive()
     {
-        return Route::is(str($this->activeAt)->explode(',')->map(fn($route) => trim($route))->toArray());
+        if($this->alwaysActive) return true;
+
+        return Route::is(str($this->activeOn)->explode(',')->map(fn($route) => trim($route))->toArray());
     }
 }

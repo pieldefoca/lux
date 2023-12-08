@@ -5,16 +5,14 @@ namespace Pieldefoca\Lux\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Pieldefoca\Lux\Enum\SliderPosition;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Pieldefoca\Lux\Traits\HasMedia;
 use Spatie\Translatable\HasTranslations;
 
-class Slide extends Model implements HasMedia
+class Slide extends Model
 {
     use HasFactory;
     use HasTranslations;
-    use InteractsWithMedia;
+    use HasMedia;
 
     protected $table = 'lux_slides';
 
@@ -38,7 +36,7 @@ class Slide extends Model implements HasMedia
     {
         if(is_null($locale)) $locale = app()->currentLocale();
 
-        return $this->getFirstMedia('background', ['locale' => $locale]);
+        return $this->getFirstMedia('background', $locale);
     }
 
     public function getBackgroundUrl($locale = null)

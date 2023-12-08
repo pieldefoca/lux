@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Livewire\Attributes;
 
+use Livewire\Attributes\On;
 use Pieldefoca\Lux\Models\Locale;
 use Livewire\Attribute as LivewireAttribute;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -12,7 +13,26 @@ class Media extends LivewireAttribute
     public function __construct(
         public string $collection,
         protected bool $translatable = false,
+        bool $multiple = false,
     ) {}
+
+    public function boot()
+    {
+        $rules = $this->component->getRules();
+
+        $propertyName = $this->getName();
+
+        if(array_key_exists($propertyName, $rules)) {
+            if(in_array('required', $rules[$propertyName])) {
+                $otherRules = array_filter($rules[$propertyName], fn($rule) => $rule !== 'required');
+                $defaultLocale = Locale::default()->code;
+                $this->component->addRulesFromOutside([
+                    "$propertyName" => $otherRules,
+                    "{$propertyName}.{$defaultLocale}" => ['required'],
+                ]);
+            }
+        }
+    }
 
     public function update($field, $value)
     {
@@ -44,14 +64,12 @@ class Media extends LivewireAttribute
         $defaultLocale = Locale::default();
         $currentValue = $this->getValue();
 
-        $emptyValue = [null, '', '', '', ''];
-
         if($this->translatable) {
             foreach(Locale::all() as $locale) {
-                if(!array_key_exists($locale->code, $currentValue) || empty($currentValue[$locale->code][0])) {
+                if(!array_key_exists($locale->code, $currentValue) || empty($currentValue[$locale->code])) {
                     $value = array_key_exists($defaultLocale->code, $currentValue)
-                        ? (empty($currentValue[$defaultLocale->code]) ? $emptyValue : $currentValue[$defaultLocale->code])
-                        : $emptyValue;
+                        ? (empty($currentValue[$defaultLocale->code]) ? [] : $currentValue[$defaultLocale->code])
+                        : [];
     
                     $currentValue = array_merge($currentValue, [
                         $locale->code => $value,
@@ -60,7 +78,7 @@ class Media extends LivewireAttribute
             }
         } else {
             if(empty($currentValue)) {
-                $currentValue = $emptyValue;
+                $currentValue = [];
             }
         }
 

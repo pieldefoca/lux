@@ -41,7 +41,7 @@
                     @foreach($slider->slides as $slide)
                         <div class="flex items-end space-x-4 [&:not(:last-child)]:pb-4 [&:not(:first-child)]:pt-4 [&:not(:last-child)]:border-b border-stone-200">
                             <div>
-                                <x-lux::media-preview :url="$slide->getBackgroundUrl($currentLocaleCode)" class="!w-28" />
+                                <x-lux::media-preview :media="$slide->getBackground($currentLocaleCode)" class="!w-28" />
                             </div>
                             <div class="flex-grow">
                                 <div class="flex items-center space-x-2 min-h-[1rem]">

@@ -1,106 +1,74 @@
 @props([
-    'type' => 'any', // any, image, video
+    'type' => 'any', // any, image, video, file
+    'multiple' => false,
 ])
 
-@aware(['translatable' => false])
+@aware(['translatable'])
 
 @php
-$wireModel = $attributes->whereStartsWith('wire:model')->getAttributes();
-$model = '';
-foreach($wireModel as $attribute => $value) {
-    $wireModel = $attribute;
-    $model = $value;
-}
-$splits = str($model)->explode('.');
-$index = null;
-if(count($splits) > 1) {
-    $model = $splits[0];
-    $index = $splits[1];
-}
-$imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-$videoExtensions = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mkv'];
-$locales = $translatable
-    ? Pieldefoca\Lux\Models\Locale::all()
-    : [Pieldefoca\Lux\Models\Locale::default()];
+    $model = $attributes->wire('model')->value;
+    $selectedIds = $translatable ? $this->$model[$this->currentLocaleCode] : $this->$model;
+    $selectedMedia = Pieldefoca\Lux\Models\Media::whereIn('id', $selectedIds)->get();
+    $locales = $translatable ? Pieldefoca\Lux\Models\Locale::all() : [Pieldefoca\Lux\Models\Locale::default()];
 @endphp
 
 @foreach($locales as $locale)
-    @php
-        $url = '';
-        $nameWireModel = '';
-        $altWireModel = '';
-        $titleWireModel = '';
-        if($translatable) {
-            $url = is_null($index) ? $this->$model[$locale->code][4] : $this->$model[$index][$locale->code][4];
-            $nameWireModel = is_null($index) ? $model.'.'.$locale->code.'.1' : $model.'.'.$index.'.'.$locale->code.'.1';
-            $altWireModel = is_null($index) ? $model.'.'.$locale->code.'.2' : $model.'.'.$index.'.'.$locale->code.'.2';
-            $titleWireModel = is_null($index) ? $model.'.'.$locale->code.'.3' : $model.'.'.$index.'.'.$locale->code.'.3';
-        } else {
-            $url = $this->$model[4];
-            $nameWireModel = $model.'.1';
-            $altWireModel = $model.'.2';
-            $titleWireModel = $model.'.3';
-        }
-        $fileExtension = pathinfo($url, PATHINFO_EXTENSION);
-        $isImage = $url && str($fileExtension)->startsWith($imageExtensions);
-        $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
-    @endphp
     <div 
-        x-data
-        @class(['@container w-full', 'hidden' => $this->currentLocaleCode !== $locale->code,])
+        x-data="{
+            select() {
+                $wire.dispatch('select-media', { 
+                    field: '{{ $model }}',
+                    preSelected: {{ json_encode($selectedIds) }}, 
+                    multiple: {{ json_encode($multiple) }} 
+                })
+            }
+        }" 
+        x-ref="media"
+        @class(['hidden' => $translatable && $this->currentLocaleCode !== $locale->code])
     >
-        <div class="flex items-center space-x-6 w-full">
-            <x-lux::media-preview :$type :$url x-on:click="$refs.input.click()" />
-
-            <div class="flex-grow space-y-2">
-                <x-lux::input.group label="Nombre">
-                    <x-lux::input.text :translatable="false" wire:model="{{ $nameWireModel }}" />
-                </x-lux::input.group>
-                <x-lux::input.group label="Alt">
-                    <x-lux::input.text :translatable="false" wire:model="{{ $altWireModel }}" />
-                </x-lux::input.group>
-                <x-lux::input.group label="Title">
-                    <x-lux::input.text :translatable="false" wire:model="{{ $titleWireModel }}" />
-                </x-lux::input.group>
-            </div>
-        </div>
-        <div class="mt-2">
-            <button
-                @click="$refs.input.click()"
-                type="button"
-                class="px-2 py-px bg-teal-100 border border-teal-600 rounded text-teal-600 text-xs transition-colors duration-300 hover:text-teal-700 hover:border-teal-700"
-            >
-                @if($type === 'any')
-                    {{ trans('lux::lux.elegir-fichero') }}
-                @elseif($type === 'image')
-                    {{ trans('lux::lux.elegir-imagen') }}
-                @elseif($type === 'video')
-                    {{ trans('lux::lux.elegir-video') }}
-                @endif
-            </button>
-            <button
-                wire:click="clearMediaField('{{$model}}')"
-                type="button"
-                class="px-2 py-px bg-red-100 border border-red-400 rounded text-red-400 text-xs transition-colors duration-300 hover:text-red-500 hover:border-red-500"
-            >
-                @if($type === 'any')
-                    {{ trans('lux::lux.eliminar-fichero') }}
-                @elseif($type === 'image')
-                    {{ trans('lux::lux.eliminar-imagen') }}
-                @elseif($type === 'video')
-                    {{ trans('lux::lux.eliminar-video') }}
-                @endif
-            </button>
-        </div>
-        <input
-            x-ref="input"
-            type="file"
-            @if($translatable)
-                wire:model="{{ is_null($index) ? $model.'.'.$locale->code.'.0' : $model.'.'.$index.'.'.$locale->code.'.0' }}"
-            @else
-                wire:model="{{$model}}.0"
+        <div class="flex flex-col space-y-3">
+            @if((!$multiple && $selectedMedia->isEmpty()) || $multiple)
+                @php
+                    $icon = 'file-invoice';
+                    $text = 'Inspeccionar';
+                    if($type === 'any') {
+                        $icon = 'photo-video';
+                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige los archivos' : 'Añadir archivos') : 'Elige un archivo';
+                    } elseif($type === 'image') {
+                        $icon = 'photo';
+                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige las imágenes' : 'Añadir imágenes') : 'Elige una imagen';
+                    } elseif($type === 'video') {
+                        $icon = 'movie';
+                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige los vídeos' : 'Añadir vídeos') : 'Elige un vídeo';
+                    } elseif($type === 'file') {
+                        $icon = 'file-invoice';
+                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige los archivos' : 'Añadir archivos') : 'Elige un archivo';
+                    }
+                @endphp
+                <div class="flex items-center space-x-4">
+                    <x-lux::button x-on:click="select" icon="{{ $icon }}">{{ $text }}</x-lux::button>
+                    @if($multiple && $selectedMedia->isNotEmpty())
+                        <button @click="$wire.clearMedia('{{ $model }}')" type="button" class="flex items-center space-x-1 text-xs transition-colors duration-300 hover:text-red-400">
+                            <x-lux::tabler-icons.trash class="w-4 h-4" />
+                            <span>Eliminar todo</span>
+                        </button>
+                    @endif
+                </div>
             @endif
-            style="display: none;"
-        />
+            @if($selectedMedia->isNotEmpty())
+                <div class="flex flex-wrap space-x-4">
+                    @foreach($selectedMedia as $media)
+                        <x-lux::media-preview 
+                            :model="$model"
+                            :media="$media"
+                            :type="$type"
+                            :selectable="!$multiple"
+                            editable
+                            :unselectable="$multiple"
+                        />
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 @endforeach

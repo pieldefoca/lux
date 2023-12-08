@@ -8,6 +8,7 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\Computed;
 use Pieldefoca\Lux\Livewire\LuxComponent;
 use Illuminate\Validation\Rule as RuleValidation;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Profile extends LuxComponent
 {
@@ -15,13 +16,12 @@ class Profile extends LuxComponent
 
 	public $user;
 
-	#[Rule('nullable')]
 	public $avatar;
 
-	#[Rule('required', message: 'Escribe un nombre')]
+	public $username;
+
 	public $name;
 
-	#[Rule('required', message: 'Escribe un email')]
 	public $email;
 
 	public $password;
@@ -30,9 +30,15 @@ class Profile extends LuxComponent
 	{
 		$this->user = auth()->user();
 		$this->avatar = $this->user->avatarUrl;
+		$this->username = $this->user->username;
 		$this->name = $this->user->name;
 		$this->email = $this->user->email;
 		$this->password = 'La curiosidad mató al gato 😉';
+	}
+
+	public function updatedUsername($value)
+	{
+		$this->username = str($value)->slug()->replace('-', '_')->toString();
 	}
 
 	#[Computed]
@@ -52,22 +58,19 @@ class Profile extends LuxComponent
 	#[On('save-profile')]
 	public function save()
 	{
-		$this->validate();
-
-		$this->user->update([
-			'name' => $this->name,
-			'email' => $this->email,
-		]);
+		$validated = $this->validate();
 
 		if(is_null($this->avatar)) {
-			$this->user->getFirstMedia('avatar')->delete();
+			$this->user->removeAvatar();
 		} else {
-			if(!is_string($this->avatar)) {
-				$this->user->addMedia($this->avatar)->toMediaCollection('avatar');
+			if($this->avatar instanceof TemporaryUploadedFile) {
+				$name = $this->avatar->store('/', 'avatars');
+	
+				$validated = array_merge($validated, ['avatar' => $name]);
 			}
 		}
 
-		$this->avatar = $this->user->avatarUrl;
+		$this->user->update($validated);
 
 		$this->notifySuccess('🤙🏾 Has actualizado tu perfil correctamente');
 	}
@@ -75,13 +78,18 @@ class Profile extends LuxComponent
 	public function rules()
 	{
 		return [
-			'email' => [RuleValidation::unique('users', 'email')->ignoreModel($this->user)],
+			'avatar' => ['nullable', 'exclude'],
+			'username' => ['required'],
+			'name' => ['required', 'string'],
+			'email' => ['required', RuleValidation::unique('users', 'email')->ignoreModel($this->user)],
 		];
 	}
 
 	public function messages()
 	{
 		return [
+			'name.required' => 'Escribe un nombre',
+			'email.required' => 'Escribe un email',
 			'email.unique' => 'Ese email ya está en uso',
 		];
 	}

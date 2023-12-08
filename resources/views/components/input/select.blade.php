@@ -2,11 +2,12 @@
     'native' => false,
     'multiple' => false,
     'options',
-    'placeholder' => 'Selecciona una opción',
+    'placeholder',
 ])
 @aware(['translatable' => false])
 
 @php
+$placeholder = $multiple ? 'Selecciona las opciones' : 'Selecciona una opción';
 $locales = $translatable
     ? Pieldefoca\Lux\Models\Locale::all()
     : [Pieldefoca\Lux\Models\Locale::default()];
@@ -44,8 +45,8 @@ $locales = $translatable
                     this.selected = this.multiple ? [] : {}
                     $nextTick(() => {
                         if(this.multiple) {
-                            for(value in this.value) {
-                                this.selected.push(this.options.filter((option) => option.value == this.value)[0])
+                            for(value of this.value) {
+                                this.selected.push(this.options.filter((option) => option.value == value)[0])
                             }
                         } else {
                             this.selected = this.options.filter((option) => option.value == this.value)[0] ?? {}
@@ -103,7 +104,7 @@ $locales = $translatable
             >
                 <div class="flex items-center justify-between py-2 w-full">
                     @if($multiple)
-                        <span class="text-sm">Selecciona las opciones</span>
+                        <span class="text-sm text-stone-500">{{ $placeholder }}</span>
                     @else
                         <div class="flex items-center space-x-1">
                             <template x-if="'image' in selected">
@@ -136,46 +137,53 @@ $locales = $translatable
                                     <x-lux::tabler-icons.trash class="w-3 h-3 transition-all duration-300 hover:scale-125 hover:text-red-400 focus:scale-125 focus:text-red-400" />
                                 </button>
                             </div>
-
                         </template>
                     </div>
                 @endif
             </button>
 
-            <ul x-show="open" class="absolute top-full left-0 w-full max-h-72 mt-1 overflow-y-auto rounded-md bg-white shadow z-10">
-                <template x-for="option in options">
-                    <li @click="select(option.value)" :class="{'border-teal-200': isSelected(option.value)}" class="border-b border-stone-200">
-                        <button 
-                            type="button" 
-                            :class="{
-                                'bg-teal-100': isSelected(option.value),
-                                'hover:bg-stone-100': !isSelected(option.value),
-                            }"
-                            class="flex items-center justify-between w-full pl-2 pr-4 py-2"
-                        >
-                            <div class="flex items-center space-x-1">
-                                <template x-if="'image' in option">
-                                    <img :src="option.image" class="w-5 h-5 rounded-full object-cover" />
-                                </template>
-                                <span x-text="option.label" class="text-sm"></span>
-                            </div>
-
-                            @if(!$multiple)
-                                <span x-show="isSelected(option.value)">
-                                    <x-lux::tabler-icons.check class="w-5 h-5 text-teal-400" />
-                                </span>
-                            @endif
-
-                            @if($multiple)
-                                <div>
-                                    <div :class="{'bg-teal-300': isSelected(option.value)}" class="w-2 h-2 rounded-full bg-stone-200"></div>
+            <div x-show="open">
+                <ul x-show="options.length > 0" class="absolute top-full left-0 w-full max-h-72 mt-1 overflow-y-auto rounded-md bg-white shadow z-10">
+                    <template x-for="option in options">
+                        <li @click="select(option.value)" :class="{'border-teal-200': isSelected(option.value)}" class="border-b border-stone-200">
+                            <button 
+                                type="button" 
+                                :class="{
+                                    'bg-teal-100': isSelected(option.value),
+                                    'hover:bg-stone-100': !isSelected(option.value),
+                                }"
+                                class="flex items-center justify-between w-full pl-2 pr-4 py-2"
+                            >
+                                <div class="flex items-center space-x-1">
+                                    <template x-if="'image' in option">
+                                        <img :src="option.image" class="w-5 h-5 rounded-full object-cover" />
+                                    </template>
+                                    <span x-text="option.label" class="text-sm"></span>
                                 </div>
-                            @endif
-                        </button>
-                    </li>
-                </template>
-            </ul>
+    
+                                @if(!$multiple)
+                                    <span x-show="isSelected(option.value)">
+                                        <x-lux::tabler-icons.check class="w-5 h-5 text-teal-400" />
+                                    </span>
+                                @endif
+    
+                                @if($multiple)
+                                    <div>
+                                        <div :class="{'bg-teal-300': isSelected(option.value)}" class="w-2 h-2 rounded-full bg-stone-200"></div>
+                                    </div>
+                                @endif
+                            </button>
+                        </li>
+                    </template>
+                </ul>
+
+                <div x-show="options.length === 0" class="absolute top-full left-0 w-full max-h-72 mt-1 overflow-y-auto rounded-md bg-white shadow z-10">
+                    <div class="flex flex-col items-center justify-center p-6 space-y-3">
+                        <x-lux::tabler-icons.square-number-0 class="opacity-20 w-16 h-16" />
+                        <p>No hay opciones disponibles</p>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
-
 @endforeach

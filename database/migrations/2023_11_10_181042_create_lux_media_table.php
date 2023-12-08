@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('disk')->nullable();
             $table->json('alt')->nullable();
             $table->json('title')->nullable();
+            $table->string('mime_type');
+            $table->string('media_type');
             $table->timestamps();
         });
     }

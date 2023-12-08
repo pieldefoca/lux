@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('lux_pages', function (Blueprint $table) {
             $table->id();
+            $table->boolean('dynamic_page')->default(false);
+            $table->string('dynamic_model')->nullable();
             $table->string('name');
-            $table->json('slug');
+            $table->json('slug')->nullable();
+            $table->json('slug_prefix')->nullable();
             $table->string('view');
             $table->json('title')->nullable();
             $table->json('description')->nullable();

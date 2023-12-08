@@ -7,8 +7,8 @@
                 <h1 class="text-xl font-bold">Entrar</h1>
                 @csrf
 
-                <x-lux::input.group label="Email" :error="$errors->first('email')">
-                    <x-lux::auth.input.text name="email" value="{{ old('email') }}" />
+                <x-lux::input.group label="Usuario o email" :error="$errors->first('login')">
+                    <x-lux::auth.input.text name="login" value="{{ old('login') }}" />
                 </x-lux::input.group>
 
                 <x-lux::input.group label="Contraseña" :error="$errors->first('password')">
@@ -18,9 +18,9 @@
                 <hr>
 
                 <div class="flex items-center justify-between">
-                    <x-lux::button type="submit">Entrar</x-lux::button>
-
                     <x-lux::auth.input.checkbox name="remember" label="Recuérdame" />
+
+                    <x-lux::button type="submit">Entrar</x-lux::button>
                 </div>
             </form>
         </div>

@@ -21,8 +21,11 @@ class Form extends LuxForm
     
     public Slider $slider;
 
-    #[Media(collection: 'images', translatable: true)]
-    public $image = [];
+    // #[Media(collection: 'images', translatable: true)]
+    public $image = [
+        'es' => [],
+        'eu' => [],
+    ];
 
     #[Rule('required', message: 'Escribe un nombre')]
     public $name;

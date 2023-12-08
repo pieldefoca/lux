@@ -6,10 +6,10 @@
         class="fixed inset-0 overflow-hidden z-10"
     >
         <!-- Overlay -->
-        <div x-dialog:overlay x-transition.opacity class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div x-dialog:overlay x-transition.opacity class="fixed inset-0 bg-black/30 backdrop-blur-[1px]"></div>
  
         <!-- Panel -->
-        <div class="fixed inset-y-0 right-0 max-w-lg w-full">
+        <div class="fixed inset-y-0 right-0 p-4 max-w-lg w-full">
             <div
                 x-dialog:panel
                 x-transition:enter="transition ease-out duration-300"
@@ -20,22 +20,22 @@
                 x-transition:leave-end="translate-x-full"
                 class="h-full w-full"
             >
-                <div class="h-full flex flex-col justify-between bg-white shadow-lg overflow-y-auto">
-                    <!-- Close Button -->
-                    <div class="absolute top-0 right-0 pt-4 pr-4">
-                        <button type="button" @click="$dialog.close()" class="bg-gray-50 rounded-lg p-2 text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
-                            <span class="sr-only">Close slideover</span>
- 
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </div>
- 
+                <div class="relative h-full flex flex-col justify-between px-6 pt-4 rounded-md bg-white shadow-lg overflow-y-auto"> 
                     <!-- Body -->
-                    <div class="p-8">
+                    <div>
                         <!-- Title -->
-                        <h2 x-dialog:title class="text-xl font-bold">{{ $title }}</h2>
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200">
+                            <h2 x-dialog:title class="text-xl font-bold">{{ $title }}</h2>
+
+                            <button 
+                                @click="$dialog.close()" 
+                                type="button" 
+                                class="rounded-md p-px text-stone-400 outline-none transition-colors duration-300 hover:text-stone-800 focus:text-stone-800 focus-visible:ring-2 focus-visible:ring-black"
+                            >
+                                <span class="sr-only">Close slideover</span>
+                                <x-lux::tabler-icons.x />
+                            </button>    
+                        </div>
  
                         <!-- Content -->
                         <div>
@@ -44,7 +44,7 @@
                     </div>
  
                     <!-- Footer -->
-                    <div class="p-4 flex justify-end space-x-2 border-t border-stone-200">
+                    <div class="py-4 mt-6 border-t border-stone-200">
                         {{ $footer }}
                     </div>
                 </div>

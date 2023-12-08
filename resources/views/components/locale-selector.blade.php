@@ -1,6 +1,6 @@
 <div
     @class([
-        'inline-flex items-center space-x-4 px-4 py-2 mb-4 bg-white rounded-lg shadow',
+        'inline-flex items-center space-x-4 px-4 py-2 mb-4 bg-white border border-stone-200 rounded-lg shadow',
         'hidden' => !$this->hasMultipleLocales,
     ])
 >

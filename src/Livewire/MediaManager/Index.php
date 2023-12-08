@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Pieldefoca\Lux\Models\Media;
 use Livewire\Attributes\Computed;
+use Pieldefoca\Lux\Enum\MediaType;
 use Pieldefoca\Lux\Livewire\LuxComponent;
 
 class Index extends LuxComponent
@@ -16,9 +17,9 @@ class Index extends LuxComponent
 
     public $selected = [];
 
-    public $filters = [
-        'type' => 'all',
-    ];
+    public $type;
+
+    public $search = '';
 
     public function updatedUploads($value)
     {
@@ -29,8 +30,32 @@ class Index extends LuxComponent
             Media::create([
                 'name' => $name,
                 'filename' => $filename,
+                'mime_type' => $file->getMimeType(),
             ]);
         }
+    }
+
+    #[Computed]
+    public function mediaItems()
+    {
+        return Media::query()
+            ->when($this->type, function($query, $type) {
+                if($type === MediaType::File->value) {
+                    return $query->where(function($query) {
+                        return $query->where('media_type', MediaType::Pdf->value)
+                            ->orWhere('media_type', MediaType::File->value);
+                    });
+                }
+
+                return $query->where('media_type', $type);
+            })
+            ->when($this->search, function($query, $search) {
+                return $query->where(function($query) use($search) {
+                    return $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('filename', 'like', "%{$search}%");
+                });
+            })
+            ->get();
     }
 
     #[Computed]

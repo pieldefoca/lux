@@ -54,6 +54,10 @@
             </div>
         </x-lux::input.inline-group>
 
+        <x-lux::input.inline-group required label="Nombre de usuario">
+            <x-lux::input.text wire:model.live.debounce.500ms="username" />
+        </x-lux::input.inline-group>
+
         <x-lux::input.inline-group required label="Nombre">
             <x-lux::input.text wire:model="name" />
         </x-lux::input.inline-group>

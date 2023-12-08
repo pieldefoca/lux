@@ -1,11 +1,19 @@
 <?php
 
 return [
+    // @A
+    'actions' => 'Acciones',
+    'admin-panel' => 'Panel de administración',
+
     // @C
-    'categorias-blog-subtitulo' => 'Lista de categorías del blog',
-    'categorias-blog-titulo' => 'Categorías del blog',
-    'contacto-subtitulo' => 'Estás editando los datos de contacto',
-    'contacto-titulo' => 'Datos de contacto',
+    'cancel' => 'Cancelar',
+    'contact-data' => '📬 Datos de contacto',
+    'contact-phones' => 'Teléfonos de contacto',
+    'contact-subtitle' => 'Estás editando los datos de contacto',
+    'contact-title' => 'Datos de contacto',
+
+    // @D
+    'dynamic-page' => '🤸🏽‍♀️ Página dinámica',
 
     // @E
     'elegir-fichero' => 'Elegir fichero',
@@ -20,7 +28,11 @@ return [
     'guardar' => 'Guardar',
 
     // @H
-    'hola' => '👋🏽 Hola',
+    'hello' => '👋🏽 Hola',
+    'home-page' => '🏠 Página de inicio',
+
+    // @L
+    'locations' => '📍 Ubicaciones',
 
     // @M
     'media-manager-subtitle' => 'Gestiona las imágenes, vídeos y ficheros de la web',
@@ -28,17 +40,22 @@ return [
     'mi-perfil' => 'Mi perfil',
 
     // @N
-    'nueva-categoria' => 'Nueva categoría',
-    'nuevo-post' => 'Nuevo post',
     'nuevo-slider' => 'Nuevo slider',
 
 	// @P
-	'panel-de-administracion' => 'Panel de administración',
+    'pages-index-title' => 'Páginas',
+    'pages-index-subtitle' => 'Lista de páginas del sitio web',
     'posts-titulo' => 'Posts',
     'posts-subtitulo' => 'Lista de posts del blog',
 
     // @S
+    'save' => 'Guardar',
     'selected-rows' => 'Fila seleccionada|Filas seleccionadas',
     'sliders-titulo' => 'Sliders',
     'sliders-subtitulo' => 'Lista de sliders',
+
+    // @T
+    'there-are-no-files' => 'No existe ningún archivo',
+    'there-are-no-images' => 'No existe ninguna imagen',
+    'there-are-no-videos' => 'No existe ningún vídeo',
 ];

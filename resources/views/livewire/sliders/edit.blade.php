@@ -12,4 +12,7 @@
     <livewire:sliders.form :$slider />
 
     <livewire:sliders.slide-form-modal :$slider />
+
+    <livewire:media-manager.selector />
+    <livewire:media-manager.slideover />
 </div>
