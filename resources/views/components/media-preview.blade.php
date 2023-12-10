@@ -8,6 +8,7 @@
     'unselectable' => false,
     'removable' => false,
     'swappable' => false,
+    'clearable' => false,
 ])
 
 @aware(['translatable'])
@@ -31,6 +32,9 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
                 'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden transition-all duration-300 shadow hover:contrast-50'
             ])
         }}
+        @if($selectable)
+            @click="select"
+        @endif
     >
         @if(is_null($media))
             @if($type === 'any')
@@ -87,12 +91,12 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
             <x-lux::tabler-icons.edit x-on:click="$dispatch('edit-media', { media: {{ $media->id }} })" class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-teal-500 hover:scale-125" />
         </button>
         @endif
-        @if($unselectable)
+        @if($unselectable || $clearable)
         <button 
             @if($unselectable)
                 @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}', {{ $media->id}})"
             @else
-                @click="$wire.clearMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}')" 
+                @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}')" 
             @endif
             type="button"
         >

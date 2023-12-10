@@ -53,10 +53,16 @@ trait HasMedia
                 $mediaIds = $mediaIds[Locale::default()->code];
             }
 
-            foreach($mediaIds as $id) {
-                $data[$id] = ['collection' => $collection, 'key' => $key];
+            if(empty($mediaIds)) {
+                $this->clearMedia($collection);
+            } else {
+                foreach($mediaIds as $id) {
+                    $data[$id] = ['collection' => $collection, 'key' => $key];
+                }
+                
+                $this->media()->attach($data);
             }
-            $this->media()->attach($data);
+
         }
     }
 

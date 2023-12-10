@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Livewire\Pages;
 
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Illuminate\Validation\Rule;
 use Pieldefoca\Lux\Models\Page;
@@ -47,6 +48,10 @@ class Edit extends LuxComponent
     public $currentHomeMessage;
 
     public $translations = [];
+    #[Translatable]
+    public $legalPageContent = [];
+
+    public $search = '';
 
     public int $swappingMediaId;
     public string $swappingMediaKey;
@@ -90,6 +95,37 @@ class Edit extends LuxComponent
                 }
             }
         }
+    }
+
+    #[On('locale-changed')]
+    public function onLocaleChanged()
+    {
+        $this->search = '';
+    }
+
+    #[Computed]
+    public function filteredTranslations()
+    {
+        $filteredTranslations = [];
+
+        foreach($this->translations as $locale => $translations) {
+            $filteredTranslations[$locale] = $this->filteredLocaleTranslations($locale);
+        }
+
+        return $filteredTranslations;
+    }
+
+    protected function filteredLocaleTranslations($locale)
+    {
+        return collect($this->translations[$locale])->when($this->search, function($collection, $search) {
+            return $collection->filter(function($value, $key) use($search) {
+                $value = str($value)->ascii()->lower();
+                $key = str($key)->ascii()->lower();
+                $search = Str::ascii($search);
+                return $key->contains($search) 
+                    || $value->contains($search);
+            });
+        })->toArray();
     }
 
     #[Computed]
@@ -214,6 +250,9 @@ class Edit extends LuxComponent
         }
 
         foreach($this->translations as $locale => $localeTranslations) {
+            if($this->page->isLegalPage()) {
+                $localeTranslations['content'] = $this->legalPageContent[$locale];
+            }
             Translator::saveTranslations($localeTranslations, lang_path($locale . '/' . $this->page->langFilePath));
         }
 

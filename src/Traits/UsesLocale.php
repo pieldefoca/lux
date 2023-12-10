@@ -35,5 +35,7 @@ trait UsesLocale
     {
         $this->currentLocale = Locale::where('code', $locale)->first();
         $this->currentLocaleCode = $locale;
+
+        $this->dispatch('locale-changed', locale: $locale);
     }
 }

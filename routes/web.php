@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::prefix(config('lux.prefix'))
 	->middleware(['web', 'auth'])
@@ -32,4 +33,14 @@ Route::prefix(config('lux.prefix'))
 		Route::get('/usuarios', Pieldefoca\Lux\Livewire\Users\Index::class)->name('lux.users.index');
 		Route::get('/roles', Pieldefoca\Lux\Livewire\Roles\Index::class)->name('lux.roles.index');
 		Route::get('/permisos', Pieldefoca\Lux\Livewire\Permissions\Index::class)->name('lux.permissions.index');
+
+		Route::post('/tinymce/upload', function() {
+			$file = request()->file();
+	
+			$filename = request()->file('file')->store('/', 'tinymceUploads');
+	
+			return response()->json([
+				'location' => Storage::disk('tinymceUploads')->url($filename),
+			]);
+		});
 	});

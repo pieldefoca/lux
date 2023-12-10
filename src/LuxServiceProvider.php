@@ -6,12 +6,14 @@ use Livewire\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Pieldefoca\Lux\Support\Lux;
+use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Support\Pages;
 use Illuminate\Support\Facades\File;
 use Pieldefoca\Lux\Support\Translator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
 use Pieldefoca\Lux\Livewire\MediaSelector;
+use Pieldefoca\Lux\Observers\MediaObserver;
 use Pieldefoca\Lux\Console\Commands\LuxUser;
 use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
@@ -27,6 +29,8 @@ class LuxServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
+		Media::observe(MediaObserver::class);
+
 		$this->configureLivewire();
 
 		$this->registerFacades();
@@ -133,6 +137,14 @@ class LuxServiceProvider extends ServiceProvider
 			'driver' => 'local', 
 			'root' => public_path('uploads'), 
 			'url' => env('APP_URL').'/uploads', 
+			'visibility' => 'public', 
+			'throw' => false, 
+		];
+
+		$this->app['config']['filesystems.disks.tinymceUploads'] = [
+			'driver' => 'local', 
+			'root' => public_path('uploads/tinymce'), 
+			'url' => env('APP_URL').'/uploads/tinymce', 
 			'visibility' => 'public', 
 			'throw' => false, 
 		];

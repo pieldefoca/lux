@@ -43,8 +43,12 @@ class Contact extends Model
         }
     }
 
-    public function savePhones(array $phones)
+    public function savePhones(?array $phones)
     {
+        if(is_null($phones)) {
+            return $this->update(['phone_numbers' => null]);
+        }
+
         $newPhones = [];
 
         foreach($phones as $key => $phone) {
@@ -65,8 +69,12 @@ class Contact extends Model
         }
     }
 
-    public function saveEmails(array $emails)
+    public function saveEmails(?array $emails)
     {
+        if(is_null($emails)) {
+            return $this->update(['emails' => null]);
+        }
+
         $newEmails = [];
 
         foreach($emails as $key => $email) {
@@ -87,8 +95,12 @@ class Contact extends Model
         }
     }
 
-    public function saveSocialMedia(array $socialMedia)
+    public function saveSocialMedia(?array $socialMedia)
     {
+        if(is_null($socialMedia)) {
+            return $this->update(['social_media' => null]);
+        }
+
         $newSocialMedia = [];
 
         foreach($socialMedia as $key => $socialMedia) {
@@ -125,8 +137,12 @@ class Contact extends Model
         }
     }
 
-    public function saveLocations(array $locations)
+    public function saveLocations(?array $locations)
     {
+        if(is_null($locations)) {
+            return $this->update(['locations' => null]);
+        }
+
         $newLocations = [];
 
         foreach($locations as $key => $locationData) {
@@ -159,8 +175,12 @@ class Contact extends Model
         }
     }
 
-    public function saveTimetables(array $timetables)
+    public function saveTimetables(?array $timetables)
     {
+        if(is_null($timetables)) {
+            return $this->update(['timetables' => null]);
+        }
+
         $newTimetables = [];
 
         foreach($timetables as $key => $timetable) {

@@ -65,6 +65,11 @@ class Index extends LuxComponent
         return count($this->selected) === 1;
     }
 
+    public function deleteMedia(Media $media)
+    {
+        $media->delete();
+    }
+
     public function select(Media $media)
     {
         $index = array_search($media->id, $this->selected);

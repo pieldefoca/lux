@@ -12,6 +12,7 @@
             $wireModel = $attribute;
             $model = $value;
         }
+        $id = str($model)->replace('.', '_')->toString();
 
         $locales = $translatable
             ? Pieldefoca\Lux\Models\Locale::all()
@@ -22,8 +23,13 @@
         x-data="{
             locale: @entangle('currentLocaleCode'),
             id: '',
+            translatable: @js($translatable),
+            model: '{{$model}}',
             init() {
-                this.id = '{{$model}}'
+                this.id = '{{$id}}'
+                if(this.translatable) {
+                    this.model += `.${this.locale}`
+                }
                 tinymce.init({
                     selector: `#${this.id}`,
                     language: 'es',
@@ -31,10 +37,10 @@
                     menubar: false,
                     toolbar: 'h1 h2 h3 bold italic underline align | bullist numlist | image media link',
                     init_instance_callback: (editor) => {
-                        editor.setContent($wire.$get(`{{$model}}.${this.locale}`) || '')
+                        editor.setContent($wire.$get(`${this.model}`) || '')
 
                         editor.on('blur', (e) => {
-                            $wire.$set(`{{$model}}.${this.locale}`, editor.getContent())
+                            $wire.$set(`${this.model}`, editor.getContent())
                         });
                     },
                     images_upload_url: '/admin/tinymce/upload',
@@ -82,11 +88,14 @@
                 })
 
                 $wire.$watch('{{$model}}', () => {
-                    tinymce.get(this.id).setContent($wire.$get(`{{$model}}.${this.locale}`) || '')
+                    tinymce.get(this.id).setContent($wire.$get(`${this.model}`) || '')
                 })
 
                 $watch('locale', ($value) => {
-                    tinymce.get(this.id).setContent($wire.$get(`{{$model}}.${this.locale}`) || '')
+                    if(this.translatable) {
+                        this.model = `{{$model}}.${this.locale}`
+                    }
+                    tinymce.get(this.id).setContent($wire.$get(`${this.model}`) || '')
                 })
             },
         }"
@@ -95,6 +104,6 @@
         ])
         wire:ignore
     >
-        <textarea x-ref="editor" id="{{$model}}"></textarea>
+        <textarea x-ref="editor" id="{{$id}}"></textarea>
     </div>
 </div>

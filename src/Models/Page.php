@@ -60,7 +60,7 @@ class Page extends Model
     public function langFilePath(): Attribute
     {
         return Attribute::make(
-            get: fn() => str($this->view)->replace('.', '/')->toString() . '.php',
+            get: fn() => str($this->key)->replace('.', '/')->toString() . '.php',
         );
     }
 
@@ -150,6 +150,13 @@ class Page extends Model
     public function isDynamic(): bool
     {
         return $this->dynamic_page;
+    }
+
+    public function isLegalPage(): bool
+    {
+        $legalPages = ['accesibilidad', 'politica-privacidad', 'politica-cookies', 'aviso-legal'];
+        
+        return in_array($this->key, $legalPages);
     }
 
     public function toggleVisibility()

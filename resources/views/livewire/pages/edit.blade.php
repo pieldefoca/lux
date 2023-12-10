@@ -111,17 +111,32 @@
 
                 <div class="grid grid-cols-2 items-start gap-8">
                     <x-lux::card title="Textos" class="p-4">
-                        <div class="pt-2">
-                            @foreach($translations as $locale => $localeTranslations)
-                                <div class="space-y-4">
+                        <x-slot name="actions">
+                            <x-lux::input.group label="">
+                                <x-lux::input.search wire:model.live="search" />
+                            </x-lux::input.group>
+                        </x-slot>
+
+                        <div class="pt-2 space-y-4">
+                            @foreach($this->filteredTranslations as $locale => $localeTranslations)
+                                <div class="space-y-4" wire:key="{{ uniqid() }}">
                                     @foreach($localeTranslations as $index => $translation)
+                                        @if($page->isLegalPage() && $index === 'content') @continue @endif
+
                                         <x-lux::input.translation
                                             wire:model="translations.{{$locale}}.{{$index}}"
                                             @class(['hidden' => $this->currentLocaleCode !== $locale])
+                                            wire:key="{{ uniqid() }}"
                                         />
                                     @endforeach
                                 </div>
                             @endforeach
+
+                            @if($page->isLegalPage())
+                                <x-lux::input.group translatable label="Contenido">
+                                    <x-lux::input.rich-text wire:model="legalPageContent" />
+                                </x-lux::input.group>
+                            @endif
                         </div>
                     </x-lux::card>
 

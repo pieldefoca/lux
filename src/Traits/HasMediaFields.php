@@ -120,7 +120,11 @@ trait HasMediaFields
 
     public function clearMediaField($field)
     {
-        $this->$field = [];
+        if(str($field)->contains('.')) {
+            $splits = explode('.', $field);
+            $field = $splits[0];
+        }
+        $this->$field[$splits[1]] = [];
     }
 
     public function saveMediaFields($model): void

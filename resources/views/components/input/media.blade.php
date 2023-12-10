@@ -4,7 +4,7 @@
     'multiple' => false,
 ])
 
-@aware(['translatable'])
+@aware(['required', 'translatable'])
 
 @php
     use Pieldefoca\Lux\Models\Locale;
@@ -73,9 +73,10 @@
                             :model="$model"
                             :media="$media"
                             :type="$type"
-                            :selectable="!$multiple"
+                            :selectable="! $multiple"
                             editable
                             :unselectable="$multiple"
+                            :clearable="! $required"
                         />
                     @endforeach
                 </div>
