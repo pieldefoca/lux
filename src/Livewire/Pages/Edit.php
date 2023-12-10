@@ -193,6 +193,10 @@ class Edit extends LuxComponent
                 $this->page->createLangFile($locale->code);
             }
             $this->translations[$locale->code] = include(lang_path("{$locale->code}/{$filename}"));
+
+            if($this->page->isLegalPage()) {
+                $this->legalPageContent[$locale->code] = $this->translations[$locale->code]['content'] ?? '';
+            }
         }
     }
 
