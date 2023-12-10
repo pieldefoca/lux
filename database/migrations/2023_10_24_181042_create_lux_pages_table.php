@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('lux_pages', function (Blueprint $table) {
             $table->id();
+            $table->string('key')->unique();
             $table->boolean('dynamic_page')->default(false);
             $table->string('dynamic_model')->nullable();
             $table->string('name');

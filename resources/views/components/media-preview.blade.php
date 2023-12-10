@@ -2,6 +2,7 @@
     'type' => 'any', // any, image, video
     'model' => null,
     'media' => null,
+    'key' => null,
     'selectable' => false,
     'editable' => false,
     'unselectable' => false,
@@ -77,7 +78,7 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
             </button>
         @endif
         @if($swappable)
-            <button @click="$wire.swapMedia({{ $media->id }})" type="button">
+            <button @click="$wire.swapMedia({{ $media->id }}, '{{ $key }}')" type="button">
                 <x-lux::tabler-icons.hand-click class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-sky-500 hover:scale-125" />
             </button>
         @endif

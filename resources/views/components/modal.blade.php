@@ -22,7 +22,7 @@
             <div
                 x-on:click.stop
                 x-trap.noscroll.inert="open"
-                class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
+                class="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
             >
                 <!-- Title -->
                 <h2 class="text-2xl font-bold mb-6" :id="$id('modal-title')">{{ $title }}</h2>

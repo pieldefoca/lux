@@ -3,17 +3,19 @@
 namespace Pieldefoca\Lux\Livewire\Pages;
 
 use Livewire\Attributes\On;
-use Livewire\Attributes\Rule;
+use Illuminate\Validation\Rule;
 use Pieldefoca\Lux\Models\Page;
 use Livewire\Attributes\Computed;
-use Pieldefoca\Lux\Models\Locale;
-use Illuminate\Support\Facades\File;
 use Pieldefoca\Lux\Facades\Pages;
+use Pieldefoca\Lux\Models\Locale;
+use Illuminate\Support\Facades\DB;
+use Pieldefoca\Lux\Models\Mediable;
+use Illuminate\Support\Facades\File;
 use Pieldefoca\Lux\Facades\Translator;
 use Pieldefoca\Lux\Livewire\LuxComponent;
+use Pieldefoca\Lux\Traits\HasMediaFields;
 use Pieldefoca\Lux\Livewire\Attributes\MediaGallery;
 use Pieldefoca\Lux\Livewire\Attributes\Translatable;
-use Pieldefoca\Lux\Traits\HasMediaFields;
 
 class Edit extends LuxComponent
 {
@@ -21,7 +23,6 @@ class Edit extends LuxComponent
 
     public Page $page;
 
-    #[Rule('required', message: 'Escribe un nombre')]
     public $name;
 
     #[Translatable]
@@ -29,8 +30,9 @@ class Edit extends LuxComponent
     #[Translatable]
     public $slug_prefix;
 
-    #[Rule('required', message: 'Elige una vista para esta página')]
     public $view;
+
+    public $key;
 
     #[Translatable]
     public $title;
@@ -38,10 +40,8 @@ class Edit extends LuxComponent
     #[Translatable]
     public $description;
 
-    #[Rule('nullable|boolean', message: 'Elige un valor válido')]
     public $is_home_page;
 
-    #[Rule('nullable|boolean', message: 'Elige un valor válido')]
     public $visible;
 
     public $currentHomeMessage;
@@ -49,6 +49,7 @@ class Edit extends LuxComponent
     public $translations = [];
 
     public int $swappingMediaId;
+    public string $swappingMediaKey;
 
     public function mount()
     {
@@ -56,6 +57,7 @@ class Edit extends LuxComponent
         $this->slug = $this->page->getTranslations('slug');
         $this->slug_prefix = $this->page->getTranslations('slug_prefix');
         $this->view = $this->page->view;
+        $this->key = $this->page->key;
         $this->title = $this->page->getTranslations('title');
         $this->description = $this->page->getTranslations('description');
         $this->is_home_page = $this->page->is_home_page;
@@ -111,9 +113,39 @@ class Edit extends LuxComponent
     }
 
     #[Computed]
-    public function mediaItems()
+    public function images()
     {
-        return $this->page->getMediaTranslations('media');
+        return $this->page->getImages($this->currentLocaleCode);
+    }
+
+    #[Computed]
+    public function videos()
+    {
+        return $this->page->getVideos($this->currentLocaleCode);
+    }
+
+    #[Computed]
+    public function files()
+    {
+        return $this->page->getFiles($this->currentLocaleCode);
+    }
+
+    #[Computed]
+    public function commonMedia()
+    {
+        $query = Mediable::with('media')
+            ->where('lux_mediable_type', 'BladeComponent');
+        
+        if($this->currentLocaleCode === Locale::default()->code) {
+            $query->where(function($query) {
+                return $query->where('locale', $this->currentLocaleCode)
+                    ->orWhere('locale', null);
+            });
+        } else {
+            $query->where('locale', $this->currentLocaleCode);
+        }
+
+        return $query->get();
     }
 
     public function getTranslations()
@@ -128,9 +160,10 @@ class Edit extends LuxComponent
         }
     }
 
-    public function swapMedia($id)
+    public function swapMedia($id, $key)
     {
         $this->swappingMediaId = $id;
+        $this->swappingMediaKey = $key;
 
         $this->dispatch('swap-media', selectedId: $id);
     }
@@ -138,26 +171,27 @@ class Edit extends LuxComponent
     #[On('media-swapped')]
     public function mediaSwapped(int $mediaId)
     {
-        $this->page->media()
-            ->where('locale', $this->currentLocaleCode)
+        $query =DB::table('lux_mediables')
             ->where('lux_media_id', $this->swappingMediaId)
-            ->first()
-            ->pivot
-            ->update(['lux_media_id' => $mediaId]);
+            ->where(function($query) {
+                $query->where('locale', $this->currentLocaleCode)
+                    ->orWhere('locale', null);
+            })
+            ->where('key', $this->swappingMediaKey);
+        
+        if(str($this->swappingMediaKey)->startsWith('component')) {
+            $query->where('lux_mediable_type', 'BladeComponent');
+        } else {
+            $query->where('lux_mediable_type', 'Pieldefoca\Lux\Models\Page')
+                ->where('lux_mediable_id', $this->page->id);
+        }
+            
+        $query->update(['lux_media_id' => $mediaId]);
     }
 
     #[On('save-page')]
     public function save()
     {
-        // dd($this->media);
-        // $this->page->clearMediaCollection('media');
-        // $this->page->addMedia(public_path('img/fire.svg'))
-        //     ->preservingOriginal()
-        //     ->withCustomProperties([
-        //         'key' => 'home.home-101',
-        //     ])
-        //     ->toMediaCollection('media');
-        // return;
         $validated = $this->validate();
 
         if($this->is_home_page) {
@@ -196,6 +230,12 @@ class Edit extends LuxComponent
             'name' => ['required'],
             'slug' => [$slugRequired ? 'required' : 'nullable'],
             'slug_prefix' => [$slugPrefixRequired ? 'required' : 'nullable'],
+            'view' => ['required'],
+            'key' => ['required', Rule::unique('lux_pages', 'key')->ignoreModel($this->page)],
+            'title' => ['nullable'],
+            'description' => ['nullable'],
+            'is_home_page' => ['boolean'],
+            'visible' => ['boolean'],
         ];
     }
 

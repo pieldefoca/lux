@@ -39,7 +39,7 @@ class LuxPages extends Command
 
             if(str($relativePathname)->endsWith('.blade.php')) {
                 $relativePathWithoutExtension = str($relativePathname)->replace('/', '.')->replace('.blade.php', '')->toString();
-                $page = Page::where('view', $relativePathWithoutExtension)->first();
+                $page = Page::where('key', $relativePathWithoutExtension)->first();
                 if(is_null($page)) {
                     $name = str($file->getFilename())->replace('.blade.php', '')->replace('-', ' ')->toString();
                     $slug = [];
@@ -48,10 +48,12 @@ class LuxPages extends Command
                         $slug[$locale->code] = ($name === 'home') ? '' : Str::slug($name);
                     }
 
+                    $view = str($relativePathWithoutExtension)->replace('/', '.')->toString();
                     $page = Page::create([
+                        'key' => $view,
                         'name' => str($name)->title()->toString(),
                         'slug' => $slug,
-                        'view' => str($relativePathWithoutExtension)->replace('/', '.')->toString(),
+                        'view' => $view,
                         'is_home_page' => $name === 'home',
                     ]);
 

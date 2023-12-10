@@ -11,6 +11,7 @@ abstract class SidebarElement
     public $tablerIcon = '';
     public $activeOn = [];
     public $alwaysActive = false;
+    public $roles = [];
 
     public function withLabel($label)
     {
@@ -33,6 +34,19 @@ abstract class SidebarElement
         return $this;
     }
 
+    public function forRoles($roles)
+    {
+        if(is_array($roles)) $this->roles = $roles;
+
+        if(is_string($roles)) {
+            $roles = array_map(fn($role) => trim($role), explode(',', $roles));
+
+            $this->roles = $roles;
+        }
+
+        return $this;
+    }
+
     public function isGroup()
     {
         return $this instanceof SidebarGroup;
@@ -43,5 +57,12 @@ abstract class SidebarElement
         if($this->alwaysActive) return true;
 
         return Route::is(str($this->activeOn)->explode(',')->map(fn($route) => trim($route))->toArray());
+    }
+
+    public function shouldShow()
+    {
+        if(empty($this->roles)) return true;
+        
+        return auth()->user()->hasRole($this->roles);
     }
 }

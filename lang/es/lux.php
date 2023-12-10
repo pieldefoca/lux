@@ -7,6 +7,7 @@ return [
 
     // @C
     'cancel' => 'Cancelar',
+    'common-elements-multiple-pages' => 'Elementos comunes a varias páginas',
     'contact-data' => '📬 Datos de contacto',
     'contact-phones' => 'Teléfonos de contacto',
     'contact-subtitle' => 'Estás editando los datos de contacto',
@@ -24,12 +25,19 @@ return [
     'eliminar-video' => 'Eliminar vídeo',
     'estas-editando-tu-perfil' => 'Estás editando tu perfil',
 
+    // @F
+    'files' => 'Archivos',
+
     // @G
     'guardar' => 'Guardar',
 
     // @H
     'hello' => '👋🏽 Hola',
     'home-page' => '🏠 Página de inicio',
+    
+    // @I
+    'images' => 'Imágenes',
+    'input-danger' => '¡Cuidado! Peligro',
 
     // @L
     'locations' => '📍 Ubicaciones',
@@ -58,4 +66,10 @@ return [
     'there-are-no-files' => 'No existe ningún archivo',
     'there-are-no-images' => 'No existe ninguna imagen',
     'there-are-no-videos' => 'No existe ningún vídeo',
+
+    // @U
+    'unsaved-changes' => ':count cambio sin guardar|:count cambios sin guardar',
+
+    // @V
+    'videos' => 'Vídeos',
 ];

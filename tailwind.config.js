@@ -3,6 +3,8 @@ export default {
     content: [
         "vendor/pieldefoca/lux/resources/**/*.blade.php",
         "vendor/pieldefoca/lux/resources/**/*.js",
+        "vendor/pieldefoca/lux-blog/resources/**/*.blade.php",
+        "vendor/pieldefoca/lux-blog/resources/**/*.js",
     ],
     theme: {
         extend: {

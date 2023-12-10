@@ -15,10 +15,10 @@
                 <span class="border border-purple-200 bg-purple-100 rounded text-[8px] text-purple-500 px-2 mt-1">{{ trans('lux::lux.dynamic-page') }}</span>
             @endif
         </div>
-        <a href="{{ page($page->view) }}" target="_blank" class="flex text-[9px] text-stone-500 transition-colors duration-300 hover:text-black">
+        <p class="flex text-[9px] text-stone-500 transition-colors duration-300 hover:text-black">
             <span>{{ config('app.url') }}/</span>
             <span>{{ $page->translate('slug', $this->currentLocaleCode) }}</span>
-        </a>
+        </p>
     </div>
 
     <div class="flex items-center space-x-6">
@@ -85,9 +85,11 @@
                     @endif
                 </button>
 
-                <a href="{{ page($page->view) }}" target="_blank">
-                    <x-lux::button.icon action="view"/>
-                </a>
+                @if(!$page->isDynamic())
+                    <a href="{{ page($page->key) }}" target="_blank">
+                        <x-lux::button.icon action="view"/>
+                    </a>
+                @endif
                 <a href="{{ route('lux.pages.edit', $page) }}">
                     <x-lux::button.icon action="edit"/>
                 </a>

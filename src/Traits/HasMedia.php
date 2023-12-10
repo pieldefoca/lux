@@ -12,6 +12,7 @@ trait HasMedia
     public function media()
     {
         return $this->morphToMany(Media::class, 'lux_mediable', 'lux_mediables', 'lux_mediable_id', 'lux_media_id')
+            ->withPivot(['locale', 'key'])
             ->withTimestamps();
     }
 
@@ -29,7 +30,7 @@ trait HasMedia
         return $collection;
     }
 
-    public function addMedia(array $mediaIds, string $collection, ?string $key = null)
+    public function addMedia(array $mediaIds, string $collection, bool $translatable = false, ?string $key = null)
     {
         $this->registerMediaCollections();
 
@@ -39,15 +40,13 @@ trait HasMedia
             $this->clearMedia($collection);
         }
         
-        $translatable = Locale::where('code', strval(array_keys($mediaIds)[0]))->exists();
-
         if($translatable) {
             foreach($mediaIds as $locale => $ids) {
-                $data = [];
                 foreach($ids as $id) {
+                    $data = [];
                     $data[$id] = ['locale' => $locale, 'collection' => $collection, 'key' => $key];
+                    $this->media()->attach($data);
                 }
-                $this->media()->attach($data);
             }
         } else {
             foreach($mediaIds as $id) {
@@ -59,8 +58,8 @@ trait HasMedia
 
     public function getFirstMedia(string $collection, ?string $locale = null, ?string $key = null): ?Media
     {
-        if(is_null($locale)) {
-            $locale = app()->currentLocale();
+        if(!$this->isTranslatableCollection($collection)) {
+            $locale = null;
         }
 
         $query = $this->media()
@@ -74,9 +73,23 @@ trait HasMedia
         return $query->first();
     }
 
-    public function getMedia(string $collection, ?string $key = null)
+    public function getMedia(string $collection, $locale = null, $mediaType = null, ?string $key = null)
     {
         $query = $this->media()->wherePivot('collection', $collection);
+
+        if($mediaType) {
+            $query->where('media_type', $mediaType);
+        }
+
+        if($locale) {
+            $query->where(function($query) use($locale) {
+                $query->where('lux_mediables.locale', $locale);
+                if($locale === Locale::default()->code) {
+                    $query->orWhere('lux_mediables.locale', null);
+                }
+                return $query;
+            });
+        }
 
         if($key) {
             $query->wherePivot('key', $key);
@@ -101,8 +114,12 @@ trait HasMedia
         $translations = [];
 
         foreach(Locale::all() as $locale) {
+            $queryLocale = $this->isTranslatableCollection($collection)
+                ? $locale->code
+                : null;
+
             $media = $this->media()
-                ->wherePivot('locale', $locale->code)
+                ->wherePivot('locale', $queryLocale)
                 ->wherePivot('collection', $collection)->get();
             
             $translations[$locale->code] = $media->pluck('id')->toArray();
@@ -134,5 +151,12 @@ trait HasMedia
         foreach($media as $m) {
             $m->pivot->delete();
         }
+    }
+
+    public function isTranslatableCollection(string $collection)
+    {
+        $media = $this->getMedia($collection);
+
+        return $media->count() > 0 && $media->where('pivot.locale', null)->count() === 0;
     }
 }

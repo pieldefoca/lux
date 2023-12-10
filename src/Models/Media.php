@@ -18,7 +18,7 @@ class Media extends Model
 
     protected $guarded = [];
 
-    public $translatable = ['name', 'filename', 'alt', 'title'];
+    public $translatable = ['name', 'alt', 'title'];
 
     public function mimeType(): Attribute
     {

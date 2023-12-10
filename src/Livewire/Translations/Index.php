@@ -16,10 +16,15 @@ class Index extends LuxComponent
     public $locales = [];
     public $editingLocaleCode;
     public $langFiles = [];
+    public $previousSelectedFile;
     public $selectedFile = '';
+    public $originalDefaultTranslations = [];
     public $defaultTranslations = [];
+    public $originalEditingTranslations = [];
     public $editingTranslations = [];
     public $search = '';
+
+    public $currentChanges = 0;
     
     public function mount()
     {
@@ -39,9 +44,33 @@ class Index extends LuxComponent
         $this->setTranslations($defaultLocale->code);
     }
 
+    public function updatingSelectedFile()
+    {
+        if($this->currentChanges > 0) {
+            $this->previousSelectedFile = $this->selectedFile;
+
+            return $this->notifyError('🧐 Parece que tienes cambios sin guardar. Revísalos y guarda antes de cambiar de fichero.');
+        }
+
+    }
+
     public function updatedSelectedFile()
     {
-        $this->setTranslations();
+        if($this->currentChanges > 0) {
+            $this->selectedFile = $this->previousSelectedFile;
+
+            $this->previousSelectedFile = null;
+        } else {
+            $this->setTranslations();
+        }
+    }
+
+    public function updated($field, $value) {
+        if(str($field)->contains('defaultTranslations') || str($field)->contains('editingTranslations')) {
+            $this->currentChanges = 0;
+            $this->currentChanges += count(array_diff($this->originalDefaultTranslations, $this->defaultTranslations));
+            $this->currentChanges += count(array_diff($this->originalEditingTranslations, $this->editingTranslations));
+        }
     }
 
     public function setTranslations($defaultLocale = null)
@@ -50,6 +79,7 @@ class Index extends LuxComponent
 
         $this->defaultTranslations = include lang_path("{$defaultLocale}/{$this->selectedFile}");
         if(is_array($this->defaultTranslations)) { ksort($this->defaultTranslations); }
+        $this->originalDefaultTranslations = $this->defaultTranslations;
 
         if(File::exists(lang_path("{$this->editingLocaleCode}/{$this->selectedFile}"))) {
             $this->editingTranslations = include lang_path("{$this->editingLocaleCode}/{$this->selectedFile}");
@@ -57,6 +87,7 @@ class Index extends LuxComponent
         } else {
             $this->editingTranslations = $this->defaultTranslations;
         }
+        $this->originalEditingTranslations = $this->editingTranslations;
     }
 
     #[Computed]
@@ -117,6 +148,8 @@ class Index extends LuxComponent
 
         $this->saveLocaleTranslations();
 
+        $this->currentChanges = 0;
+
         $this->notifySuccess('🤙🏾 Has actualizado las traducciones correctamente');
     }
 
@@ -133,7 +166,7 @@ class Index extends LuxComponent
 
         if(!file_exists($langFolder)) mkdir($langFolder);
 
-        Translator::saveTranslations($this->defaultTranslations, lang_path($this->editingLocaleCode . '/' . $this->selectedFile));
+        Translator::saveTranslations($this->editingTranslations, lang_path($this->editingLocaleCode . '/' . $this->selectedFile));
     }
 
     public function render()

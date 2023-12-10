@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('lux_media', function (Blueprint $table) {
             $table->id();
             $table->json('name');
-            $table->json('filename');
+            $table->string('filename');
             $table->string('disk')->nullable();
             $table->json('alt')->nullable();
             $table->json('title')->nullable();

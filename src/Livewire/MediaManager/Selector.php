@@ -78,6 +78,7 @@ class Selector extends LuxModal
     public function mediaItems()
     {
         return Media::query()
+            ->where('filename', '!=', '_placeholder.jpg')
             ->when($this->type, function($query, $type) {
                 if($type === MediaType::File->value) {
                     return $query->where(function($query) {

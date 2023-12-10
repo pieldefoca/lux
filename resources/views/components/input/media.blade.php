@@ -1,15 +1,26 @@
 @props([
     'type' => 'any', // any, image, video, file
+    'ignoreTranslations' => false,
     'multiple' => false,
 ])
 
 @aware(['translatable'])
 
 @php
+    use Pieldefoca\Lux\Models\Locale;
+    use Pieldefoca\Lux\Models\Media;
+
+    $defaultLocale = Locale::default();
+    $defaultLocaleCode = $defaultLocale->code;
     $model = $attributes->wire('model')->value;
-    $selectedIds = $translatable ? $this->$model[$this->currentLocaleCode] : $this->$model;
-    $selectedMedia = Pieldefoca\Lux\Models\Media::whereIn('id', $selectedIds)->get();
-    $locales = $translatable ? Pieldefoca\Lux\Models\Locale::all() : [Pieldefoca\Lux\Models\Locale::default()];
+    $selectedIds = [];
+    if($translatable) {
+        $selectedIds = $ignoreTranslations ? $this->$model[$defaultLocaleCode] : $this->$model[$this->currentLocaleCode];
+    } else {
+        $selectedIds = $this->$model;
+    }
+    $selectedMedia = Media::whereIn('id', $selectedIds)->get();
+    $locales = $translatable ? Locale::all() : [Locale::default()];
 @endphp
 
 @foreach($locales as $locale)

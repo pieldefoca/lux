@@ -6,7 +6,7 @@
 
     <x-slot name="actions">
         <div class="flex items-center space-x-8">
-            <x-lux::link link="{{ page($page->view) }}" target="_blank">Ver página</x-lux::link>
+            <x-lux::link link="{{ page($page->key) }}" target="_blank">Ver página</x-lux::link>
             <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">Guardar</x-lux::button>
         </div>
     </x-slot>
@@ -14,32 +14,30 @@
     <x-lux::locale-selector />
 
     <div x-data="{activeTab: 0}" x-tabs x-model="activeTab">
-        <div x-tabs:list class="flex justify-between gap-2">
+        <div x-tabs:list class="flex items-center justify-center gap-4 mt-6">
             <button
                 type="button"
                 x-tabs:tab
                 :class="{
-                'bg-black border-black text-white': activeTab === 0,
-                'hover:bg-stone-100 hover:shadow': activeTab !== 0,
+                'bg-stone-800 border-stone-400 text-white': activeTab === 0,
+                'border-transparent text-stone-500 hover:bg-stone-200': activeTab !== 0,
             }"
-                class="w-full py-1 border border-stone-300 rounded-md text-xs transition-all duration-300"
+                class="px-6 py-2 border border-stone-300 rounded-full transition-all duration-300"
             >Datos de la página</button>
             <button
                 type="button"
                 x-tabs:tab
                 :class="{
-                'bg-black border-black text-white': activeTab === 1,
-                'hover:bg-stone-100 hover:shadow': activeTab !== 1,
+                'bg-stone-800 border-stone-400 text-white': activeTab === 1,
+                'border-transparent text-stone-500 hover:bg-stone-200': activeTab !== 1,
             }"
-                class="w-full py-1 border border-stone-300 rounded-md text-xs transition-all duration-300"
+                class="px-6 py-2 border border-stone-300 rounded-full transition-all duration-300"
             >Contenido</button>
         </div>
 
-        <div x-tabs:panels class="mt-6">
+        <div x-tabs:panels class="border border-stone-200 bg-white rounded-lg shadow p-6 mt-3">
             <div x-tabs:panel class="space-y-6">
                 <form class="space-y-6">
-                    {{ $errors }}
-
                     <x-lux::input.inline-group required label="Nombre" :error="$errors->first('name')">
                         <x-lux::input.text wire:model="name" />
                     </x-lux::input.inline-group>
@@ -68,13 +66,19 @@
                         </x-lux::input.inline-group>
                     @endif
 
-                    <x-lux::input.inline-group required label="Vista">
-                        <x-lux::input.select native wire:model="view">
-                            @foreach($this->views as $view)
-                                <option value="{{ $view }}">{{ $view }}</option>
-                            @endforeach
-                        </x-lux::input.select>
-                    </x-lux::input.inline-group>
+                    @role('superadmin')
+                        <x-lux::input.inline-group danger required label="Vista">
+                            <x-lux::input.select native wire:model="view">
+                                @foreach($this->views as $view)
+                                    <option value="{{ $view }}">{{ $view }}</option>
+                                @endforeach
+                            </x-lux::input.select>
+                        </x-lux::input.inline-group>
+
+                        <x-lux::input.inline-group danger required label="ID" :error="$errors->first('key')">
+                            <x-lux::input.text wire:model="key" />
+                        </x-lux::input.inline-group>
+                    @endrole
 
                     @if(!$page->dynamic_page)
                         <x-lux::input.inline-group translatable label="Título (SEO)" :error="$errors->first('title')">
@@ -103,7 +107,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-8">
+                <div class="grid grid-cols-2 items-start gap-8">
                     <x-lux::card title="Textos" class="p-4">
                         <div class="pt-2">
                             @foreach($translations as $locale => $localeTranslations)
@@ -120,16 +124,121 @@
                     </x-lux::card>
 
                     <x-lux::card title="Imágenes / Vídeos / Documentos" class="p-4">
-                        <x-slot name="actions">
-                            <x-lux::button.icon x-on:click="$dispatch('add-page-media')" action="add" />
-                        </x-slot>
-
-                        <div class="pt-2">
-                            @if($mediaItems = $this->mediaItems[$this->currentLocaleCode])
-                                @foreach($mediaItems as $media)
-                                    <x-lux::media-preview :$media editable swappable />
-                                @endforeach
+                        <div class="pt-2 space-y-2">
+                            <p class="flex items-center space-x-2 uppercase font-bold">
+                                <x-lux::tabler-icons.photo />
+                                <span>{{ trans('lux::lux.images') }}</span>
+                            </p>
+                            
+                            @if($this->images->isNotEmpty())
+                                <div class="flex items-center flex-wrap gap-4">
+                                    @foreach($this->images as $image)
+                                        <div class="flex flex-col space-y-1">
+                                            <x-lux::media-preview
+                                                :media="$image"
+                                                :key="$image->pivot->key"
+                                                editable
+                                                swappable
+                                            />
+                                            <span class="text-[9px] text-stone-500">{{ $image->pivot->key }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
                             @else
+                                <div class="grid place-items-center py-8 space-y-6">
+                                    <x-lux::tabler-icons.photo-off class="w-16 h-16 opacity-10" />
+                                    <p class="text-stone-500">No hay imágenes editables</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <hr class="mt-8 mb-6">
+
+                        <div class="space-y-2">
+                            <p class="flex items-center space-x-2 uppercase font-bold">
+                                <x-lux::tabler-icons.movie />
+                                <span>{{ trans('lux::lux.videos') }}</span>
+                            </p>
+
+                            @if($this->videos->isNotEmpty())
+                                <div class="flex items-center flex-wrap gap-4">
+                                    @foreach($this->videos as $video)
+                                        <div class="flex flex-col space-y-1">
+                                            <x-lux::media-preview
+                                                :media="$video"
+                                                :key="$video->pivot->key"
+                                                editable
+                                                swappable
+                                            />
+                                            <span class="text-[9px] text-stone-500">{{ $video->pivot->key }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="grid place-items-center py-4 space-y-4">
+                                    <x-lux::tabler-icons.movie-off class="w-16 h-16 opacity-10" />
+                                    <p class="text-stone-500">No hay vídeos editables</p>
+                                </div>                            
+                            @endif
+                        </div>
+
+                        <hr class="mt-8 mb-6">
+
+                        <div class="space-y-2">
+                            <p class="flex items-center space-x-2 uppercase font-bold">
+                                <x-lux::tabler-icons.file-invoice />
+                                <span>{{ trans('lux::lux.files') }}</span>
+                            </p>
+
+                            @if($this->files->isNotEmpty())
+                                <div class="flex items-center flex-wrap gap-4">
+                                    @foreach($this->files as $file)
+                                        <div class="flex flex-col space-y-1">
+                                            <x-lux::media-preview
+                                                :media="$file"
+                                                :key="$file->pivot->key"
+                                                editable
+                                                swappable
+                                            />
+                                            <span class="text-[9px] text-stone-500">{{ $file->pivot->key }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="grid place-items-center py-8 space-y-6">
+                                    <x-lux::tabler-icons.files-off class="w-16 h-16 opacity-10" />
+                                    <p class="text-stone-500">No hay archivos editables</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <hr class="mt-8 mb-6">
+
+                        <div class="space-y-2">
+                            <p class="flex items-center space-x-2 uppercase font-bold">
+                                <x-lux::tabler-icons.photo-video />
+                                <span>{{ trans('lux::lux.common-elements-multiple-pages') }}</span>
+                            </p>
+
+                            @if($this->commonMedia->isNotEmpty())
+                                <div class="flex items-center flex-wrap gap-4">
+                                    @foreach($this->commonMedia as $file)
+                                        <div class="flex flex-col space-y-1">
+                                            <x-lux::media-preview
+                                                :media="$file->media"
+                                                :key="$file->key"
+                                                editable
+                                                swappable
+                                            />
+                                            <span class="text-[9px] text-stone-500">{{ $file->key }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="grid place-items-center py-8 space-y-6">
+                                    <x-lux::tabler-icons.files-off class="w-16 h-16 opacity-10" />
+                                    <p class="text-stone-500">No hay archivos editables</p>
+                                </div>
                             @endif
                         </div>
                     </x-lux::card>

@@ -15,6 +15,8 @@ use Pieldefoca\Lux\Livewire\MediaSelector;
 use Pieldefoca\Lux\Console\Commands\LuxUser;
 use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
+use Pieldefoca\Lux\Console\Commands\LuxInstall;
+use Pieldefoca\Lux\Console\Commands\LuxUploads;
 
 class LuxServiceProvider extends ServiceProvider
 {
@@ -50,9 +52,11 @@ class LuxServiceProvider extends ServiceProvider
             ], 'lux-assets');
 
 			$this->commands([
+				LuxInstall::class,
 				MakeLux::class,
 				LuxUser::class,
 				LuxPages::class,
+				LuxUploads::class,
 			]);
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');

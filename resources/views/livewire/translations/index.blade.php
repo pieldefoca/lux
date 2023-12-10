@@ -7,14 +7,23 @@
     </x-slot>
 
     <div class="space-y-4">
-        <div class="flex items-center gap-4">
-            <x-lux::input.group label="Fichero de traducciones">
-                <x-lux::input.select native wire:model.live="selectedFile">
-                    @foreach($langFiles as $humanName => $filename)
-                        <option value="{{ $filename }}">{{ $filename }}</option>
-                    @endforeach
-                </x-lux::input.select>
-            </x-lux::input.group>
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex items-end space-x-3">
+                <x-lux::input.group label="Fichero de traducciones">
+                    <x-lux::input.select native wire:model.live="selectedFile">
+                        @foreach($langFiles as $humanName => $filename)
+                            <option value="{{ $filename }}">{{ $filename }}</option>
+                        @endforeach
+                    </x-lux::input.select>
+                </x-lux::input.group>
+
+                @if($currentChanges > 0)
+                    <p class="flex items-center space-x-1 mb-2.5 text-xs text-orange-500">
+                        <x-lux::tabler-icons.alert-triangle class="w-4 h-4" />
+                        <span>{{ trans_choice('lux::lux.unsaved-changes', $currentChanges, ['count' => $currentChanges]) }}</span>
+                    </p>
+                @endif
+            </div>
 
             <x-lux::input.group label="Buscar">
                 <x-lux::input.search wire:model.live="search" />
@@ -46,7 +55,7 @@
                                     <x-lux::tabler-icons.copy class="w-3 h-3 cursor-pointer text-stone-500 transition-all duration-300 hover:text-stone-800 hover:scale-125" />
                                 </button>
                             </div>
-                            <x-lux::input.translation wire:model="defaultTranslations.{{$key}}" />
+                            <x-lux::input.translation wire:model.blur="defaultTranslations.{{$key}}" />
                         </div>
                     @endforeach
                 </div>
@@ -96,7 +105,7 @@
                                     <x-lux::tabler-icons.copy class="w-3 h-3 cursor-pointer text-stone-500 transition-all duration-300 hover:text-stone-800 hover:scale-125" />
                                 </button>
                             </div>
-                            <x-lux::input.translation wire:model="editingTranslations.{{$key}}" />
+                            <x-lux::input.translation wire:model.blur="editingTranslations.{{$key}}" />
                         </div>
                     @endforeach
                 </div>

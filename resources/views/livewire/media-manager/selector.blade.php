@@ -49,7 +49,7 @@
                         wire:click="select({{$media->id}})" 
                         type="button"
                         @class([
-                            'relative rounded-md border ring-2 overflow-hidden',
+                            'relative rounded-md border ring-2 bg-gray-100 overflow-hidden',
                             'border-stone-200 ring-transparent' => !$isSelected,
                             'border-transparent ring-teal-500' => $isSelected,
                         ])

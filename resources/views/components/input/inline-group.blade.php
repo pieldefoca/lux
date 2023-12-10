@@ -4,16 +4,17 @@
     'error' => '',
     'required' => false,
     'translatable' => false,
+    'danger' => false,
 ])
 
-<div class="grid grid-cols-3 pb-6 border-b border-stone-200 last:border-b-0" {{ $attributes }}>
+<div class="grid grid-cols-3 items-start gap-x-8 pb-6 border-b border-stone-200 last:border-b-0" {{ $attributes }}>
     <div class="flex flex-col mb-px">
         @if($label)
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col space-y-1">
                 <div @class(['flex flex-col space-y-1', 'mb-1' => $required || $translatable])>
                     <label
                         @class([
-                            'mt-1 text-[11px] font-bold text-stone-600',
+                            'mt-1 font-bold text-stone-600',
                             'mt-2' => !$required && !$translatable,
                         ])
                     >{{ $label }}</label>
@@ -46,10 +47,17 @@
             </div>
         @endif
 
-        <span class="text-[10px] text-stone-400">{{ $help }}</span>
+        @if($danger)
+            <p class="flex items-center space-x-1 text-xs text-orange-400">
+                <x-lux::tabler-icons.alert-circle class="w-4 h-4" />
+                <span>{{ trans('lux::lux.input-danger') }}</span>
+            </p>
+        @endif
+
+        <span class="text-xs text-stone-400">{{ $help }}</span>
     </div>
 
-    <div class="col-span-2 flex items-center">
+    <div class="col-span-2 flex items-center mt-3">
         {{ $slot }}
     </div>
 

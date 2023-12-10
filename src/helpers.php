@@ -12,7 +12,7 @@ if(!function_exists('lux')) {
 
 if(!function_exists('page')) {
     function page($page, $attributes = [], $locale = null) {
-        $page = Page::where('view', $page)->first();
+        $page = Page::where('key', $page)->first();
 
         if(is_null($page)) abort(404);
 

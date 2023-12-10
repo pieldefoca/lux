@@ -5,6 +5,7 @@ namespace Pieldefoca\Lux\Models;
 use Livewire\Livewire;
 use Illuminate\Support\Str;
 use Pieldefoca\Lux\Facades\Pages;
+use Pieldefoca\Lux\Enum\MediaType;
 use Pieldefoca\Lux\Traits\HasMedia;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
@@ -156,5 +157,20 @@ class Page extends Model
         $this->update(['visible' => !$this->attributes['visible']]);
 
         Pages::generatePageRoutes();
+    }
+
+    public function getImages($locale = null)
+    {
+        return $this->getMedia(collection: 'media', locale: $locale, mediaType: MediaType::Image->value);
+    }
+
+    public function getVideos($locale = null)
+    {
+        return $this->getMedia(collection: 'media', locale: $locale, mediaType: MediaType::Video->value);
+    }
+
+    public function getFiles($locale = null)
+    {
+        return $this->getMedia(collection: 'media', locale: $locale, mediaType: MediaType::File->value);
     }
 }

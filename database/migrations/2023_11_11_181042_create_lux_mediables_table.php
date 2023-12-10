@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('lux_mediables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lux_media_id')->constrained('lux_media', 'id')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('lux_mediable_id')->bigUnsignedInteger();
+            $table->foreignId('lux_mediable_id')->bigUnsignedInteger()->nullable();
             $table->string('lux_mediable_type');
-            $table->string('collection');
+            $table->string('collection')->nullable();
             $table->string('locale', 5)->nullable();
             $table->string('key')->nullable();
             $table->timestamps();
