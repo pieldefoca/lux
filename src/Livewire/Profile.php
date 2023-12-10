@@ -67,6 +67,8 @@ class Profile extends LuxComponent
 				$name = $this->avatar->store('/', 'avatars');
 	
 				$validated = array_merge($validated, ['avatar' => $name]);
+
+				$this->user->removeAvatar();
 			}
 		}
 

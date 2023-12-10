@@ -62,7 +62,9 @@ abstract class SidebarElement
     public function shouldShow()
     {
         if(empty($this->roles)) return true;
-        
+
+        if(!auth()->user()) return false;
+
         return auth()->user()->hasRole($this->roles);
     }
 }

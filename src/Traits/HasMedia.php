@@ -49,6 +49,10 @@ trait HasMedia
                 }
             }
         } else {
+            if(!array_is_list($mediaIds)) {
+                $mediaIds = $mediaIds[Locale::default()->code];
+            }
+
             foreach($mediaIds as $id) {
                 $data[$id] = ['collection' => $collection, 'key' => $key];
             }
@@ -60,6 +64,8 @@ trait HasMedia
     {
         if(!$this->isTranslatableCollection($collection)) {
             $locale = null;
+        } else {
+            if(is_null($locale)) $locale = Locale::default()->code;
         }
 
         $query = $this->media()

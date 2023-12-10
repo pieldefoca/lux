@@ -6,7 +6,9 @@
 
     <x-slot name="actions">
         <div class="flex items-center space-x-8">
-            <x-lux::link link="{{ page($page->key) }}" target="_blank">Ver página</x-lux::link>
+            @if(!$page->dynamic_page)            
+                <x-lux::link link="{{ page($page->key) }}" target="_blank">Ver página</x-lux::link>
+            @endif
             <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">Guardar</x-lux::button>
         </div>
     </x-slot>
