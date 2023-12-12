@@ -4,7 +4,9 @@
 
 	<div class="w-full pt-36 grid place-items-center">
         <div class="flex flex-col items-center space-y-12 p-8 border border-stone-300 rounded-xl shadow-xl">
-            <img src="{{ asset(config('lux.logo')) }}" class="w-64" />
+            <a href="/">
+                <img src="{{ asset(config('lux.logo')) }}" class="w-64" />
+            </a>
 
             <p class="text-2xl">{{ trans('lux::lux.admin-panel') }}</p>
         </div>
