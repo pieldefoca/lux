@@ -8,7 +8,24 @@ class Translator
     {
         $string = $this->getTranslationString($translations);
 
+        // $this->backup($path);
+
         file_put_contents($path, $string);
+    }
+
+    protected function backup(string $path)
+    {
+        $pathinfo = pathinfo($path);
+        $dirname = $pathinfo['dirname'];
+        $basename = $pathinfo['basename'];
+
+        $backupPath = "{$dirname}/backup";
+
+        if(! file_exists($backupPath)) {
+            mkdir($backupPath, 777, true);
+        }
+
+        copy($path, "{$backupPath}/{$basename}");
     }
 
     public function getTranslationString(array $translations)
