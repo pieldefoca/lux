@@ -18,7 +18,7 @@ if(!function_exists('page')) {
 
         if(is_null($locale)) $locale = app()->currentLocale();
 
-        return route("{$page->view}.{$locale}");
+        return route("{$page->view}.{$locale}", $attributes);
    }
 }
 
