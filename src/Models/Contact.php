@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Models;
 
+use Pieldefoca\Lux\Models\Locale;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -150,7 +151,7 @@ class Contact extends Model
                 'key' => $key, 
                 'name' => $locationData['name'],
                 'address' => $locationData['address'],
-                'image' => $locationData['image'],
+                'image' => str($locationData['name'][Locale::default()->code])->slug()->append('.jpg')->toString(),                
                 'google_maps_url' => $locationData['google_maps_url'],
             ];
         }
