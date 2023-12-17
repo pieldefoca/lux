@@ -1,5 +1,7 @@
 @aware([
     'translatable' => false,
+    'height' => 300,
+    'toolbar' => 'h1 h2 h3 bold italic underline align | bullist numlist | image media link table',
 ])
 
 <div class="w-full">
@@ -26,6 +28,7 @@
             translatable: @js($translatable),
             model: '{{$model}}',
             init() {
+                console.log(@js($height))
                 this.id = '{{$id}}'
                 if(this.translatable) {
                     this.model += `.${this.locale}`
@@ -33,9 +36,10 @@
                 tinymce.init({
                     selector: `#${this.id}`,
                     language: 'es',
-                    plugins: 'lists image autoresize link media',
+                    min_height: @js(is_string($height) ? intval($height) : $height),
+                    plugins: 'lists image autoresize link media table',
                     menubar: false,
-                    toolbar: 'h1 h2 h3 bold italic underline align | bullist numlist | image media link',
+                    toolbar: @js($toolbar),
                     init_instance_callback: (editor) => {
                         editor.setContent($wire.$get(`${this.model}`) || '')
 
