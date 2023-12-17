@@ -9,9 +9,9 @@ class LuxComponent extends Component
 {
     use UsesLocale;
 
-    public function notifySuccess(string $message)
+    public function notifySuccess(string $message, ?string $redirectUrl = null)
     {
-        $this->dispatch('notify-success', message: $message);
+        $this->dispatch('notify-success', message: $message, redirectUrl: $redirectUrl);
     }
 
     public function notifyError(string $message)
