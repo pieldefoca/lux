@@ -1,6 +1,5 @@
 {
 	"name": "pieldefoca/lux",
-	"version": "0.1",
 	"description": "Admin panel for laravel",
 	"type": "library",
 	"license": "MIT",
