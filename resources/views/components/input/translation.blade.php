@@ -12,7 +12,7 @@
             if(start === end) {
                 leadingText = input.value.substring(0, start)
                 trailingText = input.value.substring(end, input.value.length)
-                input.value = leadingText + tagOpen + tagClose + trailingText
+                input.value = leadingText + tagOpen + (tagClose ?? '') + trailingText
             } else {
                 leadingText = input.value.substring(0, start)
                 selectedText = input.value.substring(start, end)

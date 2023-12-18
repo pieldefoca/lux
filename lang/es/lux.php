@@ -28,9 +28,6 @@ return [
     // @F
     'files' => 'Archivos',
 
-    // @G
-    'guardar' => 'Guardar',
-
     // @H
     'hello' => '👋🏽 Hola',
     'home-page' => '🏠 Página de inicio',
