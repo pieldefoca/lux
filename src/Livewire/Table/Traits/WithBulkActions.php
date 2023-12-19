@@ -10,7 +10,7 @@ trait WithBulkActions
 
     public function renderingWithBulkActions()
     {
-        if ($this->selectAllRows) $this->selectPageRows();
+        // if ($this->selectAllRows) $this->selectPageRows();
     }
 
     public function updatedSelected()
@@ -34,7 +34,14 @@ trait WithBulkActions
 
     public function selectAll()
     {
+        $this->selectPage = false;
+
         $this->selectAllRows = true;
+
+        $this->selected = $this->rowsQuery->get()
+            ->pluck('id')
+            ->map(fn($id) => (string) $id)
+            ->toArray();
     }
 
     public function unselectAll()
@@ -57,7 +64,7 @@ trait WithBulkActions
 
         $this->clearSelection();
 
-        $this->notifySuccess('🤙🏾 Has eliminado las categorías seleccionadas correctamente');
+        $this->notifySuccess('🤙🏾 Has eliminado las filas correctamente');
     }
 
     public function hasAnyRowSelected()
@@ -67,7 +74,7 @@ trait WithBulkActions
 
     public function areAllRowsSelected()
     {
-        return $this->selectAllRows || (count($this->selected) === $this->rows->count());
+        return $this->selectAllRows || (count($this->selected) === $this->rows->total());
     }
 
     public function getSelectedRowsQueryProperty()

@@ -19,8 +19,6 @@ Route::prefix(config('lux.prefix'))
 		// Route::get('/blog/posts/nuevo', Pieldefoca\Lux\Livewire\Blog\Posts\Create::class)->name('lux.blog.posts.create');
 		// Route::get('/blog/posts/{post}/editar', Pieldefoca\Lux\Livewire\Blog\Posts\Edit::class)->name('lux.blog.posts.edit');
 
-		Route::get('/contacto', Pieldefoca\Lux\Livewire\Contact\Form::class)->name('lux.contact.form');
-
 		Route::get('/mi-perfil', Pieldefoca\Lux\Livewire\Profile::class)->name('lux.profile');
 
 		Route::get('/paginas', Pieldefoca\Lux\Livewire\Pages\Index::class)->name('lux.pages.index');

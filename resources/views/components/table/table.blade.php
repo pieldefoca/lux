@@ -19,16 +19,16 @@
                         @unless ($this->areAllRowsSelected())
                             <div>
                                 <span>
-                                    <strong>{{ $this->rows->count() }}</strong>
-                                    <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', $this->rows->count()) }}</span>.
+                                    <strong>{{ count($this->selected) }}</strong>
+                                    <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', count($this->selected)) }}</span>.
                                 </span>
                                 <button wire:click="selectAll" class="underline">Seleccionar las {{ $this->rows->total() }} filas.</button>
                             </div>
                         @else
                             <div class="flex items-center">
                                 <span>
-                                    <strong>{{ $this->rows->total() }}</strong>
-                                    <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', $this->rows->count()) }}</span>.
+                                    <strong>{{ count($this->selected) }}</strong>
+                                    <span class="lowercase">{{ trans_choice('lux::lux.selected-rows', $this->rows->total()) }}</span>.
                                 </span>
 
                                 <x-lux::button.link wire:click="clearSelection" class="relative ml-1 text-xs">Deseleccionar todo</x-lux::button.link>
@@ -45,8 +45,8 @@
                         <x-lux::table.bulk-delete-button
                             x-on:click.stop.prevent="
                                 Swal.fire({
-                                    title: 'Eliminar categorías del blog',
-                                    text: '¿Seguro que quieres eliminar las categorías seleccionadas?',
+                                    title: 'Eliminar filas',
+                                    text: '¿Seguro que quieres eliminar las filas seleccionadas?',
                                     icon: 'warning',
                                     showCancelButton: true,
                                     customClass: {
@@ -136,7 +136,7 @@
                 </select>
 
                 <div class="flex-grow">
-                    {{-- {{ $this->rows->links('lux::pagination') }} --}}
+                    {{ $this->rows->links('lux::pagination') }}
                 </div>
             </div>
         @endif

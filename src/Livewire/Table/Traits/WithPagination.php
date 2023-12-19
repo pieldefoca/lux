@@ -8,7 +8,7 @@ trait WithPagination
 {
     use LivewirePagination;
 
-    public $perPage = 10;
+    public $perPage = 25;
 
     public function mountWithPerPagePagination()
     {
