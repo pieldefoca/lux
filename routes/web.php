@@ -33,8 +33,6 @@ Route::prefix(config('lux.prefix'))
 		Route::get('/permisos', Pieldefoca\Lux\Livewire\Permissions\Index::class)->name('lux.permissions.index');
 
 		Route::post('/tinymce/upload', function() {
-			$file = request()->file();
-	
 			$filename = request()->file('file')->store('/', 'tinymceUploads');
 	
 			return response()->json([
