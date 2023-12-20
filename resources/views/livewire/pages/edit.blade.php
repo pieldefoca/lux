@@ -267,4 +267,5 @@
     </div>
 
     <livewire:media-manager.selector />
+    <livewire:media-manager.slideover/>
 </div>
