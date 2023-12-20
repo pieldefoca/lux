@@ -1,7 +1,7 @@
 @aware([
     'translatable' => false,
     'height' => 300,
-    'toolbar' => 'h1 h2 h3 bold italic underline align | bullist numlist | image media link table',
+    'toolbar' => 'h1 h2 h3 bold italic underline align | bullist numlist | image media link table | fullscreen',
 ])
 
 <div class="w-full">
@@ -28,7 +28,6 @@
             translatable: @js($translatable),
             model: '{{$model}}',
             init() {
-                console.log(@js($height))
                 this.id = '{{$id}}'
                 if(this.translatable) {
                     this.model += `.${this.locale}`
@@ -37,7 +36,7 @@
                     selector: `#${this.id}`,
                     language: 'es',
                     min_height: @js(is_string($height) ? intval($height) : $height),
-                    plugins: 'lists image autoresize link media table',
+                    plugins: 'link image table lists autoresize media fullscreen',
                     menubar: false,
                     toolbar: @js($toolbar),
                     init_instance_callback: (editor) => {
