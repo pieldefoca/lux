@@ -77,6 +77,12 @@ class LuxServiceProvider extends ServiceProvider
 
 	protected function configureLivewire()
 	{
+		$exitingAdmin = request()->has('exit-admin');
+
+		if($exitingAdmin) {
+			return redirect(request()->fullUrlWithQuery(['exit-admin' => null]), 302, ['Referer' => '/']);
+		}
+
 		$path = request()->path();
         $referer = request()->headers->get('referer');
 
@@ -129,22 +135,6 @@ class LuxServiceProvider extends ServiceProvider
 			'driver' => 'local', 
 			'root' => public_path('avatars'), 
 			'url' => env('APP_URL').'/avatars', 
-			'visibility' => 'public', 
-			'throw' => false, 
-		];
-
-		$this->app['config']['filesystems.disks.uploads'] = [
-			'driver' => 'local', 
-			'root' => public_path('uploads'), 
-			'url' => env('APP_URL').'/uploads', 
-			'visibility' => 'public', 
-			'throw' => false, 
-		];
-
-		$this->app['config']['filesystems.disks.tinymceUploads'] = [
-			'driver' => 'local', 
-			'root' => public_path('uploads/tinymce'), 
-			'url' => env('APP_URL').'/uploads/tinymce', 
 			'visibility' => 'public', 
 			'throw' => false, 
 		];
