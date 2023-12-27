@@ -23,13 +23,14 @@ $videoExtensions = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mkv'];
 $fileExtension = pathinfo($url, PATHINFO_EXTENSION);
 $isImage = $url && str($fileExtension)->startsWith($imageExtensions);
 $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
+$hasActions = $selectable || $editable || $unselectable || $removable || $swappable || $clearable;
 @endphp
 
 <div class="flex space-x-1">
     <div
         {{
             $attributes->class([
-                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden transition-all duration-300 shadow hover:contrast-50'
+                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden shadow hover:contrast-50'
             ])
         }}
         @if($selectable)
@@ -76,59 +77,109 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
     </div>
 
     <div class="flex flex-col space-y-3 mt-1">
-        @if($selectable)
-            <button @click="select" type="button">
-                <x-lux::tabler-icons.hand-click class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-sky-500 hover:scale-125" />
-            </button>
-        @endif
-        @if($swappable)
-            <button @click="$wire.swapMedia({{ $media->id }}, '{{ $key }}')" type="button">
-                <x-lux::tabler-icons.hand-click class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-sky-500 hover:scale-125" />
-            </button>
-        @endif
-        @if($editable)
-        <button type="button">
-            <x-lux::tabler-icons.edit x-on:click="$dispatch('edit-media', { media: {{ $media->id }} })" class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-teal-500 hover:scale-125" />
-        </button>
-        @endif
-        @if($unselectable || $clearable)
-        <button 
-            @if($unselectable)
-                @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}', {{ $media->id}})"
-            @else
-                @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}')" 
-            @endif
-            type="button"
+        <div
+            x-data="{
+                open: false,
+            }"
+            @click.outside="open = false"
+            class="relative"
         >
-            <x-lux::tabler-icons.square-x class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-red-500 hover:scale-125" />
-        </button>
-        @endif
-        @if($removable)
-            <button type="button" 
-                x-on:click.stop.prevent="
-                    Swal.fire({
-                        title: 'Eliminar archivo',
-                        text: '¿Seguro que quieres eliminar este archivo?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        customClass: {
-                            confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
-                            cancelButton: 'hover:underline',
-                            actions: 'space-x-6',
-                        },
-                        buttonsStyling: false,
-                        confirmButtonText: 'Eliminar',
-                        cancelButtonText: 'Cancelar',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $wire.call('deleteMedia', {{ $media->id }})
-                        }
-                    })
-                "
-                action="delete" 
-            >
-                <x-lux::tabler-icons.trash class="w-4 h-4 text-stone-500 transition-all duration-300 hover:text-red-500 hover:scale-125" />
-            </button>
-        @endif
+            @if($hasActions)
+                <button @click="open = !open" type="button">
+                    <x-lux::tabler-icons.dots-circle-horizontal class="w-5 h-5 transition-all duration-300 hover:text-sky-500 hover:scale-125" />
+                </button>
+            @endif
+
+            <ul x-show="open" x-transition class="absolute top-full right-0 w-48 border border-stone-300 bg-white rounded shadow overflow-hidden">
+                @if($selectable)
+                    <li>
+                        <button 
+                            @click="select" 
+                            type="button"
+                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                        >
+                            <x-lux::tabler-icons.hand-click class="w-4 h-4 group-hover:text-sky-500 group-hover:scale-125" />
+                            <span>Cambiar imagen</span>
+                        </button>
+                    </li>
+                @endif
+
+                @if($swappable)
+                    <li>
+                        <button 
+                            @click="$wire.swapMedia({{ $media->id }}, '{{ $key }}')" 
+                            type="button"
+                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                        >
+                            <x-lux::tabler-icons.hand-click class="w-4 h-4 group-hover:text-sky-500 group-hover:scale-125" />
+                            <span>Cambiar imagen</span>
+                        </button>
+                    </li>
+                @endif
+
+                @if($editable)
+                    <li>
+                        <button 
+                            @click="$dispatch('edit-media', { media: {{ $media->id }} })"
+                            type="button" 
+                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                        >
+                            <x-lux::tabler-icons.edit class="w-4 h-4 group-hover:text-teal-500 group-hover:scale-125" />
+                            <span>Editar detalles</span>
+                        </button>
+                    </li>
+                @endif
+
+                @if($unselectable || $clearable)
+                    <button 
+                        @if($unselectable)
+                            @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}', {{ $media->id}})"
+                        @else
+                            @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}')" 
+                        @endif
+                        type="button"
+                        class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                    >
+                        <x-lux::tabler-icons.square-x class="w-4 h-4 group-hover:text-red-500 group-hover:scale-125" />
+                        @if($unselectable)
+                            <span>Deseleccionar</span>
+                        @else
+                            <span>Eliminar</span>
+                        @endif
+                    </button>
+                @endif
+                @if($removable)
+                    <li>
+                        <button type="button"
+                            x-on:click.stop.prevent="
+                                Swal.fire({
+                                    title: 'Eliminar archivo',
+                                    text: '¿Seguro que quieres eliminar este archivo?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    customClass: {
+                                        confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
+                                        cancelButton: 'hover:underline',
+                                        actions: 'space-x-6',
+                                    },
+                                    buttonsStyling: false,
+                                    confirmButtonText: 'Eliminar',
+                                    cancelButtonText: 'Cancelar',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        $wire.call('deleteMedia', {{ $media->id }})
+                                    }
+                                })
+                            "
+                            action="delete"
+                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                        >
+                            <x-lux::tabler-icons.trash class="w-4 h-4 group-hover:text-red-500 group-hover:scale-125" />
+                            <span>Eliminar</span>
+                        </button>
+                    </li>
+                @endif
+            </ul>
+        </div>
     </div>
 </div>
