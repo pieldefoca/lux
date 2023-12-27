@@ -4,6 +4,7 @@ namespace Pieldefoca\Lux\Livewire\MediaManager;
 
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Pieldefoca\Lux\Models\Media;
 use Livewire\Attributes\Computed;
@@ -15,8 +16,13 @@ use Pieldefoca\Lux\Livewire\Attributes\Translatable;
 class Selector extends LuxModal
 {
     use WithFileUploads;
+    use WithPagination;
 
     public Media $media;
+
+    public $view;
+
+    public $perPage = 10;
 
     public $field;
 
@@ -32,6 +38,11 @@ class Selector extends LuxModal
     public $type;
 
     public $search = '';
+
+    public function mount()
+    {
+        $this->view = session()->get('lux-media-manager-view', 'list');
+    }
 
     public function updatedUploads($value)
     {
@@ -95,7 +106,7 @@ class Selector extends LuxModal
                         ->orWhere('filename', 'like', "%{$search}%");
                 });
             })
-            ->get();
+            ->paginate($this->perPage);
     }
 
     public function select(Media $media)

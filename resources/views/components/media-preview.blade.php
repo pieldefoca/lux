@@ -17,7 +17,8 @@
 if(is_int($media)) {
     $media = Pieldefoca\Lux\Models\Media::find($media);
 }
-$url = $media?->getUrl();
+// $url = $media?->getUrl();
+$url = $media?->getThumbUrl();
 $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 $videoExtensions = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mkv'];
 $fileExtension = pathinfo($url, PATHINFO_EXTENSION);
@@ -29,7 +30,8 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
     <div
         {{
             $attributes->class([
-                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden transition-all duration-300 shadow hover:contrast-50'
+                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden transition-all duration-300 shadow',
+                'hover:contrast-50' => $selectable,
             ])
         }}
         @if($selectable)
@@ -49,7 +51,7 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
                 <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
                     <x-lux::tabler-icons.photo class="w-3 h-3" />
                 </div>
-                <img src="{{ $media->getUrl() }}" class="w-full aspect-square object-cover" />
+                <img src="{{ $media->getThumbUrl() }}" class="w-full aspect-square object-cover" />
             @elseif($media->isVideo())
                 <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
                     <x-lux::tabler-icons.movie class="w-3 h-3" />

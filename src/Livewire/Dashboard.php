@@ -2,9 +2,9 @@
 
 namespace Pieldefoca\Lux\Livewire;
 
-use Livewire\Component;
+use Pieldefoca\Lux\Livewire\LuxComponent;
 
-class Dashboard extends Component
+class Dashboard extends LuxComponent
 {
 	public function render()
 	{

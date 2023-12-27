@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('lux_media', function (Blueprint $table) {
             $table->id();
             $table->json('name');
+            $table->string('original_image');
             $table->string('filename');
             $table->string('disk')->nullable();
             $table->json('alt')->nullable();
             $table->json('title')->nullable();
             $table->string('mime_type');
+            $table->string('extension');
             $table->string('media_type');
             $table->timestamps();
         });

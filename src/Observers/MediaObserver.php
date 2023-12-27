@@ -12,7 +12,7 @@ class MediaObserver
      */
     public function created(Media $media): void
     {
-        //
+        $media->createVariations();
     }
 
     /**
@@ -28,7 +28,7 @@ class MediaObserver
      */
     public function deleted(Media $media): void
     {
-        Storage::disk('uploads')->delete($media->filename);
+        $media->deleteAll();
     }
 
     /**

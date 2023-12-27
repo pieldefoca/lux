@@ -29,3 +29,16 @@ if(!function_exists('page_media')) {
         return $media?->getUrl();
     }
 }
+
+if(!function_exists('filesize_for_humans')) {
+    function filesize_for_humans($size, $precision = 2) {
+        $units = array('B','KB','MB','GB','TB','PB','EB','ZB','YB');
+        $step = 1024;
+        $i = 0;
+        while (($size / $step) > 0.9) {
+            $size = $size / $step;
+            $i++;
+        }
+        return round($size, $precision).$units[$i];
+    }
+}
