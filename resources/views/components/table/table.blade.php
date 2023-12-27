@@ -140,6 +140,5 @@
                 </div>
             </div>
         @endif
-
     </x-lux::card>
 </div>

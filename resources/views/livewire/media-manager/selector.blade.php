@@ -34,8 +34,13 @@
                 </button>
             </div>
 
-            <div>
+            <div class="flex items-center space-x-6">
                 <x-lux::input.search wire:model.live="search" />
+
+                <div>
+                    <x-lux::link x-on:click="$refs.input.click()" icon="upload">Añadir ficheros</x-lux::link>
+                    <input x-ref="input" wire:model.live="uploads" type="file" multiple style="display: none;" />
+                </div>
             </div>
         </div>
 
@@ -92,15 +97,16 @@
                 <p class="text-stone-500">No hay resultados</p>
             </div>
         @endif
+
+        <div class="mt-6">
+            @if($this->canLoadMore)
+                <x-lux::button wire:click="loadMore">Cargar más</x-lux::button>
+            @endif
+        </div>
     </div>
 
     <x-slot name="footer">
         <div class="flex items-center justify-between w-full">
-            <div x-data>
-                <x-lux::link x-on:click="$refs.input.click()" icon="upload">Subir</x-lux::link>
-                <input x-ref="input" wire:model.live="uploads" type="file" multiple style="display: none;" />
-            </div>
-
             <div class="flex items-center space-x-8">
                 <x-lux::link x-on:click="$wire.hide()">Cancelar</x-lux::link>
                 <x-lux::button wire:click="confirmSelection" icon="check" :disabled="count($selected) === 0" class="relative">
