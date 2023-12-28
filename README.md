@@ -1,3 +1,6 @@
+- [Instalación](#instalacion)
+- [Traducciones](#traducciones)
+
 # Instalación
 
 1. Crear un fichero `auth.json` en la raíz de la aplicación
