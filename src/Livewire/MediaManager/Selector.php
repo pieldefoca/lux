@@ -105,7 +105,7 @@ class Selector extends LuxModal
     #[Computed]
     public function canLoadMore()
     {
-        return $this->mediaItems->count() < Media::count();
+        return $this->mediaItems->count() < Media::count() - 1;
     }
 
     public function loadMore()

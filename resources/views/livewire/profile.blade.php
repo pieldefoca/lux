@@ -1,9 +1,9 @@
 <div>
-	<x-slot name="title">{{ trans('lux::lux.mi-perfil') }}</x-slot>
-	<x-slot name="subtitle">{{ trans('lux::lux.estas-editando-tu-perfil') }}</x-slot>
+	<x-slot name="title">{{ trans('lux::lux.profile-title') }}</x-slot>
+	<x-slot name="subtitle">{{ trans('lux::lux.profile-subtitle') }}</x-slot>
 
     <x-slot name="actions">
-        <x-lux::button x-on:click="$dispatch('save-profile')">{{ trans('lux::lux.guardar') }}</x-lux::button>
+        <x-lux::button.save x-on:click="$dispatch('save-profile')" />
     </x-slot>
 
     <div class="max-w-xl mx-auto space-y-6">

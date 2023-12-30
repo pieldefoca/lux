@@ -23,10 +23,12 @@ return [
     'eliminar-fichero' => 'Eliminar fichero',
     'eliminar-imagen' => 'Eliminar imagen',
     'eliminar-video' => 'Eliminar vídeo',
+    'email' => 'Email',
     'estas-editando-tu-perfil' => 'Estás editando tu perfil',
 
     // @F
     'files' => 'Archivos',
+    'fix-errors' => 'Corrige los errores',
 
     // @H
     'hello' => '👋🏽 Hola',
@@ -45,16 +47,23 @@ return [
     'mi-perfil' => 'Mi perfil',
 
     // @N
-    'nuevo-slider' => 'Nuevo slider',
+    'name' => 'Nombre',
+    'new-slider' => 'Nuevo slider',
+    'new-user' => 'Nuevo usuario',
 
 	// @P
     'pages-index-title' => 'Páginas',
     'pages-index-subtitle' => 'Lista de páginas del sitio web',
+    'password' => 'Contraseña',
+    'password-confirmation' => 'Confirma la contraseña',
     'posts-titulo' => 'Posts',
     'posts-subtitulo' => 'Lista de posts del blog',
+    'profile-subtitle' => 'Estás editando tu información de usuario',
+    'profile-title' => 'Perfil de usuario',
 
     // @S
     'save' => 'Guardar',
+    'saving' => 'Guardando',
     'selected-rows' => 'Fila seleccionada|Filas seleccionadas',
     'sliders-titulo' => 'Sliders',
     'sliders-subtitulo' => 'Lista de sliders',
@@ -66,6 +75,11 @@ return [
 
     // @U
     'unsaved-changes' => ':count cambio sin guardar|:count cambios sin guardar',
+    'username' => 'Nombre de usuario',
+    'users-create-subtitle' => 'Estás creando un nuevo usuario',
+    'users-create-title' => 'Nuevo usuario',
+    'users-index-subtitle' => 'Lista de usuarios',
+    'users-index-title' => 'Usuarios',
 
     // @V
     'videos' => 'Vídeos',

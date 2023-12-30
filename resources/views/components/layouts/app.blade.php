@@ -116,7 +116,7 @@
 					</div>
 				</div>
 
-				<div>
+				<div id="lux-actions">
 					{{ $actions ?? '' }}
 				</div>
 			</div>

@@ -1,12 +1,14 @@
 <x-lux::modal title="Cambiar contraseña">
     <form wire:submit="save" class="space-y-6">
-        <x-lux::input.inline-group
-            required
-            label="Contraseña actual"
-            :error="$errors->first('currentPassword')"
-        >
-            <x-lux::input.password wire:model="currentPassword" />
-        </x-lux::input.group>
+        @unlessrole('superadmin')
+            <x-lux::input.inline-group
+                required
+                label="Contraseña actual"
+                :error="$errors->first('currentPassword')"
+            >
+                <x-lux::input.password wire:model="currentPassword" />
+            </x-lux::input.group>
+        @endunlessrole
 
         <x-lux::input.inline-group
             required

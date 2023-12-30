@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
 use Pieldefoca\Lux\Livewire\LuxModal;
+use App\Models\User;
 
 class PasswordModal extends LuxModal
 {
-    #[Rule('required', message: 'Escribe la contraseña actual')]
-    #[Rule('current_password', message: 'La contraseña no es correcta')]
+    public User $user;
+
     public $currentPassword;
 
-    #[Rule('required', message: 'Escribe la nueva contraseña')]
-    #[Rule('confirmed', message: 'Las contraseñas no coinciden')]
     public $password;
 
-    #[Rule('required', message: 'Confirma la nueva contraseña')]
     public $password_confirmation;
 
     #[On('change-password')]
-    public function changePassword(): void
+    public function changePassword(User $user = null): void
     {
+        $this->user = is_null($user) ? auth()->user() : $user;
         $this->currentPassword = null;
         $this->password = null;
         $this->password_confirmation = null;
@@ -34,11 +33,34 @@ class PasswordModal extends LuxModal
     {
         $this->validate();
 
-        auth()->user()->update(['password' => Hash::make($this->password)]);
+        $this->user->update(['password' => Hash::make($this->password)]);
 
         $this->notifySuccess('🤙🏾 Has cambiado la contraseña correctamente');
 
         $this->hide();
+    }
+
+    public function rules()
+    {
+        $rules = [
+            'password' => ['required', 'confirmed'],
+        ];
+
+        if(! auth()->user()->hasRole('superadmin')) {
+            $rules['currentPassword'] = ['required', 'current_password'];
+        }
+
+        return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'currentPassword.required' => trans('lux::validation.user.currentPassword.required'),
+            'currentPassword.current_password' => trans('lux::validation.user.currentPassword.current_password'),
+            'password.required' => trans('lux::validation.user.password.required'),
+            'password.confirmed' => trans('lux::validation.user.password.confirmed'),
+        ];
     }
 
     public function render()
