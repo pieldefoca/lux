@@ -7,6 +7,9 @@ return [
 
     // @C
     'cancel' => 'Cancelar',
+    'change-image' => 'Cambiar imagen',
+    'change-password' => 'Cambiar contraseña',
+    'choose-image' => 'Elegir imagen',
     'common-elements-multiple-pages' => 'Elementos comunes a varias páginas',
     'contact-data' => '📬 Datos de contacto',
     'contact-phones' => 'Teléfonos de contacto',
@@ -64,6 +67,7 @@ return [
     // @S
     'save' => 'Guardar',
     'saving' => 'Guardando',
+    'select-media' => 'Seleccionar',
     'selected-rows' => 'Fila seleccionada|Filas seleccionadas',
     'sliders-titulo' => 'Sliders',
     'sliders-subtitulo' => 'Lista de sliders',
@@ -78,6 +82,8 @@ return [
     'username' => 'Nombre de usuario',
     'users-create-subtitle' => 'Estás creando un nuevo usuario',
     'users-create-title' => 'Nuevo usuario',
+    'users-edit-subtitle' => 'Estás editando el usuario',
+    'users-edit-title' => 'Editar usuario',
     'users-index-subtitle' => 'Lista de usuarios',
     'users-index-title' => 'Usuarios',
 

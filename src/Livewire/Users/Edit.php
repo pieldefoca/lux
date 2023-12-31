@@ -2,12 +2,16 @@
 
 namespace Pieldefoca\Lux\Livewire\Users;
 
+use App\Models\User;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Computed;
 use Pieldefoca\Lux\Livewire\LuxComponent;
 use Pieldefoca\Lux\Livewire\Forms\UserForm;
-use App\Models\User;
 
 class Edit extends LuxComponent
 {
+    use WithFileUploads;
+
     public User $user;
 
     public UserForm $form;
@@ -21,6 +25,12 @@ class Edit extends LuxComponent
     {
         $this->form->slugifyUsername();
     }
+
+    #[Computed]
+	public function avatarUrl()
+	{
+        return $this->form->avatarUrl();
+	}
 
     public function save()
     {

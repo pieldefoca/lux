@@ -91,10 +91,6 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <div>
-                            <x-lux::dropdown></x-lux::dropdown>
-                        </div>
-
                         <div class="flex items-center">
                             <div>
                                 {{ $actions ?? '' }}
@@ -133,7 +129,7 @@
             </table>
 
             <div class="p-4 flex items-center w-full space-x-6">
-                <select wire:model.live="perPage" class="px-2 py-1 border border-stone-300 rounded-md">
+                <select wire:model.live="perPage" class="w-24 px-2 py-1 border border-stone-300 rounded-md">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>

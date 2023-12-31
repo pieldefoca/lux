@@ -8,10 +8,13 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class UserForm extends Form
 {
     public User $user;
+
+    public $avatar;
 
     public $username;
 
@@ -29,6 +32,7 @@ class UserForm extends Form
             $this->user = User::make([]);
         } else {
             $this->user = $user;
+            $this->avatar = $user->avatarUrl;
             $this->username = $user->username;
             $this->name = $user->name;
             $this->email = $user->email;
@@ -41,11 +45,26 @@ class UserForm extends Form
         $this->username = str($this->username)->slug()->replace('-', '_')->toString();
     }
 
+    public function avatarUrl()
+    {
+        if(!is_null($this->avatar)) {
+			if(is_string($this->avatar)) {
+				return $this->avatar;
+			} else {
+				if($this->avatar->isPreviewable()) {
+					return $this->avatar->temporaryUrl();
+				}
+			}
+		}
+    }
+
     public function create()
     {
         $validated = $this->validate();
 
         $validated['password'] = Hash::make($this->password);
+
+        $validated = $this->saveAvatar($validated);
 
         return $this->user->create($validated);
     }
@@ -54,7 +73,26 @@ class UserForm extends Form
     {
         $validated = $this->validate();
 
+        $validated = $this->saveAvatar($validated);
+
         return $this->user->update($validated);
+    }
+
+    protected function saveAvatar(array $validated)
+    {
+        if(is_null($this->avatar)) {
+			$this->user->removeAvatar();
+		} else {
+			if($this->avatar instanceof TemporaryUploadedFile) {
+				$name = $this->avatar->store('/', 'avatars');
+
+                $validated = array_merge($validated, ['avatar' => $name]);
+
+				$this->user->removeAvatar();
+			}
+		}
+
+        return $validated;
     }
 
     protected function rules()

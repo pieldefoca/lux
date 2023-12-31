@@ -1,0 +1,1 @@
+<x-lux::button type="submit" icon="device-floppy">{{ trans('lux::lux.save') }}</x-lux::button>

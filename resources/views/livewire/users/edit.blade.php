@@ -1,6 +1,6 @@
 <div>
-    <x-slot name="title">{{ trans('lux::lux.users-create-title') }}</x-slot>
-    <x-slot name="subtitle">{{ trans('lux::lux.users-create-subtitle') }}</x-slot>
+    <x-slot name="title">{{ trans('lux::lux.users-edit-title') }}</x-slot>
+    <x-slot name="subtitle">{{ trans('lux::lux.users-edit-subtitle') }} {{ $user->username }}</x-slot>
 
     @teleport('#lux-actions')
         <div class="flex items-center space-x-8">
@@ -16,8 +16,12 @@
         </div>
     @endteleport
 
-    <x-lux::card class="max-w-4xl mx-auto p-8 mt-12">
+    <x-lux::card title="Datos del usuario" class="max-w-4xl mx-auto p-6 mt-6">
         <form class="space-y-6">
+            <x-lux::input.inline-group label="Avatar">
+                <x-lux::input.avatar wire:model="form.avatar" />
+            </x-lux::input.inline-group>
+
             <x-lux::input.inline-group required :label="trans('lux::lux.username')" :error="$errors->first('form.username')">
                 <x-lux::input.text wire:model="form.username" />
             </x-lux::input.inline-group>

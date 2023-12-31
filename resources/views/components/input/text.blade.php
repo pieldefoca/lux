@@ -44,9 +44,11 @@ $locales = $translatable
             @blur="focused = false"
             @if($translatable)
                 {{ $attributes->localizedWireModel($locale->code) }}
+            @else
+                {{ $attributes->whereStartsWith('wire:model') }}
             @endif
             {{
-                $attributes->class([
+                $attributes->whereDoesntStartWith('wire:model')->class([
                     'flex-auto w-full px-2 py-2 text-sm transition-colors duration-300 outline-none',
                 ])
             }}

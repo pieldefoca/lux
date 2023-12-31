@@ -1,0 +1,1 @@
+<h2 class="text-2xl font-bold mb-6" :id="$id('modal-title')">{{ $slot }}</h2>
