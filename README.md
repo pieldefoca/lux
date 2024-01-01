@@ -1,3 +1,179 @@
+- [Instalación](#instalacion)
+- [Formularios](#formularios)
+    - [Campos](#campos)
+        - [Texto](#texto)
+- [Tablas](#tablas)
+    - [Búsqueda](#búsqueda)
+    - [Ordenación](#ordenación)
+    - [Acciones en masa](#acciones-en-masa)
+- [Media Manager](#media-manager)
+- [Traducciones](#traducciones)
+
+# Formularios
+
+## Campos
+
+### Texto
+
+# Tablas
+
+Una tabla es un componente de livewire que extiende de `LuxTable`.
+Todas las tablas deben tener una propiedad `$model` y un método `rowsQuery`.
+
+```php
+use Pieldefoca\Lux\Livewire\LuxTable;
+use use Livewire\Attributes\Computed;
+
+class Table extends LuxTable
+{
+    public $model = Model::class;
+
+    #[Computed]
+    public function rowsQuery()
+    {
+        //
+    }
+}
+```
+
+```html
+<x-lux::table.table>
+    <x-slot name="head">
+        <x-lux::table.th sort="username">Nombre de usuario</x-lux::table.th>
+        <x-lux::table.th sort="name">Nombre</x-lux::table.th>
+        <x-lux::table.th sort="email">Email</x-lux::table.th>
+        <x-lux::table.th>Acciones</x-lux::table.th>
+    </x-slot>
+
+    <x-slot name="body">
+        @foreach($this->rows as $user)
+            <x-lux::table.tr :model="$user">
+                <x-lux::table.td>{{ $user->username }}</x-lux::table.td>
+                <x-lux::table.td>{{ $user->name }}</x-lux::table.td>
+                <x-lux::table.td>{{ $user->email }}</x-lux::table.td>
+                <x-lux::table.td no-padding>
+                    <div class="space-x-3">
+                        <a href="{{ route('lux.users.edit', $user) }}">
+                            <x-lux::table.edit-button />
+                        </a>
+                        <x-lux::table.delete-button />
+                    </div>
+                </x-lux::table.td>
+            </x-lux::table.tr>
+        @endforeach
+    </x-slot>
+</x-lux::table.table>
+```
+
+## Búsqueda
+
+Para añadir un campo de búsqueda a la tabla hay que usar el trait `Pieldefoca\Lux\Livewire\Table\Traits\Searchable`.
+
+```php
+use Pieldefoca\Lux\Livewire\Table\Traits\Searchable;
+use Pieldefoca\Lux\Livewire\LuxTable;
+
+class Table extends LuxTable
+{
+    use Searchable;
+}
+```
+
+Una vez añadido el trait hay que modificar el método `rowsQuery` para realizar la búsqueda.
+La búsqueda en realidad es un filtro, por lo que hay que comprobar que exista algo en `$this->filters['search']`.
+
+```php
+public function rowsQuery()
+{
+    return Post::query()
+        ->when($this->filters['search'], function($query, $search) {
+            //
+        });
+}
+```
+
+## Ordenación
+
+Es posible ordenar las filas de la tabla en función del valor de una columna.
+Para ello hay que añadir el trait `Pieldefoca\Lux\Livewire\Table\Traits\WithSorting` a la tabla.
+
+```php
+use Pieldefoca\Lux\Livewire\Table\Traits\WithSorting;
+use Pieldefoca\Lux\Livewire\LuxTable;
+
+class Table extends LuxTable
+{
+    use WithSorting;
+}
+```
+
+Una vez añadido el trait hay que especificar qué columnas son las que tienen opción para ordenar añadiendo el atributo `sort` al th de la columna.
+
+```html
+<x-lux::table.table>
+    <x-slot name="head">
+        <x-lux::table.th sort="username">Nombre de usuario</x-lux::table.th>
+        <!-- ... -->
+    </x-slot>
+
+    <x-slot name="body">
+        <!-- ... -->
+    </x-slot>
+</x-lux::table.table>
+```
+
+## Acciones en masa
+
+Para poder realizar acciones en masa hay que añadir el trait `Pieldefoca\Lux\Livewire\Table\Traits\WithBulkActions`.
+
+```php
+use Pieldefoca\Lux\Livewire\Table\Traits\WithBulkActions;
+use Pieldefoca\Lux\Livewire\LuxTable;
+
+class Table extends LuxTable
+{
+    use WithBulkActions;
+}
+```
+
+Esto añadirá un checkbox a cada fila de la tabla y un checkbox en la cabecera para poder seleccionar todas las filas a la vez.
+
+### Añadir acciones en masa
+
+El componente `table` tiene un slot llamado `bulkActions` en el que se pueden añadir acciones para ejecutar en masa.
+
+Ese slot es un dropdown al que hay que añadir items de esta forma:
+
+```html
+<x-slot name="bulkActions">
+    <x-lux::dropdown.item wire:click="activateSelected">Activar seleccionadas</x-lux::dropdown.item>
+    <x-lux::dropdown.item wire:click="deactivateSelected">Desactivar seleccionadas</x-lux::dropdown.item>
+</x-slot>
+```
+
+Después en la tabla habrá que implementar los métodos que correspondan para ejecutar las acciones. En el ejemplo anterior habría que implementar el método `activateSelected` para activar las filas seleccionadas y el método `deactivateSelected` para desactivar las filas seleccionadas.
+
+### Eliminación en masa
+
+Por defecto, cuando se añaden las acciones en masa, se podrán eliminar varias filas de la tabla al mismo tiempo. Para desactivar esta opción hay que llamar al método `disableBulkDeletion` desde el método `mount` de la tabla:
+
+```php
+public function mount()
+{
+    $this->disableBulkDeletion();
+}
+```
+
+## Filtros
+
+# Media Manager
+
+Todos los archivos que suba el usuario se guardan en `public/uploads`.
+
+Al subir una imagen se guarda la original en `public/uploads/._ogs` y se crean varias versiones:
+1. 1920px de ancho. El nombre no lleva ningún sufijo y es la imagen que se usa por defecto.
+2. 250px de ancho. Lleva el sufijo `-thumb`.
+
 # Instalación
 
 1. Crear un fichero `auth.json` en la raíz de la aplicación

@@ -20,9 +20,9 @@ class Selector extends LuxModal
 
     public Media $media;
 
-    public $view;
+    public $view = 'grid';
 
-    public $perPage = 10;
+    public $perPage = 50;
 
     public $field;
 
@@ -41,7 +41,7 @@ class Selector extends LuxModal
 
     public function mount()
     {
-        $this->view = session()->get('lux-media-manager-view', 'list');
+        // $this->view = session()->get('lux-media-manager-view', 'list');
     }
 
     public function updatedUploads($value)

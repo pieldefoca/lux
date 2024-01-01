@@ -116,7 +116,7 @@
 					</div>
 				</div>
 
-				<div>
+				<div id="lux-actions">
 					{{ $actions ?? '' }}
 				</div>
 			</div>
@@ -132,6 +132,9 @@
 			</div>
 		</div>
 	</div>
+
+	<livewire:media-manager.selector />
+    <livewire:media-manager.slideover />
 
 	@livewireScriptConfig
 	@stack('js')

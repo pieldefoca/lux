@@ -2,9 +2,11 @@
 
 namespace Pieldefoca\Lux\Console\Commands;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Pieldefoca\Lux\Models\Media;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 class LuxProcessMedia extends Command
 {
@@ -27,17 +29,23 @@ class LuxProcessMedia extends Command
      */
     public function handle()
     {
-        // Create the uploads folder
+        foreach(Media::all() as $media) {
+            if(is_null($media->original_image)) {
+                $this->saveOriginal($media);
+                Storage::disk('uploads')->delete($media->original_image);
+            }
 
-        // Copy placeholder image
+            $media->createVariations();
+        }
 
-        Media::create([
-            'name' => ['es' => 'Placeholder'],
-            'filename' => '_placeholder.jpg',
-            'mime_type' => 'image/jpeg',
-            'media_type' => 'image',
-        ]);
+    }
 
-        Artisan::call('lux:pages');
+    protected function saveOriginal(Media $media)
+    {
+        $filename = $media->filename;
+        $from = Storage::disk('uploads')->path($filename);
+        $to = Storage::disk('uploads')->path("._ogs/{$filename}");
+        copy($from, $to);
+        $media->update(['original_image' => $filename]);
     }
 }

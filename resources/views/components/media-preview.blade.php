@@ -17,7 +17,6 @@
 if(is_int($media)) {
     $media = Pieldefoca\Lux\Models\Media::find($media);
 }
-// $url = $media?->getUrl();
 $url = $media?->getThumbUrl();
 $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 $videoExtensions = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mkv'];

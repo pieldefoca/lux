@@ -32,6 +32,7 @@
                 if(this.translatable) {
                     this.model += `.${this.locale}`
                 }
+                
                 tinymce.init({
                     selector: `#${this.id}`,
                     language: 'es',

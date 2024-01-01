@@ -148,15 +148,12 @@
                         @else
                             <div class="flex flex-wrap gap-4">
                                 @foreach($this->mediaItems as $media)
-                                    <x-lux::media-preview
-                                        :media="$media"
-                                        editable
-                                        removable
-                                    />
+                                    <x-lux::media-preview :media="$media" editable removable class="!w-28" />
                                 @endforeach
                             </div>
                         @endif
-                        <div class="flex items-center space-x-8 w-full">
+
+                        <div class="flex items-center space-x-8 mt-8 w-full">
                             <div>
                                 <x-lux::input.select native wire:model.live="perPage">
                                     <option value="10">10</option>

@@ -4,7 +4,7 @@
 
         <div class="flex items-center justify-between pb-4 mb-4 border-b border-stone-200">
             <div class="flex items-center">
-                <div 
+                {{-- <div 
                     x-data="{
                         view: @entangle('view'),
                     }"
@@ -18,7 +18,7 @@
                     </button>
                 </div>
 
-                <div class="h-6 w-px bg-stone-300 mx-4"></div>
+                <div class="h-6 w-px bg-stone-300 mx-4"></div> --}}
                 
                 <div class="space-x-1">
                     <button 
@@ -121,6 +121,7 @@
                         @endphp
                         <button 
                             wire:click="select({{$media->id}})" 
+                            wire:key="{{ uniqid() }}"
                             type="button"
                             @class([
                                 'relative rounded-md border ring-2 bg-gray-100 overflow-hidden',
@@ -134,7 +135,7 @@
                                 <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
                                     <x-lux::tabler-icons.photo class="w-3 h-3" />
                                 </div>
-                                <img src="{{ $media->getUrl() }}" class="w-24 aspect-square object-cover" />
+                                <img src="{{ $media->getThumbUrl() }}" class="w-24 aspect-square object-cover" />
                             @elseif($media->isVideo())
                                 <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
                                     <x-lux::tabler-icons.movie class="w-3 h-3" />
@@ -162,7 +163,7 @@
                 </div>
             @endif
 
-            <div class="flex items-center space-x-8 w-full">
+            <div class="flex items-center space-x-8 mt-8 w-full">
                 <div>
                     <x-lux::input.select native wire:model.live="perPage">
                         <option value="10">10</option>

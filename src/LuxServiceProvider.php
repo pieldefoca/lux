@@ -19,6 +19,7 @@ use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
 use Pieldefoca\Lux\Console\Commands\LuxInstall;
 use Pieldefoca\Lux\Console\Commands\LuxUploads;
+use Pieldefoca\Lux\Console\Commands\LuxProcessMedia;
 use Pieldefoca\Lux\Support\MediaManager\MediaManager;
 
 class LuxServiceProvider extends ServiceProvider
@@ -62,6 +63,7 @@ class LuxServiceProvider extends ServiceProvider
 				LuxUser::class,
 				LuxPages::class,
 				LuxUploads::class,
+				LuxProcessMedia::class,
 			]);
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');
