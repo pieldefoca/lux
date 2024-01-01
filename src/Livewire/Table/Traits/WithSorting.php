@@ -17,7 +17,13 @@ trait WithSorting
 
     public function applySorting($query)
     {
-        $translatableFields = collect((new $this->model)->getTranslatableAttributes());
+        $translatableFields = [];
+
+        try {
+            $translatableFields = collect((new $this->model)->getTranslatableAttributes());
+        } catch(\Exception $e) {
+            $translatableFields = collect([]);
+        }
 
         foreach ($this->sorts as $field => $direction) {
             if($translatableFields->contains($field)) {

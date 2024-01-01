@@ -21,7 +21,7 @@ $locales = $translatable
             @endif
             {{ 
                 $attributes->class([
-                    'w-full bg-stone-100 border border-stone-300 rounded-md outline-none px-2 py-1.5 text-sm transition-colors duration-300 hover:border-stone-400 hover:white focus:border-stone-500 focus:bg-white',
+                    'w-full border border-stone-300 rounded-md outline-none px-2 py-2 text-sm transition-colors duration-300 hover:border-stone-400 hover:white focus:border-stone-500',
                     'hidden' => $translatable && $this->currentLocaleCode !== $locale->code,
                 ]) 
             }}
@@ -143,7 +143,7 @@ $locales = $translatable
             </button>
 
             <div x-show="open">
-                <ul x-show="options.length > 0" class="absolute top-full left-0 w-full max-h-72 mt-1 overflow-y-auto rounded-md bg-white shadow z-10">
+                <ul x-show="options.length > 0" class="absolute top-full left-0 w-full max-h-72 mt-1 overflow-y-auto border border-stone-200 rounded-md bg-white shadow z-10">
                     <template x-for="option in options">
                         <li @click="select(option.value)" :class="{'border-teal-200': isSelected(option.value)}" class="border-b border-stone-200">
                             <button 

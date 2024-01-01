@@ -42,28 +42,31 @@
                                 {{ $bulkActions }}
                             </x-lux::dropdown>
                         @endisset
-                        <x-lux::table.bulk-delete-button
-                            x-on:click.stop.prevent="
-                                Swal.fire({
-                                    title: 'Eliminar filas',
-                                    text: '¿Seguro que quieres eliminar las filas seleccionadas?',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    customClass: {
-                                        confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
-                                        cancelButton: 'hover:underline',
-                                        actions: 'space-x-6',
-                                    },
-                                    buttonsStyling: false,
-                                    confirmButtonText: 'Eliminar',
-                                    cancelButtonText: 'Cancelar',
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        $wire.call('deleteSelected')
-                                    }
-                                })
-                            "
-                        />
+
+                        @if($this->hasBulkDeletion())
+                            <x-lux::table.bulk-delete-button
+                                x-on:click.stop.prevent="
+                                    Swal.fire({
+                                        title: 'Eliminar filas',
+                                        text: '¿Seguro que quieres eliminar las filas seleccionadas?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        customClass: {
+                                            confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
+                                            cancelButton: 'hover:underline',
+                                            actions: 'space-x-6',
+                                        },
+                                        buttonsStyling: false,
+                                        confirmButtonText: 'Eliminar',
+                                        cancelButtonText: 'Cancelar',
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            $wire.call('deleteSelected')
+                                        }
+                                    })
+                                "
+                            />
+                        @endif
                     </div>
                 </div>
             @else
@@ -82,14 +85,12 @@
                             @endif
                         @endif
 
-                        <x-lux::input.search wire:model.live.debounce="filters.search" />
+                        @if($this->isSearchable())
+                            <x-lux::input.search wire:model.live.debounce="filters.search" />
+                        @endif
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <div>
-                            <x-lux::dropdown></x-lux::dropdown>
-                        </div>
-
                         <div class="flex items-center">
                             <div>
                                 {{ $actions ?? '' }}
@@ -128,7 +129,7 @@
             </table>
 
             <div class="p-4 flex items-center w-full space-x-6">
-                <select wire:model.live="perPage" class="px-2 py-1 border border-stone-300 rounded-md">
+                <select wire:model.live="perPage" class="w-24 px-2 py-1 border border-stone-300 rounded-md">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -140,6 +141,5 @@
                 </div>
             </div>
         @endif
-
     </x-lux::card>
 </div>

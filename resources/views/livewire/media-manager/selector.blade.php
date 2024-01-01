@@ -1,5 +1,7 @@
-<x-lux::modal title="Seleccionar">
-    <div>
+<x-lux::modal>
+    <x-lux::modal.panel>
+        <x-lux::modal.title>{{ trans('lux::lux.select-media') }}</x-lux::modal.title>
+
         <input type="text" wire:model="selected" style="display: none;" />
 
         <div class="flex items-center justify-between pb-4 mb-4 border-b border-stone-200">
@@ -75,6 +77,11 @@
                 </div>
 
                 <x-lux::input.search wire:model.live="search" />
+
+                <div>
+                    <x-lux::link x-on:click="$refs.input.click()" icon="upload">Añadir ficheros</x-lux::link>
+                    <input x-ref="input" wire:model.live="uploads" type="file" multiple style="display: none;" />
+                </div>
             </div>
         </div>
 
@@ -183,19 +190,25 @@
                 <p class="text-stone-500">No hay resultados</p>
             </div>
         @endif
-    </div>
 
-    <x-slot name="footer">
-        <div class="flex items-center justify-between w-full">
-            <div class="flex items-center space-x-8">
-                <x-lux::link x-on:click="$wire.hide()">Cancelar</x-lux::link>
-                <x-lux::button wire:click="confirmSelection" icon="check" :disabled="count($selected) === 0" class="relative">
-                    Seleccionar
-                    @if($multiple && count($selected) > 0)
-                        <span class="absolute top-1.5 right-1.5 flex items-center justify-center w-3 h-3 bg-white text-black rounded-full text-[9px]">{{ count($selected) }}</span>
-                    @endif
-                </x-lux::button>
-            </div>
+        <div class="mt-6">
+            @if($this->canLoadMore)
+                <x-lux::button wire:click="loadMore">Cargar más</x-lux::button>
+            @endif
         </div>
-    </x-slot>
+
+        <x-lux::modal.footer>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center space-x-8">
+                    <x-lux::link x-on:click="$wire.hide()">Cancelar</x-lux::link>
+                    <x-lux::button wire:click="confirmSelection" icon="check" :disabled="count($selected) === 0" class="relative">
+                        Seleccionar
+                        @if($multiple && count($selected) > 0)
+                            <span class="absolute top-1.5 right-1.5 flex items-center justify-center w-3 h-3 bg-white text-black rounded-full text-[9px]">{{ count($selected) }}</span>
+                        @endif
+                    </x-lux::button>
+                </div>
+            </div>
+        </x-lux::modal.footer>
+    </x-lux::modal.panel>
 </x-lux::modal>

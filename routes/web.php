@@ -29,6 +29,8 @@ Route::prefix(config('lux.prefix'))
 		Route::get('/media', Pieldefoca\Lux\Livewire\MediaManager\Index::class)->name('lux.media.index');
 
 		Route::get('/usuarios', Pieldefoca\Lux\Livewire\Users\Index::class)->name('lux.users.index');
+		Route::get('/usuarios/nuevo', Pieldefoca\Lux\Livewire\Users\Create::class)->name('lux.users.create');
+		Route::get('/usuarios/{user}/editar', Pieldefoca\Lux\Livewire\Users\Edit::class)->name('lux.users.edit');
 		Route::get('/roles', Pieldefoca\Lux\Livewire\Roles\Index::class)->name('lux.roles.index');
 		Route::get('/permisos', Pieldefoca\Lux\Livewire\Permissions\Index::class)->name('lux.permissions.index');
 

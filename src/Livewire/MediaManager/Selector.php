@@ -109,6 +109,17 @@ class Selector extends LuxModal
             ->paginate($this->perPage);
     }
 
+    #[Computed]
+    public function canLoadMore()
+    {
+        return $this->mediaItems->count() < Media::count() - 1;
+    }
+
+    public function loadMore()
+    {
+        $this->page++;
+    }
+
     public function select(Media $media)
     {
         if($this->multiple) {

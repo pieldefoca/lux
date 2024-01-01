@@ -21,8 +21,8 @@ $locales = $translatable
             'hidden' => $translatable && $this->currentLocaleCode !== $locale->code,
         ])
         :class="{
-            'ring-1 ring-stone-300 hover:ring-2 hover:ring-stone-500 hover:border-stone-500': !focused,
-            'ring-2 ring-stone-500': focused,
+            'ring-1 ring-stone-300 hover:ring-black': !focused,
+            'ring-1 ring-black': focused,
         }"
     >
         @if($leadingAddon)
@@ -44,10 +44,12 @@ $locales = $translatable
             @blur="focused = false"
             @if($translatable)
                 {{ $attributes->localizedWireModel($locale->code) }}
+            @else
+                {{ $attributes->whereStartsWith('wire:model') }}
             @endif
             {{
-                $attributes->class([
-                    'flex-auto w-full px-2 py-2 bg-stone-100 text-sm transition-colors duration-300 outline-none hover:bg-white',
+                $attributes->whereDoesntStartWith('wire:model')->class([
+                    'flex-auto w-full px-2 py-2 text-sm transition-colors duration-300 outline-none',
                 ])
             }}
         />

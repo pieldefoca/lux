@@ -7,10 +7,16 @@ trait WithBulkActions
     public $selectPage = false;
     public $selectAllRows = false;
     public $selected = [];
+    public $allowBulkDeletion = true;
 
     public function renderingWithBulkActions()
     {
         // if ($this->selectAllRows) $this->selectPageRows();
+    }
+
+    public function disableBulkDeletion()
+    {
+        $this->allowBulkDeletion = false;
     }
 
     public function updatedSelected()

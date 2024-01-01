@@ -2,34 +2,36 @@
 
 namespace Pieldefoca\Lux\Livewire\Attributes;
 
-use Livewire\Attribute as LivewireAttribute;
+use ReflectionClass;
+use ReflectionProperty;
 use Pieldefoca\Lux\Models\Locale;
+use Livewire\Attribute as LivewireAttribute;
 
 #[\Attribute]
 class Translatable extends LivewireAttribute
 {
-    public function __construct(
-        public $emptyValue = '',
-        public $required = true,
-        public $message = null,
-    ) {}
+    public function __construct(public $required = false) {}
 
-    public function boot()
+    public function update($field, $newValue)
     {
-        $rules = $this->component->getRules();
+        $splits = explode('.', $field);
+        $updatedLocale = end($splits);
+        $defaultLocale = Locale::default()->code;
+        if($updatedLocale !== $defaultLocale) return;
 
-        $propertyName = $this->getName();
+        $currentValue = $this->getValue();
+        $defaultLocaleValue = $currentValue[$defaultLocale];
+        $newCurrentValue = $currentValue;
 
-        if(array_key_exists($propertyName, $rules)) {
-            if(in_array('required', $rules[$propertyName])) {
-                $otherRules = array_filter($rules[$propertyName], fn($rule) => $rule !== 'required');
-                $defaultLocale = Locale::default()->code;
-                $this->component->addRulesFromOutside([
-                    "$propertyName" => array_merge($otherRules, ['nullable']),
-                    "{$propertyName}.{$defaultLocale}" => ['required'],
-                ]);
+        foreach($currentValue as $locale => $value) {
+            if($locale === $defaultLocale) continue;
+
+            if(empty($value) || $value === $defaultLocaleValue) {
+                $newCurrentValue[$locale] = $newValue;
             }
         }
+
+        $this->setValue($newCurrentValue);
     }
 
     public function render()
@@ -41,7 +43,7 @@ class Translatable extends LivewireAttribute
             if(!array_key_exists($locale->code, $currentValue) || empty($currentValue[$locale->code])) {
                 $value = array_key_exists($defaultLocale->code, $currentValue)
                     ? $currentValue[$defaultLocale->code]
-                    : $this->emptyValue;
+                    : '';
 
                 $currentValue = array_merge($currentValue, [
                     $locale->code => $value,

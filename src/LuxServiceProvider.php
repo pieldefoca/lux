@@ -73,6 +73,9 @@ class LuxServiceProvider extends ServiceProvider
 
 		ComponentAttributeBag::macro('localizedWireModel', function($locale) {
 			foreach($this->whereStartsWith('wire:model') as $attribute => $value) {
+				if(! Str::contains($attribute, '.blur')) {
+					$attribute .= '.blur';
+				}
 				return "{$attribute}={$value}.{$locale}";
 			}
 		});
