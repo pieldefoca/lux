@@ -32,7 +32,7 @@ class MediaManager
 
     public function save($files)
     {
-        if(!is_array($files)) {
+        if(! is_array($files)) {
             $files = [$files];
         }
 
