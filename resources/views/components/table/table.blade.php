@@ -114,7 +114,7 @@
                         @if($this->hasBulkActions() || $this->isReorderable())
                             <x-lux::table.th>
                                 @if($this->hasBulkActions() && !$this->isReordering())
-                                    <input type="checkbox" wire:model.live="selectPage" />
+                                    <x-lux::input.checkbox wire:model.live="selectPage" />
                                 @endif
                             </x-lux::table.th>
                         @endif

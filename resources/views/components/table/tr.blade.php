@@ -17,7 +17,7 @@
     @if($this->hasBulkActions() || $this->isReorderable())
         <x-lux::table.td>
             @if($this->hasBulkActions() && !$this->isReordering())
-                <input type="checkbox" wire:model.live="selected" value="{{ $model->id }}" />
+                <x-lux::input.checkbox wire:model.live="selected" value="{{ $model->id }}" />
             @elseif($this->isReordering())
                 <div type="button" class="cursor-grab">
                     <x-lux::tabler-icons.grip-horizontal class="w-5 h-5 opacity-50 transition-opacity duration-300 hover:opacity-80" />

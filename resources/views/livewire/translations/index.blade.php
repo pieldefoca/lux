@@ -3,7 +3,9 @@
     <x-slot name="subtitle">Aquí puedes traducir los textos de la página</x-slot>
 
     <x-slot name="actions">
-        <x-lux::button x-on:click="$dispatch('save-translations')" icon="device-floppy">Guardar</x-lux::button>
+        <div wire:loading.remove>
+            <x-lux::button x-on:click="$dispatch('save-translations')" icon="device-floppy">Guardar</x-lux::button>
+        </div>
     </x-slot>
 
     <div class="space-y-4">
@@ -30,7 +32,7 @@
             </x-lux::input.group>
         </div>
 
-        <div class="grid grid-cols-2 gap-8">
+        <form wire:submit="save" class="grid grid-cols-2 gap-8">
             <div class="space-y-3">
                 <div class="inline-flex flex-col space-y-1 px-2 py-1 border border-stone-300 bg-stone-200 rounded-md">
                     <div class="flex items-center space-x-1">
@@ -110,6 +112,8 @@
                     @endforeach
                 </div>
             </div>
-        </div>
+
+            <x-lux::button type="submit">Guardar</x-lux::button>
+        </form>
     </div>
 </div>

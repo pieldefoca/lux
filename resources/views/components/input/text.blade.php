@@ -49,7 +49,7 @@ $locales = $translatable
             @endif
             {{
                 $attributes->whereDoesntStartWith('wire:model')->class([
-                    'flex-auto w-full px-2 py-2 text-sm transition-colors duration-300 outline-none',
+                    'flex-auto w-full px-2 py-2 rounded-md text-sm transition-colors duration-300 outline-none',
                 ])
             }}
         />

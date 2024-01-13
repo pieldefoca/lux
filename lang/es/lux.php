@@ -42,6 +42,8 @@ return [
     'input-danger' => '¡Cuidado! Peligro',
 
     // @L
+    'locales-index-subtitle' => 'Lista de idiomas',
+    'locales-index-title' => 'Idiomas',
     'locations' => '📍 Ubicaciones',
 
     // @M
@@ -51,6 +53,7 @@ return [
 
     // @N
     'name' => 'Nombre',
+    'new-locale' => 'Nuevo idioma',
     'new-slider' => 'Nuevo slider',
     'new-user' => 'Nuevo usuario',
 

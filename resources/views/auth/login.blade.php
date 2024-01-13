@@ -1,6 +1,6 @@
 <x-lux::layouts.auth>
     <div class="grid place-items-center w-screen h-screen">
-        <div class="flex flex-col items-center w-1/4 space-y-8">
+        <div class="flex flex-col items-center w-full sm:w-2/3 md:w-1/2 lg:w-1/2 xl:w-1/3 2xl:w-1/4 p-4 space-y-8">
             <x-lux::logo class="w-28" />
 
             <form action="/login" method="POST" class="w-full rounded-lg shadow bg-white p-8 space-y-6">

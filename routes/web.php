@@ -28,6 +28,8 @@ Route::prefix(config('lux.prefix'))
 
 		Route::get('/media', Pieldefoca\Lux\Livewire\MediaManager\Index::class)->name('lux.media.index');
 
+		Route::get('/idiomas', Pieldefoca\Lux\Livewire\Locales\Index::class)->name('lux.locales.index');
+
 		Route::get('/usuarios', Pieldefoca\Lux\Livewire\Users\Index::class)->name('lux.users.index');
 		Route::get('/usuarios/nuevo', Pieldefoca\Lux\Livewire\Users\Create::class)->name('lux.users.create');
 		Route::get('/usuarios/{user}/editar', Pieldefoca\Lux\Livewire\Users\Edit::class)->name('lux.users.edit');
