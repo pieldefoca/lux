@@ -20,7 +20,7 @@
         <div
             x-on:click.stop
             x-trap.noscroll.inert="open"
-            class="relative w-full max-w-4xl overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
+            class="relative w-full max-w-5xl overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
         >
             {{ $slot }}
         </div>

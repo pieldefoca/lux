@@ -13,10 +13,10 @@
                             }"
                             class="flex items-center border border-stone-300 rounded-md p-0.5"
                         >
-                            <button @click="$wire.view = 'list';$wire.$refresh()" type="button" :class="{'bg-black rounded text-white': view === 'list'}" class="px-2 py-1">
+                            <button wire:click="setView('list')" type="button" :class="{'bg-black rounded text-white': view === 'list'}" class="px-2 py-1">
                                 <x-lux::tabler-icons.list class="w-5 h-5" />
                             </button>
-                            <button @click="$wire.view = 'grid';$wire.$refresh()" type="button" :class="{'bg-black rounded text-white': view === 'grid'}" class="px-2 py-1">
+                            <button wire:click="setView('grid')" type="button" :class="{'bg-black rounded text-white': view === 'grid'}" class="px-2 py-1">
                                 <x-lux::tabler-icons.layout-grid class="w-5 h-5" />
                             </button>
                         </div>
@@ -111,10 +111,10 @@
                             <table class="w-full">
                                 <thead class="rounded">
                                     <tr class="bg-stone-100 text-xs">
-                                        <th class="px-2 py-3 text-left rounded-l">
+                                        {{-- <th class="px-2 py-3 text-left rounded-l">
                                             <input type="checkbox" />
-                                        </th>
-                                        <th class="py-3 text-left"></th>
+                                        </th> --}}
+                                        <th class="py-3 text-left rounded-l"></th>
                                         <th wire:click.live="orderBy('name')" class="py-3 text-left">Nombre</th>
                                         <th wire:click.live="orderBy('type')" class="py-3 text-left">Tipo</th>
                                         <th class="py-3 text-left">Tamaño</th>
@@ -124,9 +124,9 @@
                                 <tbody>
                                     @foreach($this->mediaItems as $media)
                                         <tr class="border-b border-stone-200">
-                                            <td class="px-2 py-2">
+                                            {{-- <td class="px-2 py-2">
                                                 <input type="checkbox" />
-                                            </td>
+                                            </td> --}}
                                             <td class="py-2">
                                                 <x-lux::media-preview :$media class="!w-16 transition-transform duration-300 hover:scale-150 hover:z-10" />
                                             </td>
@@ -148,14 +148,14 @@
                         @else
                             <div class="flex flex-wrap gap-4">
                                 @foreach($this->mediaItems as $media)
-                                    <x-lux::media-preview :media="$media" editable removable class="!w-28" />
+                                    <x-lux::media-preview :media="$media" editable removable class="!w-36" />
                                 @endforeach
                             </div>
                         @endif
 
                         <div class="flex items-center space-x-8 mt-8 w-full">
                             <div>
-                                <x-lux::input.select native wire:model.live="perPage">
+                                <x-lux::input.select native wire:model.live="perPage" class="!w-24">
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>

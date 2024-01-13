@@ -70,6 +70,17 @@ class Index extends LuxComponent
         return count($this->selected) === 1;
     }
 
+    public function setView($view)
+    {
+        $validViews = ['list', 'grid'];
+
+        if(! in_array($view, $validViews)) $view = 'list';
+
+        $this->view = $view;
+
+        session(['lux-media-manager-view' => $view]);
+    }
+
     public function deleteMedia(Media $media)
     {
         $media->delete();
