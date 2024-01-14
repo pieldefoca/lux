@@ -1,4 +1,5 @@
 - [Instalación](#instalacion)
+- [Páginas](#páginas)
 - [Formularios](#formularios)
     - [Campos](#campos)
         - [Texto](#texto)
@@ -7,6 +8,38 @@
     - [Ordenación](#ordenación)
     - [Acciones en masa](#acciones-en-masa)
 - [Traducciones](#traducciones)
+
+# Páginas
+
+Las páginas de la web van en la carpeta `resources/views/pages`.
+Cada página tiene su correspondiente entrada en la tabla `lux_pages` de la base de datos.
+
+## Crear página
+
+Una página es realmente un componente de livewire que tiene como vista un fichero dentro de la carpeta `resources/views/pages`. Por tanto, para crear una página hay que crear un componente de livewire dentro de la carpeta `App\Livewire\Pages`.
+
+```
+php artisan make:livewire pages.home
+```
+
+Una vez creado habría que mover el fichero `resources/views/livewire/pages/home.blade.php` a `resources/views/pages/home.blade.php`.
+En la clase del componente hay que cambiar la vista que devuelve el método render:
+
+```php
+public function render()
+{
+    return view('pages.home');
+}
+```
+
+## Sincronizar las páginas con la base de datos
+
+```
+php artisan lux:pages
+```
+
+Este comando se encarga de crear una entrada en la tabla `lux_pages` para cada fichero que existe en la carpeta `resources/views/pages`.
+Además de eso genera el fichero `routes/pages.php` con todas las rutas necesarias para acceder a cada página.
 
 # Formularios
 
