@@ -4,8 +4,10 @@ namespace Pieldefoca\Lux\Livewire\Table\Traits;
 
 trait Searchable
 {
-    public function mountSearchable()
+    public $search = '';
+
+    public function updatedSearch()
     {
-        $this->addFilter('search', '');
+        $this->resetPage();
     }
 }

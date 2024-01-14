@@ -17,3 +17,15 @@ select {
     background-position: right 0.5rem top 50%;
     background-size: 1rem auto;
 }
+
+.lux-toggle button div {
+    @apply left-[2px] bg-stone-300;
+}
+
+.lux-toggle:has(input[type="checkbox"]:checked) button {
+    @apply border-stone-800 bg-stone-200;
+}
+
+.lux-toggle:has(input[type="checkbox"]:checked) button div {
+    @apply left-[1.15rem] bg-stone-800;
+}

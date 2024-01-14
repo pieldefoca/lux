@@ -49,21 +49,31 @@ Además de eso genera el fichero `routes/pages.php` con todas las rutas necesari
 
 # Tablas
 
-Una tabla es un componente de livewire que extiende de `LuxTable`.
 Todas las tablas deben tener una propiedad `$model` y un método `rowsQuery`.
 
 ```php
-use Pieldefoca\Lux\Livewire\LuxTable;
+
+namespace App\Livewire\Posts;
+
+use Pieldefoca\Lux\Livewire\LuxComponent;
+use Pieldefoca\Lux\Livewire\Table\Traits\LuxTable;
 use use Livewire\Attributes\Computed;
 
-class Table extends LuxTable
+class Table extends LuxComponent
 {
-    public $model = Model::class;
+    use LuxTable;
+
+    public $model = Post::class;
 
     #[Computed]
     public function rowsQuery()
     {
-        //
+        return Post::query();
+    }
+
+    public function render()
+    {
+        return view('livewire.posts.table');
     }
 }
 ```
@@ -71,27 +81,15 @@ class Table extends LuxTable
 ```html
 <x-lux::table.table>
     <x-slot name="head">
-        <x-lux::table.th sort="username">Nombre de usuario</x-lux::table.th>
         <x-lux::table.th sort="name">Nombre</x-lux::table.th>
-        <x-lux::table.th sort="email">Email</x-lux::table.th>
-        <x-lux::table.th>Acciones</x-lux::table.th>
+        <x-lux::table.th sort="slug">URL</x-lux::table.th>
+        <x-lux::table.th class="w-48">Estado</x-lux::table.th>
+        <x-lux::table.th class="w-20"></x-lux::table.th>
     </x-slot>
 
     <x-slot name="body">
-        @foreach($this->rows as $user)
-            <x-lux::table.tr :model="$user">
-                <x-lux::table.td>{{ $user->username }}</x-lux::table.td>
-                <x-lux::table.td>{{ $user->name }}</x-lux::table.td>
-                <x-lux::table.td>{{ $user->email }}</x-lux::table.td>
-                <x-lux::table.td no-padding>
-                    <div class="space-x-3">
-                        <a href="{{ route('lux.users.edit', $user) }}">
-                            <x-lux::table.edit-button />
-                        </a>
-                        <x-lux::table.delete-button />
-                    </div>
-                </x-lux::table.td>
-            </x-lux::table.tr>
+        @foreach($this->rows as $post)
+            <livewire:posts.row :$post :$hasBulkActions :$reorderable :key="uniqid()" />
         @endforeach
     </x-slot>
 </x-lux::table.table>
@@ -102,23 +100,26 @@ class Table extends LuxTable
 Para añadir un campo de búsqueda a la tabla hay que usar el trait `Pieldefoca\Lux\Livewire\Table\Traits\Searchable`.
 
 ```php
+use Pieldefoca\Lux\Livewire\LuxComponent;
+use Pieldefoca\Lux\Livewire\Table\Traits\LuxTable;
 use Pieldefoca\Lux\Livewire\Table\Traits\Searchable;
-use Pieldefoca\Lux\Livewire\LuxTable;
 
-class Table extends LuxTable
+class Table extends LuxComponent
 {
+    use LuxTable;
     use Searchable;
 }
 ```
 
+Este trait añade una propiedad `$search` a la tabla que será donde se guarde el texto de búsqueda que escriba el usuario.
+
 Una vez añadido el trait hay que modificar el método `rowsQuery` para realizar la búsqueda.
-La búsqueda en realidad es un filtro, por lo que hay que comprobar que exista algo en `$this->filters['search']`.
 
 ```php
 public function rowsQuery()
 {
     return Post::query()
-        ->when($this->filters['search'], function($query, $search) {
+        ->when($this->search, function($query, $search) {
             //
         });
 }
@@ -127,19 +128,8 @@ public function rowsQuery()
 ## Ordenación
 
 Es posible ordenar las filas de la tabla en función del valor de una columna.
-Para ello hay que añadir el trait `Pieldefoca\Lux\Livewire\Table\Traits\WithSorting` a la tabla.
 
-```php
-use Pieldefoca\Lux\Livewire\Table\Traits\WithSorting;
-use Pieldefoca\Lux\Livewire\LuxTable;
-
-class Table extends LuxTable
-{
-    use WithSorting;
-}
-```
-
-Una vez añadido el trait hay que especificar qué columnas son las que tienen opción para ordenar añadiendo el atributo `sort` al th de la columna.
+Hay que especificar qué columnas son las que tienen opción para ordenar añadiendo el atributo `sort` al th de la columna.
 
 ```html
 <x-lux::table.table>
@@ -159,11 +149,13 @@ Una vez añadido el trait hay que especificar qué columnas son las que tienen o
 Para poder realizar acciones en masa hay que añadir el trait `Pieldefoca\Lux\Livewire\Table\Traits\WithBulkActions`.
 
 ```php
+use Pieldefoca\Lux\Livewire\LuxComponent;
 use Pieldefoca\Lux\Livewire\Table\Traits\WithBulkActions;
-use Pieldefoca\Lux\Livewire\LuxTable;
+use Pieldefoca\Lux\Livewire\Table\Traits\LuxTable;
 
-class Table extends LuxTable
+class Table extends LuxComponent
 {
+    use LuxTable;
     use WithBulkActions;
 }
 ```
@@ -174,12 +166,12 @@ Esto añadirá un checkbox a cada fila de la tabla y un checkbox en la cabecera 
 
 El componente `table` tiene un slot llamado `bulkActions` en el que se pueden añadir acciones para ejecutar en masa.
 
-Ese slot es un dropdown al que hay que añadir items de esta forma:
+Ese slot es un menú al que hay que añadir items de esta forma:
 
 ```html
-<x-slot name="bulkActions">
-    <x-lux::dropdown.item wire:click="activateSelected">Activar seleccionadas</x-lux::dropdown.item>
-    <x-lux::dropdown.item wire:click="deactivateSelected">Desactivar seleccionadas</x-lux::dropdown.item>
+<x-slot:bulkActions>
+    <x-lux::menu.item wire:click="activateSelected">Activar seleccionadas</x-lux::menu.item>
+    <x-lux::menu.item wire:click="deactivateSelected">Desactivar seleccionadas</x-lux::menu.item>
 </x-slot>
 ```
 
@@ -198,7 +190,59 @@ public function mount()
 
 ## Filtros
 
+Para poder filtrar las filas de la tabla hay que añadir una propiedad `$filters`.
 
+```php
+use Pieldefoca\Lux\Livewire\LuxComponent;
+use Pieldefoca\Lux\Livewire\Table\Traits\WithBulkActions;
+use Pieldefoca\Lux\Livewire\Table\Traits\LuxTable;
+
+class Table extends LuxComponent
+{
+    use LuxTable;
+
+    public $filters = [
+        'status' => null,
+    ];
+}
+```
+
+En el método rowsQuery de la tabla habrá que añadir un when para realizar el filtro;
+
+```php
+public function rowsQuery()
+{
+    return Post::query()
+        ->when($this->filters['status'], function($query, $status) {
+            //
+        });
+}
+```
+
+Para añadir los filtros a la vista de la tabla existe el slot `filters`, un popover al que habrá que añadir los inputs que sean necesarios:
+
+```html
+<x-slot:filters>
+    <div>
+        <x-lux::input.group label="Estado">
+            <x-lux::input.select native wire:model.live="filters.status">
+                <option value="">Cualquiera</option>
+                <option value="published">Publicado</option>
+                <option value="draft">Borrador</option>
+            </x-lux::input.select>
+        </x-lux::input.group>
+    </div>
+
+    <div>
+        <x-lux::input.group label="Creado por">
+            <x-lux::input.select native wire:model.live="filters.author">
+                <option value="">Cualquiera</option>
+                <!-- -->
+            </x-lux::input.select>
+        </x-lux::input.group>
+    </div>
+</x-slot:filters>
+```
 
 # Instalación
 

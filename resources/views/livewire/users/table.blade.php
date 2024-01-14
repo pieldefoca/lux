@@ -8,7 +8,8 @@
 
     <x-slot name="body">
         @foreach($this->rows as $user)
-            <x-lux::table.tr :model="$user">
+            <livewire:users.row :$user :$hasBulkActions :$reorderable />
+            {{-- <x-lux::table.tr :model="$user">
                 <x-lux::table.td>{{ $user->username }}</x-lux::table.td>
                 <x-lux::table.td>{{ $user->name }}</x-lux::table.td>
                 <x-lux::table.td>{{ $user->email }}</x-lux::table.td>
@@ -20,7 +21,7 @@
                         <x-lux::table.delete-button />
                     </div>
                 </x-lux::table.td>
-            </x-lux::table.tr>
+            </x-lux::table.tr> --}}
         @endforeach
     </x-slot>
 </x-lux::table.table>
