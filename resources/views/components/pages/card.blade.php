@@ -2,10 +2,13 @@
     'page',
 ])
 
-<div class="relative flex items-center justify-between p-3 border-2 border-black rounded-md shadow">
+<a 
+    href="{{ route('lux.pages.edit', $page) }}" 
+    class="group relative flex items-center justify-between p-3 border border-stone-300 rounded-md transition-all duration-300 hover:scale-[1.02] hover:bg-stone-50 hover:border-stone-600"
+>
     <div>
         <div class="flex items-center space-x-4">
-            <p>{{ $page->name }}</p>
+            <p class="relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-stone-800 after:transition-all after:duration-300 group-hover:after:w-4/5">{{ $page->name }}</p>
 
             @if($page->is_home_page)
                 <span class="border border-sky-200 bg-sky-100 rounded text-[8px] text-sky-500 px-2 mt-1">{{ trans('lux::lux.home-page') }}</span>
@@ -28,7 +31,7 @@
                     x-data="{
                         visible: @js($page->visible),
                     }"
-                    @click="
+                    @click.stop.prevent="
                         if(visible) {
                             Swal.fire({
                                 title: 'Ocultar página',
@@ -54,31 +57,31 @@
                     "
                     type="button"
                     @class([
-                        'group px-1 border rounded text-[9px] transition-all duration-300',
+                        'group/visibility px-1 border rounded text-[9px] transition-all duration-300',
                         'border-green-500 bg-green-100 text-green-500 hover:border-stone-500 hover:bg-stone-100 hover:text-stone-500' => $page->visible,
                         'border-stone-500 bg-stone-100 hover:border-green-500 hover:bg-green-100 hover:text-green-500' => !$page->visible,
                     ])
                 >
                     @if($page->visible)
-                        <div class="flex items-center space-x-1 group-hover:hidden">
+                        <div class="flex items-center space-x-1 group-hover/visibility:hidden">
                             <span class="relative flex h-1.5 w-1.5">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
                             </span>
                             <span>Visible</span>
                         </div>
-                        <div class="hidden group-hover:flex items-center space-x-1">
+                        <div class="hidden group-hover/visibility:flex items-center space-x-1">
                             <x-lux::tabler-icons.eye-off class="w-3 h-3" />
                             <span>Ocultar</span>
                         </div>
                     @else
-                        <div class="flex items-center space-x-1 group-hover:hidden">
+                        <div class="flex items-center space-x-1 group-hover/visibility:hidden">
                             <span class="relative flex h-2 w-2">
                                 <span class="relative inline-flex rounded-full h-2 w-2 bg-stone-500"></span>
                             </span>
                             <span>Oculta</span>
                         </div>
-                        <div class="hidden group-hover:flex items-center space-x-1">
+                        <div class="hidden group-hover/visibility:flex items-center space-x-1">
                             <x-lux::tabler-icons.eye class="w-3 h-3 text-green-400" />
                             <span>Mostrar</span>
                         </div>
@@ -86,13 +89,8 @@
                 </button>
 
                 @if(!$page->isDynamic())
-                    <a href="{{ page($page->key) }}" target="_blank">
-                        <x-lux::button.icon action="view"/>
-                    </a>
+                    <x-lux::button.icon @click.stop.prevent="location.href = '{{ page($page->key) }}'" action="view"/>
                 @endif
-                <a href="{{ route('lux.pages.edit', $page) }}">
-                    <x-lux::button.icon action="edit"/>
-                </a>
             </div>
         @else
             <p class="flex items-center space-x-1 px-2 py-px bg-red-50 border border-red-200 rounded text-red-400 text-xs">
@@ -101,4 +99,4 @@
             </p>
         @endif
     </div>
-</div>
+</a>

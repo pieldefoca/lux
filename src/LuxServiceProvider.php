@@ -9,6 +9,7 @@ use Pieldefoca\Lux\Support\Lux;
 use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Support\Pages;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Pieldefoca\Lux\Support\Translator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
@@ -80,21 +81,19 @@ class LuxServiceProvider extends ServiceProvider
 
 	protected function configureLivewire()
 	{
-		$exitingAdmin = request()->has('exit-admin');
-
-		if($exitingAdmin) {
-			return redirect(request()->fullUrlWithQuery(['exit-admin' => null]), 302, ['Referer' => '/']);
-		}
-
 		$path = request()->path();
-        $referer = request()->headers->get('referer');
+		if(str($path)->startsWith('admin')) {
+			Livewire::setUpdateRoute(function ($handle) {
+				return Route::post('/admin/livewire/update', $handle)->middleware(['web']);
+			});
 
-        if(str($path)->startsWith('admin') || str($referer)->contains('/admin/')) {
-            config([
-                'livewire.layout' => 'lux::components.layouts.app',
-                'livewire.class_namespace' => 'Pieldefoca\\Lux\\Livewire',
-            ]);
-        }
+			if(str($path)->startsWith('admin')) {
+				config([
+					'livewire.layout' => 'lux::components.layouts.app',
+					'livewire.class_namespace' => 'Pieldefoca\\Lux\\Livewire',
+				]);
+			}
+		}
 	}
 
 	protected function registerComponents()

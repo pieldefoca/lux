@@ -36,10 +36,10 @@
 			}"
 		>
 			<div class="flex items-center justify-between p-3 border-b border-stone-200">
-				<a href="/" target="_blank">
+				<a href="/" target="_blank" class="flex items-center justify-between w-full">
 					<h1>{{ config('app.name') }}</h1>
+					<x-lux::logo class="h-9" />
 				</a>
-				<x-lux::logo class="h-9" />
 			</div>
 
 			<div class="flex-grow px-3 py-3 overflow-y-auto">

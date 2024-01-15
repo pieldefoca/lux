@@ -13,7 +13,7 @@ class Index extends LuxComponent
     #[Computed]
     public function pages()
     {
-        return Page::all();
+        return Page::orderBy('name')->get();
     }
 
     public function toggleVisibility(Page $page)
