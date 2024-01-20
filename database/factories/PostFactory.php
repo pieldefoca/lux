@@ -23,6 +23,7 @@ class PostFactory extends Factory
             'author_id' => 1,
             'title' => $title,
             'slug' => str($title)->slug(),
+            'excerpt' => fake()->text(),
             'body' => fake()->realText(),
         ];
     }

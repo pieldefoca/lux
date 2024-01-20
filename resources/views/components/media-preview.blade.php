@@ -9,6 +9,7 @@
     'removable' => false,
     'swappable' => false,
     'clearable' => false,
+    'withoutTypeIcon' => false,
 ])
 
 @aware(['translatable'])
@@ -17,7 +18,7 @@
 if(is_int($media)) {
     $media = Pieldefoca\Lux\Models\Media::find($media);
 }
-$url = $media?->getUrl();
+$url = $media?->getThumbUrl();
 $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 $videoExtensions = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mkv'];
 $fileExtension = pathinfo($url, PATHINFO_EXTENSION);
@@ -30,7 +31,8 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
     <div
         {{
             $attributes->class([
-                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden shadow hover:contrast-50'
+                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden transition-all duration-300 shadow',
+                'hover:contrast-50' => $selectable,
             ])
         }}
         @if($selectable)
@@ -47,17 +49,17 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
             @endif
         @else
             @if($media->isImage())
-                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
+                <div @class(['absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white', 'hidden' => $withoutTypeIcon])>
                     <x-lux::tabler-icons.photo class="w-3 h-3" />
                 </div>
-                <img src="{{ $media->getUrl() }}" class="w-full aspect-square object-cover" />
+                <img src="{{ $media->getThumbUrl() }}" class="w-full aspect-square object-cover" />
             @elseif($media->isVideo())
-                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
+                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white">
                     <x-lux::tabler-icons.movie class="w-3 h-3" />
                 </div>
                 <video src="{{ $media->getUrl() }}" muted autoplay loop class="w-full aspect-square object-cover" />
             @elseif($media->isPdf())
-                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
+                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white">
                     <x-lux::tabler-icons.file-type-pdf class="w-3 h-3" />
                 </div>
                 <div class="flex flex-col items-center justify-center space-y-2 w-full bg-stone-100 aspect-square rounded">
@@ -65,7 +67,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                     <p class="text-[9px]">{{ $media->filename }}</p>
                 </div>
             @else
-                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white backdrop-blur-[1px]">
+                <div class="absolute top-0.5 left-0.5 p-0.5 rounded bg-black/60 text-white">
                     <x-lux::tabler-icons.file-invoice class="w-3 h-3" />
                 </div>
                 <div class="flex flex-col items-center justify-center space-y-2 w-full bg-stone-100 aspect-square rounded">
@@ -76,6 +78,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
         @endif
     </div>
 
+    @if($hasActions)
     <div class="flex flex-col space-y-3 mt-1">
         <div
             x-data="{
@@ -84,12 +87,10 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
             @click.outside="open = false"
             class="relative"
         >
-            @if($hasActions)
-                <button @click="open = !open" type="button">
-                    <x-lux::tabler-icons.dots-circle-horizontal class="w-5 h-5 transition-all duration-300 hover:text-sky-500 hover:scale-125" />
-                </button>
-            @endif
-
+            <button @click="open = !open" type="button">
+                <x-lux::tabler-icons.dots-circle-horizontal class="w-5 h-5 transition-all duration-300 hover:text-sky-500 hover:scale-125" />
+            </button>
+            
             <ul x-show="open" x-transition class="absolute top-full right-0 w-48 border border-stone-300 bg-white rounded shadow overflow-hidden">
                 @if($selectable)
                     <li>
@@ -182,4 +183,5 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
             </ul>
         </div>
     </div>
+    @endif
 </div>

@@ -1,5 +1,5 @@
 @props([
-    'action', // add, edit, view, delete
+    'action' => null, // add, edit, view, delete
     'small' => false,
 ])
 
@@ -21,5 +21,7 @@
         <x-lux::tabler-icons.eye @class(['w-5 h-5' => $small]) />
     @elseif($action === 'add')
         <x-lux::tabler-icons.square-rounded-plus @class(['w-5 h-5' => $small]) />
+    @else
+        {{ $slot }}
     @endif
 </button>

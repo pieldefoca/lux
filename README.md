@@ -8,6 +8,7 @@
     - [Ordenación](#ordenación)
     - [Acciones en masa](#acciones-en-masa)
 - [Modales](#modales)
+- [Media Manager](#media-manager)
 - [Traducciones](#traducciones)
 
 # Páginas
@@ -316,7 +317,13 @@ Para añadir los filtros a la vista de la tabla existe el slot `filters`, un pop
 
 # Modales
 
+# Media Manager
 
+Todos los archivos que suba el usuario se guardan en `public/uploads`.
+
+Al subir una imagen se guarda la original en `public/uploads/._ogs` y se crean varias versiones:
+1. 1920px de ancho. El nombre no lleva ningún sufijo y es la imagen que se usa por defecto.
+2. 250px de ancho. Lleva el sufijo `-thumb`.
 
 # Instalación
 

@@ -16,8 +16,11 @@ use Pieldefoca\Lux\Livewire\Attributes\Translatable;
 class Selector extends LuxModal
 {
     use WithFileUploads;
+    use WithPagination;
 
     public Media $media;
+
+    public $view = 'grid';
 
     public $field;
 
@@ -34,7 +37,13 @@ class Selector extends LuxModal
 
     public $search = '';
 
+    public $perPage = 100;
     public $page = 1;
+
+    public function mount()
+    {
+        $this->view = session()->get('lux-media-manager-view', 'list');
+    }
 
     public function updatedUploads($value)
     {
@@ -98,19 +107,30 @@ class Selector extends LuxModal
                         ->orWhere('filename', 'like', "%{$search}%");
                 });
             })
-            ->take(20 * $this->page)
+            ->take($this->perPage * $this->page)
             ->get();
     }
 
     #[Computed]
     public function canLoadMore()
     {
-        return $this->mediaItems->count() < Media::count() - 1;
+        return $this->mediaItems->count() > 0 && ($this->mediaItems->count() < Media::count() - 1);
     }
 
     public function loadMore()
     {
         $this->page++;
+    }
+
+    public function setView($view)
+    {
+        $validViews = ['list', 'grid'];
+
+        if(! in_array($view, $validViews)) $view = 'list';
+
+        $this->view = $view;
+
+        session(['lux-media-manager-view' => $view]);
     }
 
     public function select(Media $media)

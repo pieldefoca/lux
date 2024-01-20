@@ -20,6 +20,8 @@ use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
 use Pieldefoca\Lux\Console\Commands\LuxInstall;
 use Pieldefoca\Lux\Console\Commands\LuxUploads;
+use Pieldefoca\Lux\Console\Commands\LuxProcessMedia;
+use Pieldefoca\Lux\Support\MediaManager\MediaManager;
 
 class LuxServiceProvider extends ServiceProvider
 {
@@ -62,6 +64,7 @@ class LuxServiceProvider extends ServiceProvider
 				LuxUser::class,
 				LuxPages::class,
 				LuxUploads::class,
+				LuxProcessMedia::class,
 			]);
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');
@@ -129,6 +132,8 @@ class LuxServiceProvider extends ServiceProvider
 		$this->app->bind('lux-translator', fn($app) => new Translator());
 
 		$this->app->bind('lux-pages', fn($app) => new Pages());
+
+		$this->app->bind('lux-media-manager', fn($app) => new MediaManager());
 	}
 
 	protected function registerDisks()

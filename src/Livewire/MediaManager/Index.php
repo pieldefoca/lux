@@ -2,16 +2,25 @@
 
 namespace Pieldefoca\Lux\Livewire\MediaManager;
 
+use Spatie\Image\Image;
 use Illuminate\Support\Str;
+use Spatie\Image\Enums\Fit;
+use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Pieldefoca\Lux\Models\Media;
 use Livewire\Attributes\Computed;
 use Pieldefoca\Lux\Enum\MediaType;
+use Pieldefoca\Lux\Facades\MediaManager;
 use Pieldefoca\Lux\Livewire\LuxComponent;
 
 class Index extends LuxComponent
 {
     use WithFileUploads;
+    use WithPagination;
+
+    public $view;
+
+    public $perPage = 10;
 
     public $uploads;
 
@@ -21,18 +30,14 @@ class Index extends LuxComponent
 
     public $search = '';
 
-    public function updatedUploads($value)
+    public function mount()
     {
-        foreach($value as $file) {
-            $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $filename = Str::slug($name) . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('/', $filename, 'uploads');
-            Media::create([
-                'name' => $name,
-                'filename' => $filename,
-                'mime_type' => $file->getMimeType(),
-            ]);
-        }
+        $this->view = session()->get('lux-media-manager-view', 'list');
+    }
+
+    public function updatedUploads($files)
+    {
+        MediaManager::save($files);
     }
 
     #[Computed]
@@ -56,13 +61,24 @@ class Index extends LuxComponent
                         ->orWhere('filename', 'like', "%{$search}%");
                 });
             })
-            ->get();
+            ->paginate($this->perPage);
     }
 
     #[Computed]
     public function onlyOneSelected()
     {
         return count($this->selected) === 1;
+    }
+
+    public function setView($view)
+    {
+        $validViews = ['list', 'grid'];
+
+        if(! in_array($view, $validViews)) $view = 'list';
+
+        $this->view = $view;
+
+        session(['lux-media-manager-view' => $view]);
     }
 
     public function deleteMedia(Media $media)

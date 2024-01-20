@@ -19,7 +19,9 @@ return new class extends Migration
             $table->json('alt')->nullable();
             $table->json('title')->nullable();
             $table->string('mime_type');
+            $table->string('extension');
             $table->string('media_type');
+            $table->string('original_image');
             $table->timestamps();
         });
     }
