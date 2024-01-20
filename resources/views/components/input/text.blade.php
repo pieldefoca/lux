@@ -1,72 +1,59 @@
 @props([
     'compact' => false, 
-    'leadingAddon' => null,
-    'trailingAddon' => null,
-    'inlineLeadingAddon' => null,
-    'inlineTrailingAddon' => null,
+    'translatable' => false,
 ])
-@aware(['translatable' => false])
 
-@php
-$locales = $translatable
-    ? Pieldefoca\Lux\Models\Locale::all()
-    : [Pieldefoca\Lux\Models\Locale::default()];
-@endphp
 
-@foreach($locales as $locale)
-    <div
-        x-data="{ focused: false }"
-        @class([
-            'group relative flex w-full rounded-md overflow-hidden transition-all duration-300 ',
-            'hidden' => $translatable && $this->currentLocaleCode !== $locale->code,
-        ])
-        :class="{
-            'ring-1 ring-stone-300 hover:ring-black': !focused,
-            'ring-1 ring-black': focused,
-        }"
-    >
-        @if($leadingAddon)
-            <div class="grid place-items-center px-2 bg-stone-200 border-r border-stone-300 text-xs">
-                {{ $leadingAddon }}
-            </div>
-        @endif
-
-        @if($inlineLeadingAddon)
-            <div x-ref="inlineLeadingAddon" class="grow-0 shrink-0 basis-auto grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300">
-                {{ $inlineLeadingAddon }}
-            </div>
-        @endif
-
-        <input
-            x-ref="input"
-            type="text"
-            @focus="focused = true"
-            @blur="focused = false"
-            @if($translatable)
-                {{ $attributes->localizedWireModel($locale->code) }}
-            @else
-                {{ $attributes->whereStartsWith('wire:model') }}
-            @endif
-            {{
-                $attributes->whereDoesntStartWith('wire:model')->class([
-                    'flex-auto w-full px-2 py-2 border-none rounded-md text-sm transition-colors duration-300 outline-none',
-                ])
-            }}
-        />
-
-        @if($trailingAddon)
-            <div 
-                x-ref="trailingAddon" 
-                class="grid place-items-center px-2 border-l border-stone-300 bg-stone-200 text-xs transition-colors duration-300"
-            >
-                {{ $trailingAddon }}
-            </div>
-        @endif
-
-        @if($inlineTrailingAddon)
-            <div x-ref="inlineTrailingAddon" class="grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300 group-hover:bg-white">
-                {{ $inlineTrailingAddon }}
-            </div>
-        @endif
+<div class="group relative flex w-full rounded-md border border-stone-300 overflow-hidden transition-all duration-200 hover:border-stone-400 has-[:focus]:ring-2 has-[:focus]:ring-stone-600 has-[:focus]:border-transparent">
+    <div @class([
+        'grid place-items-center px-2 bg-stone-200 border-r border-stone-300 text-xs', 
+        'hidden' => !isset($leadingAddon)
+    ])>
+        {{ $leadingAddon ?? '' }}
     </div>
-@endforeach
+
+    <div @class([
+        'grow-0 shrink-0 basis-auto grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300', 
+        'hidden' => !isset($inlineLeadingAddon)
+    ])>
+        {{ $inlineLeadingAddon ?? '' }}
+    </div>
+
+    @if($translatable)
+        @php
+            $wireModelData = $attributes->whereStartsWith('wire:model')->getAttributes();
+            $wireModelValue = reset($wireModelData);
+            $wireModelName = key($wireModelData);
+        @endphp
+        @foreach(Pieldefoca\Lux\Models\Locale::all() as $locale)
+            <input
+                type="text"
+                {{ $wireModelName }}="{{ $wireModelValue }}.{{ $locale->code }}"
+                @class([
+                    'flex-auto w-full px-2 py-1.5 border-none rounded-md text-sm transition-colors duration-300 outline-none focus:ring-transparent',
+                    'hidden' => $this->locale !== $locale->code,
+                ])
+            />
+        @endforeach
+    @else
+        <input
+            type="text"
+            {{ $attributes }}
+            class="flex-auto w-full px-2 py-1.5 border-none rounded-md text-sm transition-colors duration-300 outline-none focus:ring-transparent"
+        />
+    @endif
+
+    <div @class([
+        'grid place-items-center px-2 border-l border-stone-300 bg-stone-200 text-xs transition-colors duration-300', 
+        'hidden' => !isset($trailingAddon)
+    ])>
+        {{ $trailingAddon ?? '' }}
+    </div>
+
+    <div @class([
+        'grid place-items-center px-2 bg-stone-100 text-sm transition-colors duration-300 group-hover:bg-white', 
+        'hidden' => !isset($inlineTrailingAddon)
+    ])>
+        {{ $inlineTrailingAddon ?? '' }}
+    </div>
+</div>

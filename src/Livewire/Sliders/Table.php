@@ -3,11 +3,16 @@
 namespace Pieldefoca\Lux\Livewire\Sliders;
 
 use Livewire\Attributes\Computed;
-use Pieldefoca\Lux\Livewire\LuxTable;
 use Pieldefoca\Lux\Models\Slider;
+use Pieldefoca\Lux\Livewire\LuxComponent;
+use Pieldefoca\Lux\Livewire\Table\Traits\LuxTable;
 
-class Table extends LuxTable
+class Table extends LuxComponent
 {
+    use LuxTable;
+
+    public $model = Slider::class;
+
     protected $listeners = [
         'sliders-updated' => '$refresh',
     ];

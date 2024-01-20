@@ -10,8 +10,6 @@ use Livewire\Attribute as LivewireAttribute;
 #[\Attribute]
 class Translatable extends LivewireAttribute
 {
-    public function __construct(public $required = false) {}
-
     public function update($field, $newValue)
     {
         $splits = explode('.', $field);
@@ -40,17 +38,25 @@ class Translatable extends LivewireAttribute
         $currentValue = $this->getValue() ?? [];
 
         foreach(Locale::all() as $locale) {
-            if(!array_key_exists($locale->code, $currentValue) || empty($currentValue[$locale->code])) {
-                $value = array_key_exists($defaultLocale->code, $currentValue)
-                    ? $currentValue[$defaultLocale->code]
-                    : '';
+            if(!$this->currentValueHasLocale($locale->code) || $this->localeValueIsEmpty($locale->code)) {
+                $value = $this->currentValueHasLocale($locale->code) ? $currentValue[$defaultLocale->code] : '';
 
-                $currentValue = array_merge($currentValue, [
-                    $locale->code => $value,
-                ]);
+                $currentValue = array_merge($currentValue, [$locale->code => $value]);
             }
         }
 
         $this->setValue($currentValue);
+    }
+
+    protected function currentValueHasLocale($locale)
+    {
+        return array_key_exists($locale, $this->getValue() ?? []);
+    }
+
+    protected function localeValueIsEmpty($locale)
+    {
+        $currentValue = $this->getValue() ?? [];
+
+        return empty($currentValue[$locale]);
     }
 }

@@ -11,7 +11,9 @@ use Pieldefoca\Lux\Models\Slider;
 class FormModal extends LuxModal
 {
     public Slider $slider;
+
     public $name;
+    
     public $position;
 
     #[On('new-slider')]

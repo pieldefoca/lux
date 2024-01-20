@@ -7,6 +7,7 @@
     - [Búsqueda](#búsqueda)
     - [Ordenación](#ordenación)
     - [Acciones en masa](#acciones-en-masa)
+- [Modales](#modales)
 - [Traducciones](#traducciones)
 
 # Páginas
@@ -46,6 +47,29 @@ Además de eso genera el fichero `routes/pages.php` con todas las rutas necesari
 ## Campos
 
 ### Texto
+
+Traducible
+
+```html
+<x-input.text wire:model="name" translatable />
+```
+
+```php
+use Pieldefoca\Lux\Livewire\Attributes\Translatable;
+
+class Form
+{
+    #[Translatable]
+    public $name;
+
+    public function rules()
+    {
+        return [
+            'name.*' => ['required'],
+        ];
+    }
+}
+```
 
 # Tablas
 
@@ -89,10 +113,56 @@ class Table extends LuxComponent
 
     <x-slot name="body">
         @foreach($this->rows as $post)
-            <livewire:posts.row :$post :$hasBulkActions :$reorderable :key="uniqid()" />
+            <livewire:posts.row :$post :$hasBulkActions :$reorderable :$locale :key="uniqid()" />
         @endforeach
     </x-slot>
 </x-lux::table.table>
+```
+
+Cada fila de una tabla es un componente de livewire. Esto complica un poco la estructura pero permite poder realizar acciones en cada fila más fácilmente. Por ejemplo, se puede poner un select en una celda para cambiar el estado de una fila muy fácilmente.
+
+A cada fila hay que pasarle 5 atributos: 1 es el modelo, 3 son heredados de la tabla y 1 es la clave que necesita livewire para identificar el componente.
+
+```html
+<livewire:posts.row :$post :$hasBulkActions :$reorderable :$locale :key="uniqid()" />
+```
+
+```html
+<x-lux::table.tr :model="$tag">
+    <x-lux::table.td>{{ $tag->translate('name', $locale) }}</x-lux::table.td>
+    <x-lux::table.td>{{ $tag->translate('slug', $locale) }}</x-lux::table.td>
+    <x-lux::table.td>
+        <x-lux::input.toggle wire:model.live="active" />
+    </x-lux::table.td>
+    <x-lux::table.td>
+        <x-lux::table.row-actions>
+            <x-lux::menu.item @click="$dispatch('edit-blog-tag', { tag: {{ $tag->id }} })">
+                <div class="flex items-center space-x-2">
+                    <x-lux::tabler-icons.edit class="w-5 h-5" />
+                    <span>Editar</span>
+                </div>
+            </x-lux::menu.item>
+        </x-lux::table.row-actions>
+    </x-lux::table.td>
+</x-lux::table.tr>
+```
+
+```php
+use Livewire\Component;
+use Pieldefoca\Lux\Livewire\Table\Traits\LuxTableRow;
+use Pieldefoca\Lux\Blog\Models\BlogTag;
+
+class Row extends Component
+{
+    use LuxTableRow;
+
+    public BlogTag $tag;
+
+    public function render()
+    {
+        return view('lux-blog::livewire.tags.row');
+    }
+}
 ```
 
 ## Búsqueda
@@ -243,6 +313,10 @@ Para añadir los filtros a la vista de la tabla existe el slot `filters`, un pop
     </div>
 </x-slot:filters>
 ```
+
+# Modales
+
+
 
 # Instalación
 

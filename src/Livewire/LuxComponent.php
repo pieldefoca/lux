@@ -3,19 +3,11 @@
 namespace Pieldefoca\Lux\Livewire;
 
 use Livewire\Component;
+use Pieldefoca\Lux\Traits\Notifies;
 use Pieldefoca\Lux\Traits\UsesLocale;
 
 class LuxComponent extends Component
 {
     use UsesLocale;
-
-    public function notifySuccess(string $message, ?string $redirectUrl = null)
-    {
-        $this->dispatch('notify-success', message: $message, redirectUrl: $redirectUrl);
-    }
-
-    public function notifyError(string $message)
-    {
-        $this->dispatch('notify-error', message: $message);
-    }
+    use Notifies;
 }

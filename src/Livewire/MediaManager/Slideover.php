@@ -15,13 +15,13 @@ class Slideover extends LuxComponent
 
     public $visible = false;
 
-    #[Translatable(required: true)]
+    #[Translatable]
     public $name;
 
-    #[Translatable(required: false)]
+    #[Translatable]
     public $alt;
 
-    #[Translatable(required: false)]
+    #[Translatable]
     public $title;
 
     #[On('edit-media')]

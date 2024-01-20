@@ -1,8 +1,6 @@
 <form wire:submit.prevent="save" class="max-w-3xl mx-auto space-y-6">
     <x-lux::locale-selector />
 
-    <button type="button" wire:click="updateSelect">Actualizar</button>
-
     <x-lux::input.inline-group
         required
         label="Nombre"

@@ -7,6 +7,7 @@ use Pieldefoca\Lux\Models\Locale;
 
 trait UsesLocale
 {
+    public $locale;
     public $currentLocale;
     public $currentLocaleCode;
     public $defaultLocale;
@@ -18,6 +19,7 @@ trait UsesLocale
     {
         $this->defaultLocale = Locale::default();
         $this->defaultLocaleCode = $this->defaultLocale->code;
+        $this->locale = $this->defaultLocaleCode;
 
         $this->currentLocale = $this->defaultLocale;
         $this->currentLocaleCode = $this->currentLocale->code;
@@ -35,6 +37,7 @@ trait UsesLocale
     {
         $this->currentLocale = Locale::where('code', $locale)->first();
         $this->currentLocaleCode = $locale;
+        $this->locale = $locale;
 
         $this->dispatch('locale-changed', locale: $locale);
     }

@@ -3,7 +3,7 @@
     <x-slot name="subtitle">{{ trans('lux::lux.sliders-subtitulo') }}</x-slot>
 
     <x-slot name="actions">
-        <x-lux::button x-on:click="$dispatch('new-slider')" icon="square-rounded-plus">{{ trans('lux::lux.nuevo-slider') }}</x-lux::button>
+        <x-lux::button x-on:click="$dispatch('new-slider')" icon="square-rounded-plus">{{ trans('lux::lux.new-slider') }}</x-lux::button>
     </x-slot>
 
     <div>

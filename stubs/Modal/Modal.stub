@@ -1,0 +1,20 @@
+<?php
+
+namespace [namespace];
+
+use Livewire\Attributes\On;
+use Pieldefoca\Lux\Livewire\LuxModal;
+
+class Modal extends LuxModal
+{
+    #[On('show-modal')]
+    public function showModal()
+    {
+        $this->show();
+    }
+
+    public function render()
+    {
+        return view('[view]');
+    }
+}
