@@ -29,7 +29,8 @@ class Slide extends Model
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('background');
+        $this->addMediaCollection('background')
+            ->singleFile();
     }
 
     public function getBackground($locale = null)

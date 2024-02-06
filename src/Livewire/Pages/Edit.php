@@ -211,7 +211,7 @@ class Edit extends LuxComponent
     #[On('media-swapped')]
     public function mediaSwapped(int $mediaId)
     {
-        $query =DB::table('lux_mediables')
+        $query = DB::table('lux_mediables')
             ->where('lux_media_id', $this->swappingMediaId)
             ->where(function($query) {
                 $query->where('locale', $this->currentLocaleCode)

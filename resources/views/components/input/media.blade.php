@@ -2,9 +2,9 @@
     'type' => 'any', // any, image, video, file
     'ignoreTranslations' => false,
     'multiple' => false,
+    'required' => false,
+    'translatable' => false,
 ])
-
-@aware(['required', 'translatable'])
 
 @php
     use Pieldefoca\Lux\Models\Locale;
@@ -19,7 +19,8 @@
     } else {
         $selectedIds = $this->$model;
     }
-    $selectedMedia = Media::whereIn('id', $selectedIds)->get();
+    if(!is_array($selectedIds)) $selectedIds = [$selectedIds];
+    $mediaSelected = !empty($selectedIds);
     $locales = $translatable ? Locale::all() : [Locale::default()];
 @endphp
 
@@ -38,27 +39,27 @@
         @class(['hidden' => $translatable && $this->currentLocaleCode !== $locale->code])
     >
         <div class="flex flex-col space-y-3">
-            @if((!$multiple && $selectedMedia->isEmpty()) || $multiple)
+            @if((!$multiple && !$mediaSelected) || $multiple)
                 @php
                     $icon = 'file-invoice';
                     $text = 'Inspeccionar';
                     if($type === 'any') {
                         $icon = 'photo-video';
-                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige los archivos' : 'Añadir archivos') : 'Elige un archivo';
+                        $text = $multiple ? (!$mediaSelected ? 'Elige los archivos' : 'Añadir archivos') : 'Elige un archivo';
                     } elseif($type === 'image') {
                         $icon = 'photo';
-                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige las imágenes' : 'Añadir imágenes') : 'Elige una imagen';
+                        $text = $multiple ? (!$mediaSelected ? 'Elige las imágenes' : 'Añadir imágenes') : 'Elige una imagen';
                     } elseif($type === 'video') {
                         $icon = 'movie';
-                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige los vídeos' : 'Añadir vídeos') : 'Elige un vídeo';
+                        $text = $multiple ? (!$mediaSelected ? 'Elige los vídeos' : 'Añadir vídeos') : 'Elige un vídeo';
                     } elseif($type === 'file') {
                         $icon = 'file-invoice';
-                        $text = $multiple ? ($selectedMedia->isEmpty() ? 'Elige los archivos' : 'Añadir archivos') : 'Elige un archivo';
+                        $text = $multiple ? (!$mediaSelected ? 'Elige los archivos' : 'Añadir archivos') : 'Elige un archivo';
                     }
                 @endphp
                 <div class="flex items-center space-x-4">
                     <x-lux::button x-on:click="select" icon="{{ $icon }}">{{ $text }}</x-lux::button>
-                    @if($multiple && $selectedMedia->isNotEmpty())
+                    @if($multiple && $mediaSelected)
                         <button @click="$wire.clearMedia('{{ $model }}')" type="button" class="flex items-center space-x-1 text-xs transition-colors duration-300 hover:text-red-400">
                             <x-lux::tabler-icons.trash class="w-4 h-4" />
                             <span>Eliminar todo</span>
@@ -66,17 +67,18 @@
                     @endif
                 </div>
             @endif
-            @if($selectedMedia->isNotEmpty())
-                <div class="flex flex-wrap space-x-4">
-                    @foreach($selectedMedia as $media)
+            @if($mediaSelected)
+                <div @if($multiple) drag-root="reorderGallery" drag-params="{{$model}}" @endif class="flex flex-wrap gap-4">
+                    @foreach($selectedIds as $mediaId)
                         <x-lux::media-preview 
                             :model="$model"
-                            :media="$media"
+                            :media="$mediaId"
                             :type="$type"
                             :selectable="! $multiple"
                             editable
                             :unselectable="$multiple"
                             :clearable="! $required"
+                            draggable
                         />
                     @endforeach
                 </div>

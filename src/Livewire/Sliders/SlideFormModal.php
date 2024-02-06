@@ -25,10 +25,24 @@ class SlideFormModal extends LuxModal
     #[Media(collection: 'background', translatable: true)]
     public $background = [];
 
+    public $showTitle;
     public $title = [];
+
+    public $showSubtitle;
     public $subtitle = [];
+
+    public $showAction;
     public $action_text = [];
     public $action_link = [];
+
+    public function mount()
+    {
+        $fieldsConfig = collect(config('lux.sliders.fields'));
+
+        $this->showTitle = $fieldsConfig->contains('title');
+        $this->showSubtitle = $fieldsConfig->contains('subtitle');
+        $this->showAction = $fieldsConfig->contains('action');
+    }
 
     #[On('new-slide')]
     public function newSlide(): void
@@ -67,8 +81,7 @@ class SlideFormModal extends LuxModal
             $this->slide = Slide::create(array_merge($validated, ['slider_id' => $this->slider->id]));
         }
 
-        $this->slide->addMedia($this->background, 'background');
-        // $this->saveMediaFields($this->slide);
+        $this->slide->addMedia($this->background)->saveTranslations()->toCollection('background');
 
         $this->notifySuccess($this->editing ? '🤙🏾 Has actualizado la diapositiva correctamente' : '👍🏽 Has creado la diapositiva correctamente');
 

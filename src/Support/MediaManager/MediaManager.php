@@ -8,22 +8,28 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaManager
 {
-    protected array $collections;
+    protected array $collections = [];
 
     public function addCollection(string $name, string $model)
     {
         $collection = new MediaCollection($name);
 
-        $this->collections[$model] = $collection;
+        if(array_key_exists($model, $this->collections)) {
+            $this->collections[$model][] = $collection;
+        } else {
+            $this->collections[$model] = [$collection];
+        }
 
         return $collection;
     }
 
     public function getCollection(string $name, string $model)
     {
-        foreach($this->collections as $class => $collection) {
-            if($model === $class && $collection->name === $name) {
-                return $collection;
+        foreach($this->collections as $class => $collections) {
+            foreach($collections as $collection) {
+                if($model === $class && $collection->name === $name) {
+                    return $collection;
+                }
             }
         }
         

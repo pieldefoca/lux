@@ -4,21 +4,27 @@ namespace Pieldefoca\Lux\Traits;
 
 use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Models\Locale;
-use Pieldefoca\Lux\Support\MediaManager\MediaCollection;
+use Pieldefoca\Lux\Support\MediaManager\MediaAdder;
 use Pieldefoca\Lux\Support\MediaManager\MediaManager;
+use Pieldefoca\Lux\Support\MediaManager\MediaCollection;
 
 trait HasMedia
 {
     public function media()
     {
         return $this->morphToMany(Media::class, 'lux_mediable', 'lux_mediables', 'lux_mediable_id', 'lux_media_id')
-            ->withPivot(['locale', 'key'])
+            ->withPivot(['id', 'collection', 'locale', 'key'])
             ->withTimestamps();
     }
 
     protected function mediaManager()
     {
         return app()->make(MediaManager::class);
+    }
+
+    protected function mediaAdder()
+    {
+        return new MediaAdder($this);
     }
 
     public function addMediaCollection(string $name)
@@ -30,40 +36,11 @@ trait HasMedia
         return $collection;
     }
 
-    public function addMedia(array $mediaIds, string $collection, bool $translatable = false, ?string $key = null)
+    public function addMedia(array $mediaIds)
     {
         $this->registerMediaCollections();
 
-        if(count($mediaIds) === 0) return;
-
-        if($this->isSingleFileCollection($collection)) {
-            $this->clearMedia($collection);
-        }
-        
-        if($translatable) {
-            foreach($mediaIds as $locale => $ids) {
-                foreach($ids as $id) {
-                    $data = [];
-                    $data[$id] = ['locale' => $locale, 'collection' => $collection, 'key' => $key];
-                    $this->media()->attach($data);
-                }
-            }
-        } else {
-            if(!array_is_list($mediaIds)) {
-                $mediaIds = $mediaIds[Locale::default()->code];
-            }
-
-            if(empty($mediaIds)) {
-                $this->clearMedia($collection);
-            } else {
-                foreach($mediaIds as $id) {
-                    $data[$id] = ['collection' => $collection, 'key' => $key];
-                }
-                
-                $this->media()->attach($data);
-            }
-
-        }
+        return $this->mediaAdder()->addMedia($mediaIds);
     }
 
     public function getFirstMedia(string $collection, ?string $locale = null, ?string $key = null): ?Media
@@ -87,7 +64,7 @@ trait HasMedia
 
     public function getMedia(string $collection, $locale = null, $mediaType = null, ?string $key = null)
     {
-        $query = $this->media()->wherePivot('collection', $collection);
+        $query = $this->media()->wherePivot('collection', $collection)->orderBy('lux_mediables.order');
 
         if($mediaType) {
             $query->where('media_type', $mediaType);
@@ -140,16 +117,7 @@ trait HasMedia
         return $translations;
     }
 
-    protected function isSingleFileCollection(string $collection)
-    {
-        $collection = $this->getCollection($collection);
-
-        if(is_null($collection)) return false;
-
-        return $collection->hasSingleFile();
-    }
-
-    protected function getCollection(string $name): ?MediaCollection
+    public function getCollection(string $name): ?MediaCollection
     {
         return $this->mediaManager()->getCollection($name, get_class($this));
     }
@@ -170,5 +138,10 @@ trait HasMedia
         $media = $this->getMedia($collection);
 
         return $media->count() > 0 && $media->where('pivot.locale', null)->count() === 0;
+    }
+
+    public function isSingleFileCollection(string $collection)
+    {
+        return $this->getCollection($collection)->isSingleFile();
     }
 }

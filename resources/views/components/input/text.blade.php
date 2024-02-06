@@ -3,7 +3,6 @@
     'translatable' => false,
 ])
 
-
 <div class="group relative flex w-full rounded-md border border-stone-300 overflow-hidden transition-all duration-200 hover:border-stone-400 has-[:focus]:ring-2 has-[:focus]:ring-stone-600 has-[:focus]:border-transparent">
     <div @class([
         'grid place-items-center px-2 bg-stone-200 border-r border-stone-300 text-xs', 

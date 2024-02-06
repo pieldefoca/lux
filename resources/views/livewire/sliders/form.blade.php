@@ -89,7 +89,7 @@
                             </div>
                             <div>
                                 <x-lux::button.icon x-on:click="$dispatch('edit-slide', { slide: {{$slide->id}} })" small action="edit" />
-                                <x-lux::button.icon x-on:click="$dispatch('delete-slide', { slide: {{$slide->id}} })" small action="delete" />
+                                <x-lux::button.icon wire:click="$parent.deleteSlide({{$slide->id}})" small action="delete" />
                             </div>
                         </div>
                     @endforeach

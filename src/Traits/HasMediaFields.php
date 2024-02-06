@@ -4,10 +4,7 @@ namespace Pieldefoca\Lux\Traits;
 
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
-use Pieldefoca\Lux\Models\Locale;
 use Pieldefoca\Lux\Livewire\Attributes\Media;
-use Pieldefoca\Lux\Livewire\Attributes\MediaGallery;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 trait HasMediaFields
 {
@@ -16,87 +13,72 @@ trait HasMediaFields
     #[On('media-selected')]
     public function mediaSelected($field, $mediaIds)
     {
-        $mediaProperties = $this->getSingleMediaProperties();
+        $mediaProperties = $this->getMediaProperties();
 
         foreach($mediaProperties as $property) {
             if($field === $property['name']) {
-                $this->$field[$this->currentLocaleCode] = $mediaIds;
+                if($property['translatable']) {
+                    $fallbackToDefault = [];
+
+                    if($this->currentLocaleCode === $this->defaultLocaleCode) {
+                        $defaultLocaleValue = array_unique($this->$field[$this->defaultLocaleCode]);
+
+                        foreach($this->$field as $locale => $ids) {
+                            if($locale === $this->defaultLocaleCode) continue;
+
+                            $idsNotPresentInDefaultLocaleValue = array_diff(array_unique($ids), $defaultLocaleValue);
+
+                            if(count($idsNotPresentInDefaultLocaleValue) === 0) {
+                                $fallbackToDefault[] = $locale;
+                            }
+                        }
+                    }
+
+                    $newValue = $mediaIds;
+
+                    if($property['multiple']) {
+                        $newValue = array_merge($this->$field[$this->currentLocaleCode], $mediaIds);
+                        $newValue = array_unique($newValue);
+                        $newValue = array_values($newValue);
+                        $this->$field[$this->currentLocaleCode] = $newValue;
+                    } else {
+                        $this->$field[$this->currentLocaleCode] = $mediaIds;
+                    }
+
+                    foreach($fallbackToDefault as $locale) {
+                        $this->$field[$locale] = $newValue;
+                    }
+                } else {
+                    $this->$field = $mediaIds;
+                }
             }
         }
     }
 
-    public function initMediaFields($model): void
+    protected function initMediaFields($model)
     {
-        $this->initSingleMediaFields($model);
-
-        $this->initMediaGalleryFields($model);
-    }
-
-    protected function initSingleMediaFields($model)
-    {
-        $mediaProperties = $this->getSingleMediaProperties();
+        $mediaProperties = $this->getMediaProperties();
 
         foreach($mediaProperties as $property) {
-            extract($property); // $name, $collection, $translatable
+            extract($property); // $name, $collection, $translatable, $multiple
 
             if($translatable) {
                 $this->$name = $model->getMediaTranslations($collection);
             } else {
-                $media = $model->getFirstMedia($collection);
-
-                $this->$name = is_null($media) ? [] : $media;
-            }
-        }
-    }
-
-    protected function initMediaGalleryFields($model)
-    {
-        $mediaProperties = $this->getMediaGalleryProperties();
-
-        foreach($mediaProperties as $property) {
-            extract($property); // $name, $collection, $translatable
-
-            if($translatable) {
-                $defaultMedia = $model->getMedia($collection, ['locale' => Locale::default()->code]);
-
-                foreach($defaultMedia as $media) {
-                    $media = $model->getMedia($collection, ['key' => $media->getCustomProperty('key')]);
-                    $mediaLocales = [];
-                    foreach($media as $item) {
-                        $mediaLocales[$item->getCustomProperty('locale')] = [
-                            $item->getUrl(),
-                            $item->name,
-                            $item->getCustomProperty('alt'),
-                            $item->getCustomProperty('title'),
-                            $item->getUrl(),
-                        ];
-                    }
-                    $this->$name[] = $mediaLocales;
-                }
-            } else {
-                $media = $model->getMedia($collection);
-
-                foreach($media as $mediaItem) {
-                    $this->$name = [
-                        $mediaItem->getUrl(),
-                        $mediaItem->name,
-                        $mediaItem->getCustomProperty('alt'),
-                        $mediaItem->getCustomProperty('title'),
-                        $mediaItem->getUrl(),
-                    ];
+                if($multiple) {
+                    // TODO
+                } else {
+                    $media = $model->getFirstMedia($collection);
+    
+                    $this->$name = is_null($media) ? [] : $media->id;
                 }
             }
         }
     }
 
-    public function getSingleMediaProperties()
+    public function getMediaProperties()
     {
-        return $this->getPropertiesWithAttribute(Media::class);    
-    }
-
-    public function getMediaGalleryProperties()
-    {
-        return $this->getPropertiesWithAttribute(MediaGallery::class);
+        return $this->getPropertiesWithAttribute(Media::class);
     }
 
     protected function getPropertiesWithAttribute($attributeClass)
@@ -107,11 +89,13 @@ trait HasMediaFields
             $attributes = $property->getAttributes($attributeClass);
             if(!empty($attributes)) {
                 $collection = $attributes[0]->getArguments()['collection'];
-                $translatable = $attributes[0]->getArguments()['translatable'];
+                $translatable = $attributes[0]->newInstance()->isTranslatable();
+                $multiple = $attributes[0]->newInstance()->isMultiple();
                 $properties[] = [
                     'name' => $property->getName(), 
                     'collection' => $collection,
                     'translatable' => $translatable,
+                    'multiple' => $multiple,
                 ];
             }
         }
@@ -127,110 +111,25 @@ trait HasMediaFields
         $this->$field[$splits[1]] = [];
     }
 
-    public function saveMediaFields($model): void
+    public function unselectMedia($field, $mediaId)
     {
-        $this->saveSingleMediaFields($model);
+        $fieldSplits = explode('.', $field);
 
-        $this->saveMediaGalleryFields($model);
-    }
-
-    protected function saveSingleMediaFields($model)
-    {
-        $mediaProperties = $this->getSingleMediaProperties();
-
-        foreach($mediaProperties as $property) {
-            $field = $property['name'];
-            $collection = $property['collection'];
-            $translatable = $property['translatable'];
-
-            if($translatable) {
-                foreach(Locale::all() as $locale) {
-                    $this->saveOrUpdate(
-                        $model, 
-                        $collection, 
-                        $this->$field[$locale->code][0], 
-                        $this->$field[$locale->code][1], 
-                        $this->$field[$locale->code][2], 
-                        $this->$field[$locale->code][3],
-                        $locale->code,
-                    );
-                }
-            } else {
-                $this->saveOrUpdate($model, $collection, $this->$field[0], $this->$field[1], $this->$field[2], $this->$field[3]);
-            }
-        }
-    }
-
-    protected function saveMediaGalleryFields($model)
-    {
-        $mediaProperties = $this->getMediaGalleryProperties();
-
-        foreach($mediaProperties as $property) {
-            $field = $property['name'];
-            $collection = $property['collection'];
-            $translatable = $property['translatable'];
-
-            foreach($this->$field as $media) {
-                if($translatable) {
-                    foreach(Locale::all() as $locale) {
-                        $this->saveOrUpdate(
-                            $model, 
-                            $collection, 
-                            $media[$locale->code][0], 
-                            $media[$locale->code][1], 
-                            $media[$locale->code][2], 
-                            $media[$locale->code][3],
-                            $locale->code,
-                        );
-                    }
-                } else {
-                    $this->saveOrUpdate($model, $collection, $media[0], $media[1], $media[2], $media[3]);
-                }
-            }
-        }
-    }
-
-    protected function saveOrUpdate($model, $collection, $fileOrUrl, $name, $alt, $title, $locale = null)
-    {
-
-        $media = is_null($locale)
-            ? $model->getFirstMedia($collection)
-            : $model->getFirstMedia($collection, ['locale' => $locale]);
-
-        if(is_string($fileOrUrl)) {
-            $this->updateMediaMetaData($media, $name, $alt, $title);
+        if(count($fieldSplits) > 1) {
+            $field = $fieldSplits[0];
+            $locale = $fieldSplits[1];
+            $index = array_search($mediaId, $this->$field[$locale]);
+            unset($this->$field[$locale][$index]);
+            array_values($this->$field[$locale]);
         } else {
-            if($media) $media->delete();
-
-            $this->saveMedia($model, $fileOrUrl, $name, $alt, $title, $collection, $locale);
+            $index = array_search($mediaId, $this->$field);
+            unset($this->$field[$index]);
+            array_values($this->$field);
         }
     }
 
-    protected function updateMediaMetaData($media, $name, $alt, $title)
+    public function reorderGallery($field, $ids)
     {
-        $extension = pathinfo($media->file_name, PATHINFO_EXTENSION);
-        $media->name = $name;
-        $media->file_name = "{$name}.{$extension}";
-        $media->setCustomProperty('alt', $alt);
-        $media->setCustomProperty('title', $title);
-        $media->save();
-    }
-
-    protected function saveMedia($model, $file, $name, $alt, $title, $collection, $locale = null)
-    {
-        if(!is_null($file)) {
-            $filename = $name;
-            $extension = $file->getClientOriginalExtension();
-            $model->addMedia($file)
-                ->preservingOriginal()
-                ->usingFileName("{$filename}.{$extension}")
-                ->usingName($name)
-                ->withCustomProperties([
-                    'locale' => $locale,
-                    'alt' => $alt,
-                    'title' => $title,
-                ])
-                ->toMediaCollection($collection);
-        }
+        $this->$field[$this->currentLocaleCode] = $ids;
     }
 }

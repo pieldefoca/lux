@@ -27,10 +27,10 @@ class Form extends LuxForm
         'eu' => [],
     ];
 
-    #[Rule('required', message: 'Escribe un nombre')]
     public $name;
 
     public $position = [];
+    
     public $url = 'http://lux-app.test/img/fire.svg';
 
     protected $listeners = [
@@ -46,15 +46,12 @@ class Form extends LuxForm
     #[On('save-slider')]
     public function save(): void
     {
-        dd($this->getMediaProperties());
         $this->validate();
 
-        if($this->editing) {
-            $this->slider->update([
-                'name' => $this->name,
-                'position' => $this->position,
-            ]);
-        }
+        $this->slider->update([
+            'name' => $this->name,
+            'position' => $this->position,
+        ]);
 
         $this->notifySuccess('🤙🏾 Has actualizado el slider correctamente');
     }
@@ -62,19 +59,19 @@ class Form extends LuxForm
     public function rules(): array
     {
         return [
-            // 'name' => ['required'],
+            'name' => ['required'],
             'position' => ['required', new Enum(SliderPosition::class)],
         ];
     }
 
-    // public function messages(): array
-    // {
-    //     return [
-    //         'name.required' => 'Escribe un nombre para el slider',
-    //         'position.required' => 'Elige la posición del slider',
-    //         'position.enum' => 'Elige una posición válida',
-    //     ];
-    // }
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Escribe un nombre para el slider',
+            'position.required' => 'Elige la posición del slider',
+            'position.enum' => 'Elige una posición válida',
+        ];
+    }
 
     public function render()
     {

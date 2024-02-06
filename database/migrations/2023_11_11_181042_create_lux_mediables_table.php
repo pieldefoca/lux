@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('collection')->nullable();
             $table->string('locale', 5)->nullable();
             $table->string('key')->nullable();
+            $table->unsignedInteger('order')->nullable();
             $table->timestamps();
         });
     }

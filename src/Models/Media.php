@@ -49,12 +49,12 @@ class Media extends Model
 
     public function getUrl()
     {
-        return Storage::disk('uploads')->url($this->filename);
+        return Storage::disk('uploads')->url("{$this->filename}.{$this->extension}");
     }
 
     public function getThumbUrl()
     {
-        return Storage::disk('uploads')->url("{$this->filename}-thumb.webp");
+        return Storage::disk('uploads')->url("{$this->filename}-thumb.{$this->extension}");
     }
 
     public function getPath()
@@ -140,6 +140,7 @@ class Media extends Model
 
     protected function deleteVariations()
     {
-
+        Storage::disk('uploads')->delete("{$this->filename}.{$this->extension}");
+        Storage::disk('uploads')->delete("{$this->filename}-thumb.{$this->extension}");
     }
 }

@@ -58,6 +58,13 @@ document.addEventListener('alpine:init', () => {
     Alpine.directive('tooltip', (el, { expression }) => {
         tippy(el, { content: expression })
     })
+
+    Alpine.store('lux', {
+        locale: 'es',
+        init() {
+            console.log(Livewire.all())
+        }
+    })
 })
 
 Livewire.start()

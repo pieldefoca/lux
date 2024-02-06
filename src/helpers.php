@@ -2,7 +2,8 @@
 
 use Pieldefoca\Lux\Models\Page;
 use Pieldefoca\Lux\Support\Lux;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Pieldefoca\Lux\Models\Media;
+use Pieldefoca\Lux\Models\Locale;
 
 if(!function_exists('lux')) {
     function lux() {
@@ -20,14 +21,6 @@ if(!function_exists('page')) {
 
         return route("{$page->view}.{$locale}", $attributes);
    }
-}
-
-if(!function_exists('page_media')) {
-    function page_media($key) {
-        $media = Media::where('custom_properties->key', $key)->first();
-
-        return $media?->getUrl();
-    }
 }
 
 if(!function_exists('filesize_for_humans')) {

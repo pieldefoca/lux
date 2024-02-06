@@ -12,49 +12,43 @@ use Illuminate\Support\Facades\DB;
 $pageKey = explode('.', $key)[0];
 $isComponentImage = $pageKey === 'component';
 
-$page = Page::where('key', $pageKey)->first();
+$media = null;
 
-$mediables = DB::table('lux_mediables')
-    ->where('key', $key)
-    ->get();
+if($isComponentImage) {
+    $mediables = DB::table('lux_mediables')->where('key', $key)->get();
 
-if($mediables->isEmpty()) {
-    if($translatable) {
+    if($mediables->isEmpty()) {
         foreach(Locale::all() as $locale) {
             DB::table('lux_mediables')->insert([
                 'lux_media_id' => 1,
-                'lux_mediable_id' => $isComponentImage ? null : $page->id,
-                'lux_mediable_type' => $isComponentImage ? 'BladeComponent' : 'Pieldefoca\Lux\Models\Page',
-                'collection' => $isComponentImage ? null : 'media',
+                'lux_mediable_id' => null,
+                'lux_mediable_type' => 'BladeComponent',
+                'collection' => null,
                 'locale' => $locale->code,
                 'key' => $key,
             ]);
         }
-    } else {
-        DB::table('lux_mediables')->insert([
-            'lux_media_id' => 1,
-            'lux_mediable_id' => $isComponentImage ? null : $page->id,
-            'lux_mediable_type' => $isComponentImage ? 'BladeComponent' : 'Pieldefoca\Lux\Models\Page',
-            'collection' => $isComponentImage ? null : 'media',
-            'locale' => null,
-            'key' => $key,
-        ]);
-    }
 
-    $url = Media::first()->getUrl();
-} else {
-    if($translatable) {
+        $media = Media::find(1);
+    } else {
         $mediable = $mediables->where('locale', app()->currentLocale())->first();
     
         if(is_null($mediable)) {
             $mediable = $mediables->where('locale', Locale::default()->code)->first();
         }
-    } else {
-        $mediable = $mediables->where('locale', null)->first();
+
+        $media = Media::find($mediable->lux_media_id);
     }
 
-    $url = Media::find($mediable->lux_media_id)->getUrl();
+} else {
+    $page = Page::where('key', $pageKey)->first();
+
+    $media = $page->getImageOrCreate($key);
 }
+
+$url = $media->getUrl();
+$alt = $media->alt;
+$title = $media->title;
 @endphp
 
-<img src="{{ $url }}" {{ $attributes }} />
+<img src="{{ $url }}" alt="{{ $alt }}" title="{{ $title }}" {{ $attributes }} />

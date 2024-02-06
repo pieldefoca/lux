@@ -4,52 +4,62 @@ window.onload = function() {
     window.addEventListener('refresh-drag', () => setTimeout(() => initDrag(), 1000))
 }
 
-var dragRoot;
+let dragRoots;
+let activeDragRoot;
 
 function initDrag() {
-    dragRoot = document.querySelector('[drag-root]');
+    dragRoots = document.querySelectorAll('[drag-root]');
 
-    if(!dragRoot) return
+    if(!dragRoots) return
 
-    dragRoot.querySelectorAll('[drag-item]').forEach(el => {
-        el.removeEventListener('dragstart', dragstart)
-        el.addEventListener('dragstart', dragstart)
+    dragRoots.forEach(dragRoot => {
+        dragRoot.querySelectorAll('[drag-item]').forEach(el => {
+            el.removeEventListener('dragstart', dragstart)
+            el.addEventListener('dragstart', dragstart)
 
-        el.removeEventListener('drop', drop)
-        el.addEventListener('drop', drop)
+            el.removeEventListener('drop', drop)
+            el.addEventListener('drop', drop)
 
-        el.removeEventListener('dragenter', dragenter)
-        el.addEventListener('dragenter', dragenter)
+            el.removeEventListener('dragenter', dragenter)
+            el.addEventListener('dragenter', dragenter)
 
-        el.removeEventListener('dragleave', dragleave)
-        el.addEventListener('dragleave', dragleave)
+            el.removeEventListener('dragleave', dragleave)
+            el.addEventListener('dragleave', dragleave)
 
-        el.removeEventListener('dragover', dragover)
-        el.addEventListener('dragover', dragover);
+            el.removeEventListener('dragover', dragover)
+            el.addEventListener('dragover', dragover);
 
-        el.removeEventListener('dragend', dragend)
-        el.addEventListener('dragend', dragend);
-    });
+            el.removeEventListener('dragend', dragend)
+            el.addEventListener('dragend', dragend);
+        });
+    })
+
 }
 
 function dragstart(e) {
+    activeDragRoot = elementDragRoot(e.target)
+
     e.target.closest('[drag-item]').setAttribute('dragging', true);
 }
 
 function drop(e) {
     let component = Livewire.find(e.target.closest('[wire\\:id]').getAttribute('wire:id'))
 
-    let orderedIds = Array.from(dragRoot.querySelectorAll('[drag-item]')).map(itemEl => itemEl.getAttribute('drag-item'))
+    let orderedIds = Array.from(activeDragRoot.querySelectorAll('[drag-item]')).map(itemEl => itemEl.getAttribute('drag-item'))
 
-    component.call(dragRoot.getAttribute('drag-root'), orderedIds)
+    let dragParams = activeDragRoot.getAttribute('drag-params').split(' ')
+
+    let params = [...dragParams, orderedIds]
+
+    component.call(activeDragRoot.getAttribute('drag-root'), ...params)
 
     window.dispatchEvent(new CustomEvent('refresh-drag'))
 }
 
 function dragenter(e) {
-    let draggingEl = dragRoot.querySelector('[dragging]');
+    let draggingEl = activeDragRoot.querySelector('[dragging]');
     let target = e.target.closest('[drag-item]');
-    let childNodes = Array.from(dragRoot.childNodes);
+    let childNodes = Array.from(activeDragRoot.childNodes);
     let draggingElementIsBeforeTarget = childNodes.indexOf(draggingEl) < childNodes.indexOf(target);
 
     if(draggingEl != target) {
@@ -73,4 +83,8 @@ function dragover(e) {
 
 function dragend(e) {
     e.target.closest('[drag-item]').setAttribute('dragging', true);
+}
+
+function elementDragRoot(el) {
+    return el.closest('[drag-root]')
 }

@@ -39,6 +39,8 @@ class LuxInstall extends Command
             'filename' => '_placeholder.jpg',
             'mime_type' => 'image/jpeg',
             'media_type' => 'image',
+            'extension' => 'jpg',
+            'original_image' => '_placeholder.jpg',
         ]);
 
         Artisan::call('lux:pages');

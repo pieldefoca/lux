@@ -17,7 +17,7 @@ class MediaCollection
         return $this;
     }
 
-    public function hasSingleFile()
+    public function isSingleFile()
     {
         return $this->singleFile;
     }

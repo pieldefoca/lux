@@ -10,12 +10,13 @@
     'swappable' => false,
     'clearable' => false,
     'withoutTypeIcon' => false,
+    'draggable' => false,
 ])
 
 @aware(['translatable'])
 
 @php
-if(is_int($media)) {
+if(is_numeric($media)) {
     $media = Pieldefoca\Lux\Models\Media::find($media);
 }
 $url = $media?->getThumbUrl();
@@ -27,12 +28,13 @@ $isVideo = $url && str($fileExtension)->startsWith($videoExtensions);
 $hasActions = $selectable || $editable || $unselectable || $removable || $swappable || $clearable;
 @endphp
 
-<div class="flex space-x-1">
+<div @if($draggable) draggable="true" drag-item="{{ $media->id }}" @endif class="flex space-x-0.5">
     <div
         {{
             $attributes->class([
-                'relative grid place-items-center w-48 aspect-square bg-stone-100 border border-stone-200 rounded-lg cursor-pointer overflow-hidden transition-all duration-300 shadow',
-                'hover:contrast-50' => $selectable,
+                'relative grid place-items-center w-36 aspect-square bg-stone-100 border border-stone-200 rounded-lg overflow-hidden transition-all duration-300 shadow',
+                'cursor-pointer hover:contrast-50' => $selectable,
+                'cursor-grab' => $draggable,
             ])
         }}
         @if($selectable)
@@ -79,7 +81,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
     </div>
 
     @if($hasActions)
-    <div class="flex flex-col space-y-3 mt-1">
+    <div class="flex flex-col space-y-3 mt-0.5">
         <div
             x-data="{
                 open: false,
@@ -95,7 +97,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                 @if($selectable)
                     <li>
                         <button 
-                            @click="select" 
+                            @click="select; open = false" 
                             type="button"
                             class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
@@ -108,7 +110,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                 @if($swappable)
                     <li>
                         <button 
-                            @click="$wire.swapMedia({{ $media->id }}, '{{ $key }}')" 
+                            @click="$wire.swapMedia({{ $media->id }}, '{{ $key }}'); open = false" 
                             type="button"
                             class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
@@ -121,7 +123,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                 @if($editable)
                     <li>
                         <button 
-                            @click="$dispatch('edit-media', { media: {{ $media->id }} })"
+                            @click="$dispatch('edit-media', { media: {{ $media->id }} }); open = false"
                             type="button" 
                             class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
@@ -134,9 +136,9 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                 @if($unselectable || $clearable)
                     <button 
                         @if($unselectable)
-                            @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}', {{ $media->id}})"
+                            @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}', {{ $media->id}}); open = false"
                         @else
-                            @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}')" 
+                            @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}'); open = false" 
                         @endif
                         type="button"
                         class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"

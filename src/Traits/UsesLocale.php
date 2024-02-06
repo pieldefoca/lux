@@ -40,5 +40,7 @@ trait UsesLocale
         $this->locale = $locale;
 
         $this->dispatch('locale-changed', locale: $locale);
+
+        $this->dispatch('refresh-drag');
     }
 }

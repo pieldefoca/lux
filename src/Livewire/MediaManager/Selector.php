@@ -11,6 +11,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Modelable;
 use Pieldefoca\Lux\Enum\MediaType;
 use Pieldefoca\Lux\Livewire\LuxModal;
+use Pieldefoca\Lux\Facades\MediaManager;
 use Pieldefoca\Lux\Livewire\Attributes\Translatable;
 
 class Selector extends LuxModal
@@ -45,19 +46,9 @@ class Selector extends LuxModal
         $this->view = session()->get('lux-media-manager-view', 'list');
     }
 
-    public function updatedUploads($value)
+    public function updatedUploads($files)
     {
-        foreach($value as $file) {
-            $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $filename = Str::slug($name) . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('/', $filename, 'uploads');
-            $media = Media::create([
-                'name' => $name,
-                'filename' => $filename,
-                'mime_type' => $file->getMimeType(),
-            ]);
-            $this->select($media);
-        }
+        MediaManager::save($files);
     }
 
     #[On('select-media')]
@@ -159,6 +150,8 @@ class Selector extends LuxModal
         }
 
         $this->hide();
+
+        $this->dispatch('refresh-drag');
     }
 
     public function isSelected($id)

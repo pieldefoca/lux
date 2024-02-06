@@ -60,7 +60,7 @@
 
                     @if($page->dynamic_page)
                         <x-lux::input.inline-group required translatable label="Prefijo de la URL" :error="$errors->first('slug_prefix')">
-                            <x-lux::input.slug wire:model.blur="slug_prefix" :prefix="config('app.url').'/'.$currentLocaleCode.'/'" />
+                            <x-lux::input.slug translatable wire:model.blur="slug_prefix" :prefix="config('app.url').'/'.$currentLocaleCode.'/'" />
                         </x-lux::input.inline-group>
                     @else
                         <x-lux::input.inline-group required translatable label="URL" :error="$errors->first('slug')">
@@ -84,11 +84,11 @@
 
                     @if(!$page->dynamic_page)
                         <x-lux::input.inline-group translatable label="Título (SEO)" :error="$errors->first('title')">
-                            <x-lux::input.text wire:model="title" />
+                            <x-lux::input.text translatable wire:model="title" />
                         </x-lux::input.inline-group>
 
                         <x-lux::input.inline-group translatable label="Descripción (SEO)" :error="$errors->first('description')">
-                            <x-lux::input.textarea wire:model="description" />
+                            <x-lux::input.textarea translatable wire:model="description" />
                         </x-lux::input.inline-group>
 
                         <x-lux::input.inline-group label="Visible" help="¿Quieres publicar esta página?" :error="$errors->first('visible')">

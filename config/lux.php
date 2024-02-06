@@ -17,4 +17,8 @@ return [
             ->withRouteName('lux.media.index')
             ->activeOn('lux.media.*'),
     ],
+
+    'sliders' => [
+        'fields' => ['title', 'subtitle', 'action']
+    ],
 ];

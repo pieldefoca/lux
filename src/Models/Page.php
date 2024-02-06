@@ -180,4 +180,31 @@ class Page extends Model
     {
         return $this->getMedia(collection: 'media', locale: $locale, mediaType: MediaType::File->value);
     }
+
+    public function getImageOrCreate($key)
+    {
+        $media = $this->getMedia('media', locale: app()->currentLocale(), key: $key);
+
+        if($media->isEmpty()) {
+            $ids = [];
+
+            foreach(Locale::all() as $locale) {
+                $ids[$locale->code] = [1];
+            }
+
+            $this->addMedia($ids)
+                ->saveTranslations()
+                ->withKey($key)
+                ->toCollection('media');
+
+            return $this->getMedia('media', locale: app()->currentLocale(), key: $key)->first();
+        }
+
+        return $media->first();
+    }
+
+    public function registerMediaCollections()
+    {
+        $this->addMediaCollection('media');
+    }
 }
