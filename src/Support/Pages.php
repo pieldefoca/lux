@@ -5,6 +5,7 @@ namespace Pieldefoca\Lux\Support;
 use Illuminate\Support\Str;
 use Pieldefoca\Lux\Models\Page;
 use Pieldefoca\Lux\Models\Locale;
+use Livewire\Features\SupportConsoleCommands\Commands\ComponentParser;
 
 class Pages
 {
@@ -28,17 +29,17 @@ class Pages
 
         foreach(Page::published()->get() as $page) {
             foreach(Locale::active()->get() as $locale) {
-                if($page->isDynamic()) {
-                    $path = trim($page->translate('slug_prefix', $locale->code)) . '/{model}';
-                    $path = $locale->default ? $path : "{$locale->code}/{$path}";
+                $path = trim($page->translate('slug', $locale->code));
+                if($path === '/') $path = '';
+                $path = $locale->default ? $path : "{$locale->code}/{$path}";
+
+
+                if($page->isControllerPage()) {
+                    $content .= "Route::get('/{$path}', [\\{$page->controller}::class, '{$page->controller_action}'])->name('{$page->id}.{$locale->code}');\n";
                 } else {
-                    $path = trim($page->translate('slug', $locale->code));
-                    $path = $locale->default ? $path : "{$locale->code}/{$path}";
+                    $content .= "Route::get('/{$path}', \\{$page->livewire_component}::class)->name('{$page->id}.{$locale->code}');\n";
                 }
 
-                $action = $page->livewireComponentClass();
-
-                $content .= "Route::get('/{$path}', {$action})->name('{$page->view}.{$locale->code}');\n";
             }
             $content .= "\n";
         }
@@ -46,4 +47,16 @@ class Pages
         file_put_contents(base_path('routes/pages.php'), $content);
     }
 
+    public function getLivewireComponentClassName($name)
+    {
+        if(class_exists($name)) return $name;
+
+        $parser = new ComponentParser(
+            'App\Livewire',
+            config('livewire.view_path'),
+            $name,
+        );
+
+        return $parser->classNamespace() . '\\' . $parser->className();
+    }
 }

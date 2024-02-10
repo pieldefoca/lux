@@ -43,6 +43,6 @@ class LuxInstall extends Command
             'original_image' => '_placeholder.jpg',
         ]);
 
-        Artisan::call('lux:pages');
+        // Artisan::call('lux:pages');
     }
 }

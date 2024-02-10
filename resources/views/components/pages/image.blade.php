@@ -32,7 +32,7 @@ if($isComponentImage) {
         $media = Media::find(1);
     } else {
         $mediable = $mediables->where('locale', app()->currentLocale())->first();
-    
+
         if(is_null($mediable)) {
             $mediable = $mediables->where('locale', Locale::default()->code)->first();
         }
@@ -41,7 +41,7 @@ if($isComponentImage) {
     }
 
 } else {
-    $page = Page::where('key', $pageKey)->first();
+    $page = Page::where('id', $pageKey)->first();
 
     $media = $page->getImageOrCreate($key);
 }

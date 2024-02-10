@@ -28,12 +28,14 @@ class Edit extends LuxComponent
 
     #[Translatable]
     public $slug;
-    #[Translatable]
-    public $slug_prefix;
 
-    public $view;
+    public $target;
 
-    public $key;
+    public $controller;
+
+    public $controller_action;
+
+    public $livewire_component;
 
     #[Translatable]
     public $title;
@@ -41,13 +43,10 @@ class Edit extends LuxComponent
     #[Translatable]
     public $description;
 
-    public $is_home_page;
-
     public $visible;
 
-    public $currentHomeMessage;
-
     public $translations = [];
+
     #[Translatable]
     public $legalPageContent = [];
 
@@ -60,9 +59,10 @@ class Edit extends LuxComponent
     {
         $this->name = $this->page->name;
         $this->slug = $this->page->getTranslations('slug');
-        $this->slug_prefix = $this->page->getTranslations('slug_prefix');
-        $this->view = $this->page->view;
-        $this->key = $this->page->key;
+        $this->target = is_null($this->page->controller) ? 'livewire' : 'controller';
+        $this->controller = $this->page->controller;
+        $this->controller_action = $this->page->controller_action;
+        $this->livewire_component = $this->page->livewire_component;
         $this->title = $this->page->getTranslations('title');
         $this->description = $this->page->getTranslations('description');
         $this->is_home_page = $this->page->is_home_page;
@@ -71,19 +71,6 @@ class Edit extends LuxComponent
         $this->getTranslations();
 
         $this->initMediaFields($this->page);
-    }
-
-    public function updatedIsHomePage($value)
-    {
-        if($value) {
-            $currentHome = Page::where('is_home_page', true)->first();
-
-            if($currentHome && $currentHome->id !== $this->page->id) {
-                $this->currentHomeMessage = 'La página "'.$currentHome->name.'" es la página de inicio actual.<br> Al guardar estos ajustes se sustituirá la página de inicio anterior por la actual.';
-            }
-        } else {
-            $this->currentHomeMessage = '';
-        }
     }
 
     public function updatedSlug($value)
@@ -122,30 +109,10 @@ class Edit extends LuxComponent
                 $value = str($value)->ascii()->lower();
                 $key = str($key)->ascii()->lower();
                 $search = Str::ascii($search);
-                return $key->contains($search) 
+                return $key->contains($search)
                     || $value->contains($search);
             });
         })->toArray();
-    }
-
-    #[Computed]
-    public function views()
-    {
-        $views = [];
-
-        foreach(File::allFiles(resource_path('views/pages')) as $file) {
-            if(!str($file->getFilename())->endsWith('.blade.php')) continue;
-
-            $relativePath = $file->getRelativePath();
-
-            if(str($relativePath)->startsWith('livewire/lux')) continue;
-
-            $filename = str($file->getFilename())->replace('.blade.php', '')->toString();
-
-            $views[] = empty($relativePath) ? $filename : "{$relativePath}/$filename";
-        }
-
-        return $views;
     }
 
     #[Computed]
@@ -171,7 +138,7 @@ class Edit extends LuxComponent
     {
         $query = Mediable::with('media')
             ->where('lux_mediable_type', 'BladeComponent');
-        
+
         if($this->currentLocaleCode === Locale::default()->code) {
             $query->where(function($query) {
                 return $query->where('locale', $this->currentLocaleCode)
@@ -218,14 +185,14 @@ class Edit extends LuxComponent
                     ->orWhere('locale', null);
             })
             ->where('key', $this->swappingMediaKey);
-        
+
         if(str($this->swappingMediaKey)->startsWith('component')) {
             $query->where('lux_mediable_type', 'BladeComponent');
         } else {
             $query->where('lux_mediable_type', 'Pieldefoca\Lux\Models\Page')
                 ->where('lux_mediable_id', $this->page->id);
         }
-            
+
         $query->update(['lux_media_id' => $mediaId]);
     }
 
@@ -234,24 +201,13 @@ class Edit extends LuxComponent
     {
         $validated = $this->validate();
 
-        if($this->is_home_page) {
-            foreach($validated['slug'] as $locale => $slug) {
-                if(empty($slug)) $validated['slug'][$locale] = ' ';
-            }
-        }
+        $validated = $this->cleanSlug($validated);
 
-        if($this->page->isDynamic()) {
-            $validated['slug'] = null;
-        }
+        $validated = $this->cleanController($validated);
+
+        $validated = $this->cleanLivewireComponent($validated);
 
         $this->page->update($validated);
-
-        if($this->is_home_page) {
-            Page::where('id', '!=', $this->page->id)
-                ->where('is_home_page', true)
-                ->first()
-                ?->update(['is_home_page' => false]);
-        }
 
         foreach($this->translations as $locale => $localeTranslations) {
             if($this->page->isLegalPage()) {
@@ -265,19 +221,56 @@ class Edit extends LuxComponent
         $this->notifySuccess('🤙🏾 Has editado la página correctamente');
     }
 
+    protected function cleanSlug($validated)
+    {
+        foreach($this->slug as $locale => $slug) {
+            if(empty($slug)) {
+                $validated['slug'][$locale] = '/';
+            }
+        }
+
+        return $validated;
+    }
+
+    protected function cleanController($validated)
+    {
+        if($this->target !== 'controller') {
+            $validated['controller'] = null;
+            $validated['controller_action'] = null;
+            return $validated;
+        }
+
+        if(!Str::startsWith($validated['controller'], 'App\Http\Controllers')) {
+            $validated['controller'] = "App\Http\Controllers\\{$validated['controller']}";
+            return $validated;
+        }
+
+        return $validated;
+    }
+
+    protected function cleanLivewireComponent($validated)
+    {
+        if($this->target !== 'livewire') {
+            $validated['livewire_component'] = null;
+            return $validated;
+        }
+
+        $validated['livewire_component'] = Pages::getLivewireComponentClassName($validated['livewire_component']);
+
+        return $validated;
+    }
+
     public function rules()
     {
-        $slugRequired = !$this->page->isDynamic() && !$this->is_home_page;
-        $slugPrefixRequired = $this->page->isDynamic();
         return [
             'name' => ['required'],
-            'slug' => [$slugRequired ? 'required' : 'nullable'],
-            'slug_prefix' => [$slugPrefixRequired ? 'required' : 'nullable'],
-            'view' => ['required'],
-            'key' => ['required', Rule::unique('lux_pages', 'key')->ignoreModel($this->page)],
+            'slug' => ['required'],
+            'target' => ['required', Rule::in(['controller', 'livewire']), 'exclude'],
+            'controller' => ['nullable', Rule::requiredIf($this->target === 'controller')],
+            'controller_action' => ['nullable', Rule::requiredIf($this->target === 'controller')],
+            'livewire_component' => ['nullable', Rule::requiredIf($this->target === 'livewire')],
             'title' => ['nullable'],
             'description' => ['nullable'],
-            'is_home_page' => ['boolean'],
             'visible' => ['boolean'],
         ];
     }
@@ -285,7 +278,13 @@ class Edit extends LuxComponent
     public function messages()
     {
         return [
-
+            'name.required' => 'Escribe un nombre descriptivo para la página',
+            'slug.required' => 'Escribe una url',
+            'target.required' => 'Elige un destino',
+            'target.in' => 'Elige un destino válido',
+            'controller.required' => 'Escribe el nombre del controlador',
+            'controller_action.required' => 'Escribe la acción',
+            'livewire_component.required' => 'Escribe el nombre del componente',
         ];
     }
 

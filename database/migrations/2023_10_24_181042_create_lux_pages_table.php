@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lux_pages', function (Blueprint $table) {
-            $table->id();
-            $table->string('key')->unique();
-            $table->boolean('dynamic_page')->default(false);
-            $table->string('dynamic_model')->nullable();
+            $table->string('id');
             $table->string('name');
             $table->json('slug')->nullable();
-            $table->json('slug_prefix')->nullable();
-            $table->string('view');
-            $table->json('title')->nullable();
-            $table->json('description')->nullable();
+            $table->string('controller')->nullable();
+            $table->string('controller_action')->nullable();
+            $table->string('livewire_component')->nullable();
             $table->boolean('is_home_page')->default(false);
             $table->boolean('visible')->default(true);
+            $table->json('title')->nullable();
+            $table->json('description')->nullable();
             $table->timestamps();
+
+            $table->primary('id');
         });
     }
 

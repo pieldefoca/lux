@@ -21,80 +21,90 @@ class Page extends Model
 
     protected $table = 'lux_pages';
 
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $guarded = [];
 
     protected $casts = [
         'is_home_page' => 'boolean',
         'visible' => 'boolean',
-        'dynamic_page' => 'boolean',
     ];
 
-    public $translatable = ['slug', 'slug_prefix', 'title', 'description'];
+    public $translatable = ['slug', 'title', 'description'];
 
     public function scopePublished($query)
     {
         return $query->where('visible', true);
     }
 
-    public function check()
+    public function isControllerPage()
     {
-        $viewWithSlashes = str($this->view)->replace('.', '/')->toString();
-        if(!File::exists(resource_path('views/pages/' . $viewWithSlashes . '.blade.php'))) {
-            return false;
-        }
-        return true;
+        return !is_null($this->controller);
     }
 
-    public function localizedRoute($locale = null)
+    public function isDynamic()
     {
-        if(is_null($locale)) $locale = app()->currentLocale();
+        return Str::of($this->slug)->isMatch('/.*{*}.*/');
+    }
 
-        if(Locale::default()->code === $locale) {
-            return '/' . $this->translate('slug', $locale);
-        } else {
-            return '/' . $locale . '/' .$this->translate('slug', $locale);
-        }
-
+    public function localizedUrl($locale)
+    {
+        return route("{$this->id}.{$locale}");
     }
 
     public function langFilePath(): Attribute
     {
         return Attribute::make(
-            get: fn() => str($this->key)->replace('.', '/')->toString() . '.php',
+            get: fn() => str($this->id)->replace('.', '/')->toString() . '.php',
         );
     }
 
     public function getLangFileRelativePath(): string
     {
-        $splits = explode('.', $this->view);
+        $splits = explode('.', $this->id);
 
         if(count($splits) > 1) {
             $folders = array_slice($splits, 0, count($splits) - 1);
 
             return str(implode('/', $folders))->trim('/')->toString();
         }
+
         return '';
     }
 
     public function langFileKey(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->view,
+            get: fn() => $this->id,
         );
     }
 
-    public function getLangFilename(): string
+    public function getLangFilename(bool $withExtension = false): string
     {
-        $splits = explode('.', $this->view);
+        $splits = explode('.', $this->id);
 
-        if(count($splits) > 1) return end($splits);
+        $filename = $this->id;
 
-        return $this->view;
+        if(count($splits) > 1) $filename = end($splits);
+
+        return str($filename)->when($withExtension, fn($str) => $str->append('.php'))->toString();
     }
 
     public function hasLangFileFor($locale)
     {
-        return File::exists(lang_path($locale . '/' . $this->getLangFileRelativePath() . '/' . $this->getLangFilename() . '.php'));
+        $relativePath = $this->getLangFileRelativePath();
+
+        $filename = $this->getLangFilename(withExtension: true);
+
+        $path = str('')
+            ->when(!empty($relativePath), function($str) use($relativePath) {
+                $str->append("/{$relativePath}");
+            })
+            ->append($filename);
+
+        return File::exists(lang_path($locale . '/' . $path));
     }
 
     public function createLangFile(string $locale)
@@ -147,15 +157,10 @@ class Page extends Model
         return !$this->attributes['visible'];
     }
 
-    public function isDynamic(): bool
-    {
-        return $this->dynamic_page;
-    }
-
     public function isLegalPage(): bool
     {
         $legalPages = ['accesibilidad', 'politica-privacidad', 'politica-cookies', 'aviso-legal'];
-        
+
         return in_array($this->key, $legalPages);
     }
 

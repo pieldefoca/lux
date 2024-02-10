@@ -6,16 +6,14 @@
 
     <x-slot name="actions">
         <div class="flex items-center space-x-8">
-            @if(!$page->dynamic_page)            
-                <x-lux::link link="{{ page($page->key) }}" target="_blank">Ver página</x-lux::link>
-            @endif
+            <x-lux::link link="" target="_blank">Ver página</x-lux::link>
             <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">Guardar</x-lux::button>
         </div>
     </x-slot>
 
-    <x-lux::locale-selector />
+    <div x-data="{activeTab: 0}" x-tabs x-model="activeTab" class="max-w-6xl mx-auto">
+        <x-lux::locale-selector />
 
-    <div x-data="{activeTab: 0}" x-tabs x-model="activeTab">
         <div x-tabs:list class="flex items-center justify-center gap-4 mt-6">
             <button
                 type="button"
@@ -44,45 +42,44 @@
                         <x-lux::input.text wire:model="name" />
                     </x-lux::input.inline-group>
 
-                    @if(!$page->dynamic_page)
-                        <x-lux::input.inline-group label="Página de inicio" help="¿Es esta la página de inicio?" :error="$errors->first('is_home_page')">
-                            <div class="space-y-2">
-                                <x-lux::input.toggle wire:model.live="is_home_page" />
-                                @if(!empty($currentHomeMessage))
-                                    <p class="flex items-start space-x-2 text-xs text-amber-500">
-                                        <x-lux::tabler-icons.alert-triangle class="w-5 h-5 text-amber-500" />
-                                        <span>{!! $currentHomeMessage !!}</span>
-                                    </p>
-                                @endif
-                            </div>
-                        </x-lux::input.inline-group>
-                    @endif
-
-                    @if($page->dynamic_page)
-                        <x-lux::input.inline-group required translatable label="Prefijo de la URL" :error="$errors->first('slug_prefix')">
-                            <x-lux::input.slug translatable wire:model.blur="slug_prefix" :prefix="config('app.url').'/'.$currentLocaleCode.'/'" />
-                        </x-lux::input.inline-group>
-                    @else
-                        <x-lux::input.inline-group required translatable label="URL" :error="$errors->first('slug')">
+                    <x-lux::input.inline-group required translatable label="URL" :error="$errors->first('slug')">
+                        <div class="w-full space-y-1">
                             <x-lux::input.slug wire:model.blur="slug" :prefix="config('app.url').'/'.$currentLocaleCode.'/'" />
-                        </x-lux::input.inline-group>
-                    @endif
+                            @if($page->isDynamic())
+                                <span class="flex items-center space-x-2 text-xs font-bold text-amber-500">
+                                    <x-lux::tabler-icons.alert-triangle class="w-4 h-4" />
+                                    <span>No modifiques la parte que está entre corchetes o la página dejará de funcionar</span>
+                                </span>
+                            @endif
+                        </div>
+                    </x-lux::input.inline-group>
 
                     @role('superadmin')
-                        <x-lux::input.inline-group danger required label="Vista">
-                            <x-lux::input.select native wire:model="view">
-                                @foreach($this->views as $view)
-                                    <option value="{{ $view }}">{{ $view }}</option>
-                                @endforeach
+                        <x-lux::input.inline-group danger required label="Destino">
+                            <x-lux::input.select native wire:model="target">
+                                <option value="controller">Controlador</option>
+                                <option value="livewire">Livewire</option>
                             </x-lux::input.select>
                         </x-lux::input.inline-group>
 
-                        <x-lux::input.inline-group danger required label="ID" :error="$errors->first('key')">
-                            <x-lux::input.text wire:model="key" />
-                        </x-lux::input.inline-group>
+                        <div x-show="$wire.target === 'controller'">
+                            <x-lux::input.inline-group danger required label="Controlador" :error="$errors->first('controller')">
+                                <x-lux::input.text wire:model="controller" />
+                            </x-lux::input.inline-group>
+
+                            <x-lux::input.inline-group danger required label="Acción" :error="$errors->first('controller_action')">
+                                <x-lux::input.text wire:model="controller_action" />
+                            </x-lux::input.inline-group>
+                        </div>
+
+                        <div x-show="$wire.target === 'livewire'">
+                            <x-lux::input.inline-group danger required label="Componente" :error="$errors->first('livewire_component')">
+                                <x-lux::input.text wire:model="livewire_component" />
+                            </x-lux::input.inline-group>
+                        </div>
                     @endrole
 
-                    @if(!$page->dynamic_page)
+                    @if(!$page->isDynamic())
                         <x-lux::input.inline-group translatable label="Título (SEO)" :error="$errors->first('title')">
                             <x-lux::input.text translatable wire:model="title" />
                         </x-lux::input.inline-group>
@@ -146,7 +143,7 @@
                                 <x-lux::tabler-icons.photo />
                                 <span>{{ trans('lux::lux.images') }}</span>
                             </p>
-                            
+
                             @if($this->images->isNotEmpty())
                                 <div class="flex items-center flex-wrap gap-4">
                                     @foreach($this->images as $image)
@@ -195,7 +192,7 @@
                                 <div class="grid place-items-center py-4 space-y-4">
                                     <x-lux::tabler-icons.movie-off class="w-16 h-16 opacity-10" />
                                     <p class="text-stone-500">No hay vídeos editables</p>
-                                </div>                            
+                                </div>
                             @endif
                         </div>
 
@@ -260,8 +257,6 @@
                         </div>
                     </x-lux::card>
                 </div>
-
-                <livewire:pages.page-media-form-modal />
             </div>
         </div>
     </div>

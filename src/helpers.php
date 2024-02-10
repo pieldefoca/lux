@@ -11,18 +11,6 @@ if(!function_exists('lux')) {
     }
 }
 
-if(!function_exists('page')) {
-    function page($page, $attributes = [], $locale = null) {
-        $page = Page::where('key', $page)->first();
-
-        if(is_null($page)) abort(404);
-
-        if(is_null($locale)) $locale = app()->currentLocale();
-
-        return route("{$page->view}.{$locale}", $attributes);
-   }
-}
-
 if(!function_exists('filesize_for_humans')) {
     function filesize_for_humans($size, $precision = 2) {
         $units = array('B','KB','MB','GB','TB','PB','EB','ZB','YB');

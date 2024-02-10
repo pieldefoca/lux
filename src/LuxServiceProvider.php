@@ -5,6 +5,7 @@ namespace Pieldefoca\Lux;
 use Livewire\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Pieldefoca\Lux\Models\Page;
 use Pieldefoca\Lux\Support\Lux;
 use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Support\Pages;
@@ -15,12 +16,15 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
 use Pieldefoca\Lux\Livewire\MediaSelector;
 use Pieldefoca\Lux\Observers\MediaObserver;
+use Pieldefoca\Lux\Console\Commands\LuxPage;
 use Pieldefoca\Lux\Console\Commands\LuxUser;
 use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
 use Pieldefoca\Lux\Console\Commands\LuxInstall;
 use Pieldefoca\Lux\Console\Commands\LuxUploads;
+use Pieldefoca\Lux\Http\Middleware\PageMiddleware;
 use Pieldefoca\Lux\Console\Commands\LuxProcessMedia;
+use Pieldefoca\Lux\Http\Middleware\LocaleMiddleware;
 use Pieldefoca\Lux\Support\MediaManager\MediaManager;
 
 class LuxServiceProvider extends ServiceProvider
@@ -62,6 +66,7 @@ class LuxServiceProvider extends ServiceProvider
 				LuxInstall::class,
 				MakeLux::class,
 				LuxUser::class,
+				LuxPage::class,
 				LuxPages::class,
 				LuxUploads::class,
 				LuxProcessMedia::class,
@@ -80,6 +85,29 @@ class LuxServiceProvider extends ServiceProvider
 				return "{$attribute}={$value}.{$locale}";
 			}
 		});
+
+		$this->app->call(function() {
+    		if(file_exists(base_path('routes/pages.php'))) {
+                Route::middleware(['web', PageMiddleware::class, LocaleMiddleware::class])
+                    ->group(base_path('routes/pages.php'));
+            }
+		});
+
+		app('url')->resolveMissingNamedRoutesUsing(function($name, $parameters, $absolute) {
+            $page = Page::where('id', $name)->first();
+
+            if(is_null($page)) {
+                throw new \Exception("Page [{$name}] not found");
+            }
+
+            $routes = app('router')->getRoutes();
+
+            $locale = app()->currentLocale();
+
+            $route = $routes->getByName("{$page->id}.{$locale}");
+
+            return app('url')->toRoute($route, $parameters, $absolute);
+        });
 	}
 
 	protected function configureLivewire()
@@ -104,7 +132,7 @@ class LuxServiceProvider extends ServiceProvider
 		$luxAppPath = app_path('Livewire/Lux');
 
 		$files = File::allFiles($luxAppPath);
-		
+
 		$namespace = 'App\Livewire\Lux\\';
 		foreach($files as $file) {
 			if($file->getExtension() !== 'php') continue;
@@ -118,7 +146,7 @@ class LuxServiceProvider extends ServiceProvider
 			$componentName = str($component)->after('Livewire\\');
 			$splits = array_map(fn($s) => Str::snake($s, '-'), explode('\\', $componentName));
 			$componentName = implode('.', $splits);
-			
+
 			if (is_subclass_of($component, Component::class)) {
                 Livewire::component($componentName, $component);
             }
@@ -139,11 +167,11 @@ class LuxServiceProvider extends ServiceProvider
 	protected function registerDisks()
 	{
 		$this->app['config']['filesystems.disks.avatars'] = [
-			'driver' => 'local', 
-			'root' => public_path('avatars'), 
-			'url' => env('APP_URL').'/avatars', 
-			'visibility' => 'public', 
-			'throw' => false, 
+			'driver' => 'local',
+			'root' => public_path('avatars'),
+			'url' => env('APP_URL').'/avatars',
+			'visibility' => 'public',
+			'throw' => false,
 		];
 	}
 }
