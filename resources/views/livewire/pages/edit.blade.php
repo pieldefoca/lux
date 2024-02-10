@@ -48,7 +48,7 @@
                             @if($page->isDynamic())
                                 <span class="flex items-center space-x-2 text-xs font-bold text-amber-500">
                                     <x-lux::tabler-icons.alert-triangle class="w-4 h-4" />
-                                    <span>No modifiques la parte que está entre corchetes o la página dejará de funcionar</span>
+                                    <span>No modifiques la partes que están entre llaves o la página dejará de funcionar</span>
                                 </span>
                             @endif
                         </div>

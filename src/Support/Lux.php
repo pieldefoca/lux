@@ -18,9 +18,9 @@ class Lux
             ->orWhere("slug->{$defaultLocale}", $currentPath)
             ->first();
 
-        if(is_null($page)) {
-            return Page::find('projects.show');
-        }
+        // if(is_null($page)) {
+        //     return Page::find('projects.show');
+        // }
 
         return $page;
     }

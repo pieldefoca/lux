@@ -88,7 +88,7 @@ class LuxServiceProvider extends ServiceProvider
 
 		$this->app->call(function() {
     		if(file_exists(base_path('routes/pages.php'))) {
-                Route::middleware(['web', PageMiddleware::class, LocaleMiddleware::class])
+                Route::middleware(['web', LocaleMiddleware::class, PageMiddleware::class])
                     ->group(base_path('routes/pages.php'));
             }
 		});

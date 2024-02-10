@@ -3,16 +3,14 @@
     <x-lux::table.td>{{ $slider->position }}</x-lux::table.td>
     <x-lux::table.td>
         <x-lux::table.row-actions>
-            <x-lux::menu.item>
-                <a href="{{ route('lux.sliders.edit', $slider) }}">
-                    <div class="flex items-center space-x-2">
-                        <x-lux::tabler-icons.edit class="w-5 h-5" />
-                        <span>Editar</span>
-                    </div>
-                </a>
-            </x-lux::menu.item>
+            <x-lux::menu.link-item :href="route('lux.sliders.edit', $slider)">
+                <div class="flex items-center space-x-2">
+                    <x-lux::tabler-icons.edit class="w-5 h-5" />
+                    <span>Editar</span>
+                </div>
+            </x-lux::menu.link-item>
 
-            <x-lux::menu.item
+            <x-lux::menu.button-item
                 x-on:click.stop.prevent="
                     Swal.fire({
                         title: 'Eliminar slider',
@@ -39,7 +37,7 @@
                     <x-lux::tabler-icons.trash class="w-5 h-5" />
                     <span>Eliminar</span>
                 </div>
-            </x-lux::menu.item>
+            </x-lux::menu.button-item>
         </x-lux::table.row-actions>
     </x-lux::table.td>
 </x-lux::table.tr>

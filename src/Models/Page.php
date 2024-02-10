@@ -49,9 +49,9 @@ class Page extends Model
         return Str::of($this->slug)->isMatch('/.*{*}.*/');
     }
 
-    public function localizedUrl($locale)
+    public function localizedUrl($locale, $params = [])
     {
-        return route("{$this->id}.{$locale}");
+        return route("{$this->id}.{$locale}", $params);
     }
 
     public function langFilePath(): Attribute
@@ -206,6 +206,23 @@ class Page extends Model
         }
 
         return $media->first();
+    }
+
+    public function getSlugParams()
+    {
+        return str($this->slug)
+            ->matchAll('/{.*}/')
+            ->map(fn($param) => Str::unwrap($param, '{', '}'));
+    }
+
+    public function getSlugRegex()
+    {
+        return str($this->slug)
+            ->replaceMatches('/\//', '\/')
+            ->replaceMatches('/{.*}/', '([^\/]*)')
+            ->prepend('/^')
+            ->append('$/')
+            ->toString();
     }
 
     public function registerMediaCollections()
