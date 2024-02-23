@@ -1,26 +1,19 @@
-<form wire:submit.prevent="save" class="max-w-3xl mx-auto space-y-6">
-    <x-lux::locale-selector />
+<form wire:submit.prevent="save" class="max-w-3xl mx-auto space-y-10">
+    <x-lux::form-header without-locale />
 
-    <x-lux::input.inline-group
-        required
-        label="Nombre"
-        error="{{ $errors->first('name') }}"
-    >
-        <x-lux::input.text wire:model="name" />
-    </x-lux::input.inline-group>
-
-    <x-lux::input.inline-group
-        required
-        label="Posición"
-        error="{{ $errors->first('position') }}"
-    >
-        <x-lux::input.select native wire:model="position">
-            @foreach(Pieldefoca\Lux\Enum\SliderPosition::options() as $value => $label)
-                <option value="{{ $value }}">{{ $label }}</option>
-            @endforeach
-            <option value="otra">Otra</option>
-        </x-lux::input.select>
-    </x-lux::input.inline-group>
+    <x-lux::card title="Datos del slider" class="p-4 space-y-6">
+        <x-lux::input.group required label="Nombre" error="{{ $errors->first('name') }}">
+            <x-lux::input.text wire:model="name" />
+        </x-lux::input.group>
+    
+        <x-lux::input.group required label="Posición" error="{{ $errors->first('position') }}">
+            <x-lux::input.select native wire:model="position">
+                @foreach(Pieldefoca\Lux\Enum\SliderPosition::options() as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </x-lux::input.select>
+        </x-lux::input.group>
+    </x-lux::card>
 
     <div>
         <x-lux::card title="Diapositivas" class="p-4">
@@ -39,57 +32,84 @@
                     @foreach($slider->slides as $slide)
                         <div class="flex items-end space-x-4 [&:not(:last-child)]:pb-4 [&:not(:first-child)]:pt-4 [&:not(:last-child)]:border-b border-stone-200">
                             <div>
-                                <x-lux::media-preview :media="$slide->getBackground($currentLocaleCode)" class="!w-28" />
+                                <x-lux::media-preview :media="$slide->getBackground($currentLocaleCode)" class="!w-64 aspect-video" />
                             </div>
                             <div class="flex-grow">
-                                <div class="flex items-center space-x-2 min-h-[1rem]">
-                                    <div class="flex items-center justify-end space-x-1 w-16">
-                                        <span class="text-[8px] font-bold text-stone-500 uppercase">Título</span>
-                                        <x-lux::tabler-icons.h-1 class="w-3 h-3 text-stone-400" />
+                                @if($showTitle)
+                                    <div class="flex items-center space-x-2 min-h-[1rem]">
+                                        <div class="flex items-center justify-end space-x-1 w-16">
+                                            <span class="text-[8px] font-bold text-stone-500 uppercase">Título</span>
+                                            <x-lux::tabler-icons.h-1 class="w-3 h-3 text-stone-400" />
+                                        </div>
+                                        @if($slide->title)
+                                            <p class="text-sm">{{ $slide->translate('title', $currentLocaleCode) }}</p>
+                                        @else
+                                            <x-lux::tabler-icons.line-dashed class="text-stone-400" />
+                                        @endif
                                     </div>
-                                    @if($slide->title)
-                                        <p class="text-sm">{{ $slide->translate('title', $currentLocaleCode) }}</p>
-                                    @else
-                                        <x-lux::tabler-icons.line-dashed class="text-stone-400" />
-                                    @endif
-                                </div>
-                                <div class="flex items-center space-x-2 min-h-[1rem]">
-                                    <div class="flex items-center justify-end space-x-1 w-16">
-                                        <span class="text-[8px] font-bold text-stone-500 uppercase">Subtítulo</span>
-                                        <x-lux::tabler-icons.h-2 class="w-3 h-3 text-stone-400" />
+                                @endif
+                                @if($showSubtitle)
+                                    <div class="flex items-center space-x-2 min-h-[1rem]">
+                                        <div class="flex items-center justify-end space-x-1 w-16">
+                                            <span class="text-[8px] font-bold text-stone-500 uppercase">Subtítulo</span>
+                                            <x-lux::tabler-icons.h-2 class="w-3 h-3 text-stone-400" />
+                                        </div>
+                                        @if($slide->subtitle)
+                                            <p class="text-sm">{{ $slide->translate('subtitle', $currentLocaleCode) }}</p>
+                                        @else
+                                            <x-lux::tabler-icons.line-dashed class="text-stone-400" />
+                                        @endif
                                     </div>
-                                    @if($slide->subtitle)
-                                        <p class="text-sm">{{ $slide->translate('subtitle', $currentLocaleCode) }}</p>
-                                    @else
-                                        <x-lux::tabler-icons.line-dashed class="text-stone-400" />
-                                    @endif
-                                </div>
-                                <div class="flex items-center space-x-2 min-h-[1rem]">
-                                    <div class="flex items-center justify-end space-x-1 w-16">
-                                        <span class="text-[8px] font-bold text-stone-500 uppercase">Acción</span>
-                                        <x-lux::tabler-icons.hand-click class="w-3 h-3 text-stone-400" />
+                                @endif
+                                @if($showAction)
+                                    <div class="flex items-center space-x-2 min-h-[1rem]">
+                                        <div class="flex items-center justify-end space-x-1 w-16">
+                                            <span class="text-[8px] font-bold text-stone-500 uppercase">Acción</span>
+                                            <x-lux::tabler-icons.hand-click class="w-3 h-3 text-stone-400" />
+                                        </div>
+                                        @if($slide->action_text)
+                                            <p class="text-sm">{{ $slide->translate('action_text', $currentLocaleCode) }}</p>
+                                        @else
+                                            <x-lux::tabler-icons.line-dashed class="text-stone-400" />
+                                        @endif
                                     </div>
-                                    @if($slide->action_text)
-                                        <p class="text-sm">{{ $slide->translate('action_text', $currentLocaleCode) }}</p>
-                                    @else
-                                        <x-lux::tabler-icons.line-dashed class="text-stone-400" />
-                                    @endif
-                                </div>
-                                <div class="flex items-center space-x-2 min-h-[1rem]">
-                                    <div class="flex items-center justify-end space-x-1 w-16">
-                                        <span class="text-[8px] font-bold text-stone-500 uppercase">URL</span>
-                                        <x-lux::tabler-icons.link class="w-3 h-3 text-stone-400" />
+                                    <div class="flex items-center space-x-2 min-h-[1rem]">
+                                        <div class="flex items-center justify-end space-x-1 w-16">
+                                            <span class="text-[8px] font-bold text-stone-500 uppercase">URL</span>
+                                            <x-lux::tabler-icons.link class="w-3 h-3 text-stone-400" />
+                                        </div>
+                                        @if($slide->action_link)
+                                            <p class="text-sm">{{ $slide->translate('action_link', $currentLocaleCode) }}</p>
+                                        @else
+                                            <x-lux::tabler-icons.line-dashed class="text-stone-400" />
+                                        @endif
                                     </div>
-                                    @if($slide->action_link)
-                                        <p class="text-sm">{{ $slide->translate('action_link', $currentLocaleCode) }}</p>
-                                    @else
-                                        <x-lux::tabler-icons.line-dashed class="text-stone-400" />
-                                    @endif
-                                </div>
+                                @endif
                             </div>
                             <div>
                                 <x-lux::button.icon x-on:click="$dispatch('edit-slide', { slide: {{$slide->id}} })" small action="edit" />
-                                <x-lux::button.icon wire:click="$parent.deleteSlide({{$slide->id}})" small action="delete" />
+                                <x-lux::button.icon 
+                                    x-on:click.stop.prevent="
+                                        Swal.fire({
+                                            title: 'Eliminar diapositiva',
+                                            text: '¿Seguro que quieres eliminar esta diapositiva?',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            customClass: {
+                                                confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
+                                                cancelButton: 'hover:underline',
+                                                actions: 'space-x-6',
+                                            },
+                                            buttonsStyling: false,
+                                            confirmButtonText: 'Eliminar',
+                                            cancelButtonText: 'Cancelar',
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                $wire.call('deleteSlide', {{ $slide->id }})
+                                            }
+                                        })
+                                    "
+                                    small action="delete" />
                             </div>
                         </div>
                     @endforeach

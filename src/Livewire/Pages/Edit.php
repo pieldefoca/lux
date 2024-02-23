@@ -75,7 +75,7 @@ class Edit extends LuxComponent
 
     public function updatedSlug($value)
     {
-        if($this->currentLocaleCode === $this->defaultLocaleCode) {
+        if($this->locale === $this->defaultLocaleCode) {
             foreach(Locale::all() as $locale) {
                 if(array_key_exists($locale->code, $this->slug) && empty($this->slug[$locale->code])) {
                     $this->slug[$locale->code] = $value;
@@ -118,19 +118,19 @@ class Edit extends LuxComponent
     #[Computed]
     public function images()
     {
-        return $this->page->getImages($this->currentLocaleCode);
+        return $this->page->getImages($this->locale);
     }
 
     #[Computed]
     public function videos()
     {
-        return $this->page->getVideos($this->currentLocaleCode);
+        return $this->page->getVideos($this->locale);
     }
 
     #[Computed]
     public function files()
     {
-        return $this->page->getFiles($this->currentLocaleCode);
+        return $this->page->getFiles($this->locale);
     }
 
     #[Computed]
@@ -139,13 +139,13 @@ class Edit extends LuxComponent
         $query = Mediable::with('media')
             ->where('lux_mediable_type', 'BladeComponent');
 
-        if($this->currentLocaleCode === Locale::default()->code) {
+        if($this->locale === Locale::default()->code) {
             $query->where(function($query) {
-                return $query->where('locale', $this->currentLocaleCode)
+                return $query->where('locale', $this->locale)
                     ->orWhere('locale', null);
             });
         } else {
-            $query->where('locale', $this->currentLocaleCode);
+            $query->where('locale', $this->locale);
         }
 
         return $query->get();
@@ -181,7 +181,7 @@ class Edit extends LuxComponent
         $query = DB::table('lux_mediables')
             ->where('lux_media_id', $this->swappingMediaId)
             ->where(function($query) {
-                $query->where('locale', $this->currentLocaleCode)
+                $query->where('locale', $this->locale)
                     ->orWhere('locale', null);
             })
             ->where('key', $this->swappingMediaKey);
@@ -290,6 +290,10 @@ class Edit extends LuxComponent
 
     public function render()
     {
-        return view('lux::livewire.pages.edit');
+        return view('lux::livewire.pages.edit')
+            ->layout('lux::components.layouts.app', [
+                'title' => trans('lux::lux.edit-page-title'),
+                'subtitle' => trans('lux::lux.edit-page-subtitle', ['name' => $this->page->name]),
+            ]);
     }
 }

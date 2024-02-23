@@ -17,12 +17,12 @@ trait UsesLocale
 
     public function mountUsesLocale()
     {
-        $this->defaultLocale = Locale::default();
-        $this->defaultLocaleCode = $this->defaultLocale->code;
-        $this->locale = $this->defaultLocaleCode;
+        $defaultLocale = Locale::default();
+        // $this->defaultLocaleCode = $this->defaultLocale->code;
+        $this->locale = session('luxLocale', $defaultLocale->code);
 
-        $this->currentLocale = $this->defaultLocale;
-        $this->currentLocaleCode = $this->currentLocale->code;
+        // $this->currentLocale = $this->defaultLocale;
+        // $this->currentLocaleCode = $this->currentLocale->code;
 
         $this->hasMultipleLocales = Locale::count() > 1;
     }
@@ -35,9 +35,11 @@ trait UsesLocale
     #[On('select-locale')]
     public function selectLocale($locale)
     {
-        $this->currentLocale = Locale::where('code', $locale)->first();
-        $this->currentLocaleCode = $locale;
+        // $this->currentLocale = Locale::where('code', $locale)->first();
+        // $this->currentLocaleCode = $locale;
         $this->locale = $locale;
+
+        session(['luxLocale' => $locale]);
 
         $this->dispatch('locale-changed', locale: $locale);
 

@@ -1,3 +1,5 @@
+@props(['size' => 'md'])
+
 <div
     x-show="open"
     style="display: none"
@@ -20,7 +22,12 @@
         <div
             x-on:click.stop
             x-trap.noscroll.inert="open"
-            class="relative w-full max-w-5xl overflow-y-auto rounded-xl bg-white p-6 shadow-lg"
+            @class([
+                'relative w-full overflow-y-auto rounded-xl bg-white p-6 shadow-lg',
+                'max-w-xl' => $size === 'sm',
+                'max-w-3xl' => $size === 'md',
+                'max-w-5xl' => $size === 'lg',
+            ])
         >
             {{ $slot }}
         </div>

@@ -41,7 +41,7 @@ class Slideover extends LuxComponent
     {
         if(!isset($this->media)) return null;
         
-        return config('app.url') . '/uploads/' . Str::slug($this->name[$this->currentLocaleCode]) . '.' . $this->media?->getExtension();
+        return config('app.url') . '/uploads/' . Str::slug($this->name[$this->locale]) . '.' . $this->media?->getExtension();
     }
 
     public function save()

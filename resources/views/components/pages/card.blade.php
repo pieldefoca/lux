@@ -15,9 +15,9 @@
             @endif
         </div>
 
-        <p class="flex text-[9px] text-stone-500 transition-colors duration-300 hover:text-black">
+        <p x-data="{ page: @js($page) }" class="flex text-[9px] text-stone-500 transition-colors duration-300 hover:text-black">
             <span>{{ config('app.url') }}/</span>
-            <span>{{ $page->translate('slug', $this->currentLocaleCode) }}</span>
+            {{-- <span>{{ $page->translate('key', $this->locale) }}</span> --}}
         </p>
     </div>
 
@@ -84,7 +84,7 @@
                 @endif
             </button>
 
-            <x-lux::button.icon @click.stop.prevent="location.href = ''" action="view"/>
+            {{-- <x-lux::button.icon @click.stop.prevent="location.href = '{{ route($page->id) }}'" action="view"/> --}}
         </div>
     </div>
 </a>

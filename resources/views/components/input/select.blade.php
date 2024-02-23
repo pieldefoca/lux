@@ -21,8 +21,8 @@ $locales = $translatable
             @endif
             {{ 
                 $attributes->class([
-                    'w-full border border-stone-300 rounded-md outline-none px-2 py-2 text-sm transition-colors duration-300 hover:border-stone-400 hover:white focus:border-stone-500',
-                    'hidden' => $translatable && $this->currentLocaleCode !== $locale->code,
+                    'w-full border border-stone-300 rounded-md outline-none px-2 py-2 bg-transparent text-sm cursor-pointer transition-colors duration-300 hover:border-stone-400 hover:white focus:border-stone-500',
+                    'hidden' => $translatable && $this->locale !== $locale->code,
                 ]) 
             }}
         >
@@ -92,7 +92,7 @@ $locales = $translatable
             @keyup.escape="open = false"
             @class([
                 'relative w-full',
-                'hidden' => $translatable && $this->currentLocaleCode !== $locale->code,
+                'hidden' => $translatable && $this->locale !== $locale->code,
             ])
         >
             <button

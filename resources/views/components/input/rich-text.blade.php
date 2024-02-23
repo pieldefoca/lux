@@ -1,4 +1,4 @@
-@aware([
+@props([
     'translatable' => false,
     'height' => 300,
     'toolbar' => 'h1 h2 h3 bold italic underline align | bullist numlist | image media link table | fullscreen',
@@ -23,7 +23,7 @@
 
     <div
         x-data="{
-            locale: @entangle('currentLocaleCode'),
+            locale: @entangle('locale'),
             id: '',
             translatable: @js($translatable),
             model: '{{$model}}',

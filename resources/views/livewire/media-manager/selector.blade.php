@@ -1,6 +1,6 @@
 <div>
     <x-lux::modal>
-        <x-lux::modal.panel>
+        <x-lux::modal.panel size="lg">
             <x-lux::modal.title>{{ trans('lux::lux.select-media') }}</x-lux::modal.title>
 
             <input type="text" wire:model="selected" style="display: none;" />

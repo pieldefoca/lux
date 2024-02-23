@@ -1,96 +1,92 @@
-<div>
+<x-lux::admin-page>
     <script defer src="https://unpkg.com/@alpinejs/ui@3.13.1-beta.0/dist/cdn.min.js"></script>
 
-    <x-slot name="title">Editar página</x-slot>
-    <x-slot name="subtitle">Estás editando la página "{{ $page->name }}"</x-slot>
+    <x-lux::title-bar :title="trans('lux::lux.edit-page-title')" :subtitle="trans('lux::lux.edit-page-subtitle', ['name' => $page->name])" />
 
-    <x-slot name="actions">
-        <div class="flex items-center space-x-8">
-            <x-lux::link link="" target="_blank">Ver página</x-lux::link>
-            <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">Guardar</x-lux::button>
-        </div>
-    </x-slot>
+    <div x-data="{activeTab: 0}" x-tabs x-model="activeTab" class="flex-grow w-3/4 max-w-6xl mx-auto mt-8">
+        <x-lux::form-header without-locale />
 
-    <div x-data="{activeTab: 0}" x-tabs x-model="activeTab" class="max-w-6xl mx-auto">
-        <x-lux::locale-selector />
-
-        <div x-tabs:list class="flex items-center justify-center gap-4 mt-6">
+        <div x-tabs:list class="flex items-center justify-center mt-6">
             <button
                 type="button"
                 x-tabs:tab
                 :class="{
-                'bg-stone-800 border-stone-400 text-white': activeTab === 0,
-                'border-transparent text-stone-500 hover:bg-stone-200': activeTab !== 0,
+                'bg-stone-800 border-stone-800 text-white': activeTab === 0,
+                'border-stone-100 border-r-transparent bg-stone-100 text-stone-500 hover:bg-stone-200': activeTab !== 0,
             }"
-                class="px-6 py-2 border border-stone-300 rounded-full transition-all duration-300"
+                class="flex-grow px-6 py-2 border border-stone-300 rounded-l-lg transition-all duration-300"
             >Datos de la página</button>
             <button
                 type="button"
                 x-tabs:tab
                 :class="{
-                'bg-stone-800 border-stone-400 text-white': activeTab === 1,
-                'border-transparent text-stone-500 hover:bg-stone-200': activeTab !== 1,
+                'bg-stone-800 border-stone-800 text-white': activeTab === 1,
+                'border-stone-100 border-l-none bg-stone-100 text-stone-500 hover:bg-stone-200': activeTab !== 1,
             }"
-                class="px-6 py-2 border border-stone-300 rounded-full transition-all duration-300"
+                class="flex-grow px-6 py-2 border border-stone-300 rounded-r-lg transition-all duration-300"
             >Contenido</button>
         </div>
 
         <div x-tabs:panels class="border border-stone-200 bg-white rounded-lg shadow p-6 mt-3">
             <div x-tabs:panel class="space-y-6">
                 <form class="space-y-6">
-                    <x-lux::input.inline-group required label="Nombre" :error="$errors->first('name')">
-                        <x-lux::input.text wire:model="name" />
-                    </x-lux::input.inline-group>
-
-                    <x-lux::input.inline-group required translatable label="URL" :error="$errors->first('slug')">
-                        <div class="w-full space-y-1">
-                            <x-lux::input.slug wire:model.blur="slug" :prefix="config('app.url').'/'.$currentLocaleCode.'/'" />
-                            @if($page->isDynamic())
-                                <span class="flex items-center space-x-2 text-xs font-bold text-amber-500">
-                                    <x-lux::tabler-icons.alert-triangle class="w-4 h-4" />
-                                    <span>No modifiques la partes que están entre llaves o la página dejará de funcionar</span>
-                                </span>
-                            @endif
-                        </div>
-                    </x-lux::input.inline-group>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <x-lux::input.group required label="Nombre" for="name" :error="$errors->first('name')">
+                            <x-lux::input.text wire:model="name" id="name" />
+                        </x-lux::input.group>
+    
+                        <x-lux::input.group required translatable label="URL" for="slug" :error="$errors->first('slug')">
+                            <div class="w-full space-y-1">
+                                <x-lux::input.slug translatable wire:model.blur="slug" :inline-leading-addon="config('app.url').'/'.$currentLocaleCode.'/'" id="slug" />
+                                @if($page->isDynamic())
+                                    <span class="flex items-center space-x-2 text-xs font-bold text-amber-500">
+                                        <x-lux::tabler-icons.alert-triangle class="w-4 h-4" />
+                                        <span>No modifiques la partes que están entre llaves o la página dejará de funcionar</span>
+                                    </span>
+                                @endif
+                            </div>
+                        </x-lux::input.group>
+                    </div>
 
                     @role('superadmin')
-                        <x-lux::input.inline-group danger required label="Destino">
-                            <x-lux::input.select native wire:model="target">
-                                <option value="controller">Controlador</option>
-                                <option value="livewire">Livewire</option>
-                            </x-lux::input.select>
-                        </x-lux::input.inline-group>
-
-                        <div x-show="$wire.target === 'controller'">
-                            <x-lux::input.inline-group danger required label="Controlador" :error="$errors->first('controller')">
-                                <x-lux::input.text wire:model="controller" />
-                            </x-lux::input.inline-group>
-
-                            <x-lux::input.inline-group danger required label="Acción" :error="$errors->first('controller_action')">
-                                <x-lux::input.text wire:model="controller_action" />
-                            </x-lux::input.inline-group>
-                        </div>
-
-                        <div x-show="$wire.target === 'livewire'">
-                            <x-lux::input.inline-group danger required label="Componente" :error="$errors->first('livewire_component')">
-                                <x-lux::input.text wire:model="livewire_component" />
-                            </x-lux::input.inline-group>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <x-lux::input.group danger required label="Destino">
+                                <x-lux::input.select native wire:model="target">
+                                    <option value="controller">Controlador</option>
+                                    <option value="livewire">Livewire</option>
+                                </x-lux::input.select>
+                            </x-lux::input.group>
+    
+                            <div x-show="$wire.target === 'controller'">
+                                <x-lux::input.group danger required label="Controlador" for="controller" :error="$errors->first('controller')">
+                                    <x-lux::input.text wire:model="controller" id="controller" />
+                                </x-lux::input.group>
+    
+                                <x-lux::input.group danger required label="Acción" for="controller_action" :error="$errors->first('controller_action')">
+                                    <x-lux::input.text wire:model="controller_action" id="controller_action" />
+                                </x-lux::input.group>
+                            </div>
+    
+                            <div x-show="$wire.target === 'livewire'">
+                                <x-lux::input.group danger required label="Componente" for="livewire_component" :error="$errors->first('livewire_component')">
+                                    <x-lux::input.text wire:model="livewire_component" id="livewire_component" />
+                                </x-lux::input.group>
+                            </div>
                         </div>
                     @endrole
 
                     @if(!$page->isDynamic())
-                        <x-lux::input.inline-group translatable label="Título (SEO)" :error="$errors->first('title')">
-                            <x-lux::input.text translatable wire:model="title" />
-                        </x-lux::input.inline-group>
+                        <x-lux::input.group translatable label="Título (SEO)" :error="$errors->first('title')" help="Se recomienda entre 50 y 60 caracteres">
+                            <x-lux::input.seo-title wire:model="title" />
+                        </x-lux::input.group>
 
-                        <x-lux::input.inline-group translatable label="Descripción (SEO)" :error="$errors->first('description')">
-                            <x-lux::input.textarea translatable wire:model="description" />
-                        </x-lux::input.inline-group>
+                        <x-lux::input.group translatable label="Descripción (SEO)" :error="$errors->first('description')" help="Se recomienda entre 120 y 150 caracteres">
+                            <x-lux::input.seo-description wire:model="description" />
+                        </x-lux::input.group>
 
-                        <x-lux::input.inline-group label="Visible" help="¿Quieres publicar esta página?" :error="$errors->first('visible')">
+                        <x-lux::input.group label="Visible" help="¿Quieres publicar esta página?" :error="$errors->first('visible')">
                             <x-lux::input.toggle wire:model="visible" />
-                        </x-lux::input.inline-group>
+                        </x-lux::input.group>
                     @endif
                 </form>
             </div>
@@ -100,8 +96,8 @@
                     <div class="inline-flex items-center space-x-1 px-2 py-1 border border-amber-200 rounded bg-amber-50">
                         <span class="text-xs">Estás editando:</span>
                         <div class="flex items-center space-x-1">
-                            <img src="{{ asset('vendor/lux/img/flags/'.$currentLocaleCode.'.svg') }}" class="w-3 h-3" />
-                            <p class="text-xs">{{ $currentLocaleCode }}</p>
+                            <img src="{{ asset('vendor/lux/img/flags/'.$locale.'.svg') }}" class="w-3 h-3" />
+                            <p class="text-xs">{{ $locale }}</p>
                         </div>
                     </div>
                 </div>
@@ -122,7 +118,7 @@
 
                                         <x-lux::input.translation
                                             wire:model="translations.{{$locale}}.{{$index}}"
-                                            @class(['hidden' => $this->currentLocaleCode !== $locale])
+                                            @class(['hidden' => $this->locale !== $locale])
                                             wire:key="{{ uniqid() }}"
                                         />
                                     @endforeach
@@ -131,7 +127,7 @@
 
                             @if($page->isLegalPage())
                                 <x-lux::input.group translatable label="Contenido">
-                                    <x-lux::input.rich-text wire:model="legalPageContent" />
+                                    <x-lux::input.rich-text translatable wire:model="legalPageContent" />
                                 </x-lux::input.group>
                             @endif
                         </div>
@@ -260,4 +256,9 @@
             </div>
         </div>
     </div>
-</div>
+
+    <x-lux::action-bar>
+        <x-lux::link link="" target="_blank">Ver página</x-lux::link>
+        <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">Guardar</x-lux::button>    
+    </x-lux::action-bar>
+</x-lux::admin-page>

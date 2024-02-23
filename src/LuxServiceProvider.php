@@ -11,6 +11,7 @@ use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Support\Pages;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Blade;
 use Pieldefoca\Lux\Support\Translator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
@@ -129,6 +130,8 @@ class LuxServiceProvider extends ServiceProvider
 
 	protected function registerComponents()
 	{
+		Blade::componentNamespace('Pieldefoca\\Lux\\Views\\Components', 'lux');
+
 		$luxAppPath = app_path('Livewire/Lux');
 
 		$files = File::allFiles($luxAppPath);

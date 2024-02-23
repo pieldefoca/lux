@@ -27,7 +27,7 @@ trait WithSorting
 
         foreach ($this->sorts as $field => $direction) {
             if($translatableFields->contains($field)) {
-                $locale = $this->currentLocaleCode;
+                $locale = $this->locale;
                 $query->orderBy("{$field}->{$locale}", $direction);
             } else {
                 $query->orderBy($field, $direction);

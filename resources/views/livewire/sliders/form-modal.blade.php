@@ -1,5 +1,7 @@
-<x-lux::modal title="Nuevo slider">
+<x-lux::modal>
     <x-lux::modal.panel>
+        <x-lux::modal.title>Nuevo slider</x-lux::modal.title>
+        
         <form wire:submit="save" class="space-y-6">
             <x-lux::input.inline-group
                 required

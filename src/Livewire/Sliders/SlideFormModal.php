@@ -83,7 +83,9 @@ class SlideFormModal extends LuxModal
 
         $this->slide->addMedia($this->background)->saveTranslations()->toCollection('background');
 
-        $this->notifySuccess($this->editing ? '🤙🏾 Has actualizado la diapositiva correctamente' : '👍🏽 Has creado la diapositiva correctamente');
+        if($this->editing) {
+            $this->notifySuccess('🤙🏾 Has actualizado la diapositiva correctamente');
+        }
 
         $this->dispatch('slides-updated');
 

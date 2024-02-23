@@ -1,11 +1,10 @@
-<div>
-    <x-slot name="title">{{ trans('lux::lux.pages-index-title') }}</x-slot>
-    <x-slot name="subtitle">{{ trans('lux::lux.pages-index-subtitle') }}</x-slot>
+<x-lux::admin-page>
+    <x-lux::title-bar :title="trans('lux::lux.pages-index-title')" :subtitle="trans('lux::lux.pages-index-subtitle')" />
 
-    <div class="max-w-3xl mx-auto">
-        <x-lux::locale-selector />
+    <x-lux::locale-selector />
 
-        <x-lux::card class="p-6">
+    <div class="flex-grow w-1/2 max-w-3xl mx-auto">
+        <x-lux::card class="mt-8 p-6">
             <div class="space-y-3">
                 @foreach($this->pages as $page)
                     <x-lux::pages.card :$page />
@@ -13,4 +12,4 @@
             </div>
         </x-lux::card>
     </div>
-</div>
+</x-lux::admin-page>

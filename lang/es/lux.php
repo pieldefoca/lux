@@ -20,6 +20,10 @@ return [
     'dynamic-page' => '🤸🏽‍♀️ Página dinámica',
 
     // @E
+    'edit-page-subtitle' => 'Estás editando la página ":name"',
+    'edit-page-title' => 'Editar página',
+    'edit-slider-subtitle' => 'Estás editando el slider ":name"',
+    'edit-slider-title' => 'Editar slider',
     'elegir-fichero' => 'Elegir fichero',
     'elegir-imagen' => 'Elegir imagen',
     'elegir-video' => 'Elegir vídeo',
@@ -72,8 +76,8 @@ return [
     'saving' => 'Guardando',
     'select-media' => 'Seleccionar',
     'selected-rows' => 'Fila seleccionada|Filas seleccionadas',
-    'sliders-titulo' => 'Sliders',
-    'sliders-subtitulo' => 'Lista de sliders',
+    'sliders-subtitle' => 'Lista de sliders',
+    'sliders-title' => 'Sliders',
 
     // @T
     'there-are-no-files' => 'No existe ningún archivo',

@@ -114,9 +114,7 @@ class MediaAdder
 
     protected function save()
     {
-        $mediaIds = array_map('current', $this->mediaIds);
-
-        $mediaIds = array_values($mediaIds);
+        $mediaIds = array_values($this->mediaIds);
 
         $mediaIds = array_unique($mediaIds);
 

@@ -3,6 +3,7 @@
 namespace Pieldefoca\Lux\Livewire\Table\Traits;
 
 use Livewire\Attributes\Computed;
+use Pieldefoca\Lux\Traits\UsesLocale;
 use Pieldefoca\Lux\Livewire\Table\Traits\WithSorting;
 use Pieldefoca\Lux\Livewire\Table\Traits\WithPagination;
 
@@ -11,6 +12,7 @@ trait LuxTable
     use WithSorting;
     use WithPagination;
 
+    public $showLocale = false;
     public $hasBulkActions = false;
     public $hasBulkDeletion = false;
     public $searchable = false;

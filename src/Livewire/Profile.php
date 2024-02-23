@@ -58,6 +58,12 @@ class Profile extends LuxComponent
 	#[On('save-profile')]
 	public function save()
 	{
+		$this->withValidator(function($validator) {
+			if($validator->fails()) {
+				$this->dispatch('show-error-feedback');
+			}
+		});
+
 		$validated = $this->validate();
 
 		if(is_null($this->avatar)) {
@@ -90,6 +96,7 @@ class Profile extends LuxComponent
 	public function messages()
 	{
 		return [
+			'username.required' => 'Escribe un nombre de usuario',
 			'name.required' => 'Escribe un nombre',
 			'email.required' => 'Escribe un email',
 			'email.unique' => 'Ese email ya está en uso',

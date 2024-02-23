@@ -4,8 +4,6 @@
 ])
 
 <div>
-    <x-lux::locale-selector />
-
     <x-lux::card>
         <div @class(['rounded-t-md px-4 py-4'])>
             <div class="flex items-center justify-between">
@@ -92,8 +90,12 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div class="flex items-center space-x-3">
                             {{ $actions ?? '' }}
+
+                            @if($this->showLocale)
+                                <x-lux::locale-selector class="mb-8" />
+                            @endif
                         </div>
                     </div>
                 </div>

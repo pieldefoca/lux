@@ -15,7 +15,7 @@
     $model = $attributes->wire('model')->value;
     $selectedIds = [];
     if($translatable) {
-        $selectedIds = $ignoreTranslations ? $this->$model[$defaultLocaleCode] : $this->$model[$this->currentLocaleCode];
+        $selectedIds = $ignoreTranslations ? $this->$model[$defaultLocaleCode] : $this->$model[$this->locale];
     } else {
         $selectedIds = $this->$model;
     }
@@ -36,9 +36,9 @@
             }
         }" 
         x-ref="media"
-        @class(['hidden' => $translatable && $this->currentLocaleCode !== $locale->code])
+        @class(['hidden' => $translatable && $this->locale !== $locale->code])
     >
-        <div class="flex flex-col space-y-3">
+        <div class="flex flex-col space-y-3 mt-4">
             @if((!$multiple && !$mediaSelected) || $multiple)
                 @php
                     $icon = 'file-invoice';

@@ -10,13 +10,12 @@ class Edit extends LuxComponent
 {
     public Slider $slider;
 
-    public function deleteSlide(Slide $slide)
-    {
-        $slide->delete();
-    }
-
     public function render()
     {
-        return view('lux::livewire.sliders.edit');
+        return view('lux::livewire.sliders.edit')
+            ->layout('lux::components.layouts.app', [
+                'title' => trans('lux::lux.edit-slider-title'),
+                'subtitle' => trans('lux::lux.edit-slider-subtitle', ['name' => $this->slider->name]),
+            ]);
     }
 }

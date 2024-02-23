@@ -136,9 +136,9 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                 @if($unselectable || $clearable)
                     <button 
                         @if($unselectable)
-                            @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}', {{ $media->id}}); open = false"
+                            @click="$wire.unselectMedia('{{ $translatable ? $model.'.'.$this->locale : $model }}', {{ $media->id}}); open = false"
                         @else
-                            @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->currentLocaleCode : $model }}'); open = false" 
+                            @click="$wire.clearMediaField('{{ $translatable ? $model.'.'.$this->locale : $model }}'); open = false" 
                         @endif
                         type="button"
                         class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"

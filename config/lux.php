@@ -21,4 +21,10 @@ return [
     'sliders' => [
         'fields' => ['title', 'subtitle', 'action']
     ],
+
+    'locales' => [
+        'es', 'eu',
+    ],
+
+    'default_locale' => 'es',
 ];

@@ -20,7 +20,7 @@ trait HasMediaFields
                 if($property['translatable']) {
                     $fallbackToDefault = [];
 
-                    if($this->currentLocaleCode === $this->defaultLocaleCode) {
+                    if($this->locale === $this->defaultLocaleCode) {
                         $defaultLocaleValue = array_unique($this->$field[$this->defaultLocaleCode]);
 
                         foreach($this->$field as $locale => $ids) {
@@ -37,12 +37,12 @@ trait HasMediaFields
                     $newValue = $mediaIds;
 
                     if($property['multiple']) {
-                        $newValue = array_merge($this->$field[$this->currentLocaleCode], $mediaIds);
+                        $newValue = array_merge($this->$field[$this->locale], $mediaIds);
                         $newValue = array_unique($newValue);
                         $newValue = array_values($newValue);
-                        $this->$field[$this->currentLocaleCode] = $newValue;
+                        $this->$field[$this->locale] = $newValue;
                     } else {
-                        $this->$field[$this->currentLocaleCode] = $mediaIds;
+                        $this->$field[$this->locale] = $mediaIds;
                     }
 
                     foreach($fallbackToDefault as $locale) {
@@ -70,7 +70,7 @@ trait HasMediaFields
                 } else {
                     $media = $model->getFirstMedia($collection);
     
-                    $this->$name = is_null($media) ? [] : $media->id;
+                    $this->$name = is_null($media) ? [] : [$media->id];
                 }
             }
         }
@@ -107,8 +107,10 @@ trait HasMediaFields
         if(str($field)->contains('.')) {
             $splits = explode('.', $field);
             $field = $splits[0];
+            $this->$field[$splits[1]] = [];
+        } else {
+            $this->$field = [];
         }
-        $this->$field[$splits[1]] = [];
     }
 
     public function unselectMedia($field, $mediaId)
@@ -130,6 +132,6 @@ trait HasMediaFields
 
     public function reorderGallery($field, $ids)
     {
-        $this->$field[$this->currentLocaleCode] = $ids;
+        $this->$field[$this->locale] = $ids;
     }
 }

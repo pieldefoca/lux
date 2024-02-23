@@ -9,7 +9,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                body: ['Quicksand', 'serif'],
+                body: ['Barlow', 'serif'],
             }
         },
     },

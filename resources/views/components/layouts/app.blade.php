@@ -7,7 +7,8 @@
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+	{{-- <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet"> --}}
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
@@ -90,45 +91,15 @@
 
 		<div
 			x-data
-			class="w-full min-h-screen bg-stone-50 transition-all duration-300"
+			class="w-full min-h-screen bg-gray-50 transition-all duration-300"
 			x-cloak
 		>
-			<div
-					:class="{
-                    'w-[calc(100%-16rem)] ml-64': !sidebarCollapsed,
-                    'w-full ml-0': sidebarCollapsed,
-                }"
-					class="fixed flex items-center justify-between px-12 py-2 bg-white/80 backdrop-blur shadow transition-all duration-300 z-10"
-			>
-				<div class="flex items-center space-x-6">
-					<button
-						x-data
-						type="button"
-						x-on:click="toggleSidebar"
-						class="relative flex items-center justify-center p-1.5 rounded transition-colors duration-300 bg-stone-200 text-stone-600 hover:bg-stone-800 hover:text-stone-100"
-					>
-						<x-lux::tabler-icons.layout-sidebar-left-collapse x-show="!sidebarCollapsed" class="w-6 h-6" />
-						<x-lux::tabler-icons.layout-sidebar-left-expand x-show="sidebarCollapsed" class="w-6 h-6" />
-					</button>
-					<div>
-						<h1 class="font-bold text-lg">{{ $title ?? 'Titulo' }}</h1>
-						@isset($subtitle)
-							<h2 class="text-xs text-stone-500">{{ $subtitle ?? 'Subtitulo' }}</h2>
-						@endisset
-					</div>
-				</div>
-
-				<div id="lux-actions">
-					{{ $actions ?? '' }}
-				</div>
-			</div>
-
 			<div
 				x-bind:class="{
 					'px-12 ml-64': !sidebarCollapsed,
 					'px-8 ml-0': sidebarCollapsed,
 				}"
-				class="mt-6 mb-12 pt-16 transition-all duration-300"
+				class="transition-all duration-300"
 			>
 				{{ $slot }}
 			</div>

@@ -159,9 +159,9 @@ class Page extends Model
 
     public function isLegalPage(): bool
     {
-        $legalPages = ['accesibilidad', 'politica-privacidad', 'politica-cookies', 'aviso-legal'];
+        $legalPages = ['accesibility', 'privacy-policy', 'cookies-policy', 'legal-notice'];
 
-        return in_array($this->key, $legalPages);
+        return in_array($this->id, $legalPages);
     }
 
     public function toggleVisibility()
