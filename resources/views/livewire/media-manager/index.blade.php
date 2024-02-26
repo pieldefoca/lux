@@ -172,6 +172,4 @@
             </x-lux::card>
         </div>
     </div>
-
-    <livewire:media-manager.slideover/>
 </x-lux::admin-page>

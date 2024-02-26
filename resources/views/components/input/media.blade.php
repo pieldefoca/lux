@@ -60,7 +60,30 @@
                 <div class="flex items-center space-x-4">
                     <x-lux::button x-on:click="select" icon="{{ $icon }}">{{ $text }}</x-lux::button>
                     @if($multiple && $mediaSelected)
-                        <button @click="$wire.clearMedia('{{ $model }}')" type="button" class="flex items-center space-x-1 text-xs transition-colors duration-300 hover:text-red-400">
+                        <button 
+                            x-on:click.stop.prevent="
+                                Swal.fire({
+                                    title: 'Eliminar todos los archivos',
+                                    text: '¿Seguro que quieres eliminar todos los archivos?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    customClass: {
+                                        confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
+                                        cancelButton: 'hover:underline',
+                                        actions: 'space-x-6',
+                                    },
+                                    buttonsStyling: false,
+                                    confirmButtonText: 'Eliminar',
+                                    cancelButtonText: 'Cancelar',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        $wire.clearMedia('{{ $model }}')
+                                    }
+                                })
+                            "
+                            type="button" 
+                            class="flex items-center space-x-1 text-xs transition-colors duration-300 hover:text-red-400"
+                        >
                             <x-lux::tabler-icons.trash class="w-4 h-4" />
                             <span>Eliminar todo</span>
                         </button>

@@ -1,24 +1,24 @@
 <x-lux::slideover title="Información" class="p-4">
     <div class="space-y-4">
-        <div class="flex items-center space-x-4 bg-amber-50 border border-amber-200 rounded p-2">
-            <x-lux::tabler-icons.alert-triangle class="text-amber-300" />
-            <p class="text-[9px] text-amber-500">Ten en cuenta que los cambios que hagas aquí se aplicarán en todos los sitios en los que se esté utilizando esta imagen</p>
+        <div class="flex items-center space-x-3 bg-amber-50 border border-amber-200 rounded p-2">
+            <x-lux::tabler-icons.alert-triangle class="flex-grow w-8 h-8 text-amber-300" />
+            <p class="text-[11px] text-amber-500">Ten en cuenta que los cambios que hagas aquí se aplicarán en todos los sitios en los que se esté utilizando esta imagen</p>
         </div>
 
-        <x-lux::locale-selector />
+        <x-lux::form-header />
 
         <img src="{{ $media?->getUrl() }}" class="w-48 aspect-square object-cover rounded-md" />
 
-        <x-lux::input.group translatable label="Nombre">
-            <x-lux::input.text wire:model.live="name" />
+        <x-lux::input.group required translatable label="Nombre">
+            <x-lux::input.text translatable wire:model="name" />
         </x-lux::input.group>
 
         <x-lux::input.group translatable label="Alt (SEO)">
-            <x-lux::input.text wire:model="alt" />
+            <x-lux::input.text translatable wire:model="alt" />
         </x-lux::input.group>
 
         <x-lux::input.group translatable label="Título (SEO)">
-            <x-lux::input.text wire:model="title" />
+            <x-lux::input.text translatable wire:model="title" />
         </x-lux::input.group>
 
         <x-lux::input.group label="URL">

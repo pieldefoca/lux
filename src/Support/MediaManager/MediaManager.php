@@ -45,6 +45,15 @@ class MediaManager
         foreach($files as $file) {
             $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $filename = Str::slug($name);
+            $extension = $file->getClientOriginalExtension();
+
+            $fullName = "{$filename}.{$extension}";
+            $count = 1;
+            while(file_exists(public_path('uploads/' . $fullName))) {
+                $filename = "{$name}-{$count}";
+                $fullName = "{$filename}.{$extension}";
+                $count++;
+            }
 
             // Store the original file
             $originalFilename = $file->store('._ogs', 'uploads');
@@ -55,7 +64,7 @@ class MediaManager
                 'name' => $name,
                 'filename' => $filename,
                 'mime_type' => $file->getMimeType(),
-                'extension' => $file->getClientOriginalExtension(),
+                'extension' => $extension,
             ]);
         }
     }

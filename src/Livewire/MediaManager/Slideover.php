@@ -41,12 +41,12 @@ class Slideover extends LuxComponent
     {
         if(!isset($this->media)) return null;
         
-        return config('app.url') . '/uploads/' . Str::slug($this->name[$this->locale]) . '.' . $this->media?->getExtension();
+        return config('app.url') . '/uploads/' . Str::slug($this->media->filename) . '.' . $this->media?->extension;
     }
 
     public function save()
     {
-        // $this->validate();
+        $this->validate();
 
         $this->media->update([
             'name' => $this->name,
@@ -60,6 +60,20 @@ class Slideover extends LuxComponent
     public function deleteMedia()
     {
         $this->media->delete();
+    }
+
+    public function rules()
+    {
+        return [
+            'name.*' => ['required'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.*.required' => 'Escribe un nombre',
+        ];
     }
 
     public function render()

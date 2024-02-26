@@ -99,9 +99,9 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                         <button 
                             @click="select; open = false" 
                             type="button"
-                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                            class="group/select flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
-                            <x-lux::tabler-icons.hand-click class="w-4 h-4 group-hover:text-sky-500 group-hover:scale-125" />
+                            <x-lux::tabler-icons.hand-click class="w-4 h-4 transition-transform duration-300 group-hover/select:scale-125" />
                             <span>Cambiar imagen</span>
                         </button>
                     </li>
@@ -112,9 +112,9 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                         <button 
                             @click="$wire.swapMedia({{ $media->id }}, '{{ $key }}'); open = false" 
                             type="button"
-                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                            class="group/swap flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
-                            <x-lux::tabler-icons.hand-click class="w-4 h-4 group-hover:text-sky-500 group-hover:scale-125" />
+                            <x-lux::tabler-icons.hand-click class="w-4 h-4 transition-transform duration-300 group-hover/swap:scale-125" />
                             <span>Cambiar imagen</span>
                         </button>
                     </li>
@@ -125,9 +125,9 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                         <button 
                             @click="$dispatch('edit-media', { media: {{ $media->id }} }); open = false"
                             type="button" 
-                            class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
+                            class="group/edit flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
-                            <x-lux::tabler-icons.edit class="w-4 h-4 group-hover:text-teal-500 group-hover:scale-125" />
+                            <x-lux::tabler-icons.edit class="w-4 h-4 transition-transform duration-300 group-hover/edit:scale-125" />
                             <span>Editar detalles</span>
                         </button>
                     </li>
@@ -143,7 +143,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                         type="button"
                         class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                     >
-                        <x-lux::tabler-icons.square-x class="w-4 h-4 group-hover:text-red-500 group-hover:scale-125" />
+                        <x-lux::tabler-icons.square-x class="w-4 h-4 transition-transform duration-300 group-hover:scale-125" />
                         @if($unselectable)
                             <span>Deseleccionar</span>
                         @else
@@ -177,7 +177,7 @@ $hasActions = $selectable || $editable || $unselectable || $removable || $swappa
                             action="delete"
                             class="group flex items-center space-x-2 px-4 py-2 w-full transition-colors duration-300 hover:bg-black hover:text-white"
                         >
-                            <x-lux::tabler-icons.trash class="w-4 h-4 group-hover:text-red-500 group-hover:scale-125" />
+                            <x-lux::tabler-icons.trash class="w-4 h-4 transition-transform duration-300 group-hover:scale-125" />
                             <span>Eliminar</span>
                         </button>
                     </li>

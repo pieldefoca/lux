@@ -1,4 +1,4 @@
-<div x-data="{ open: @entangle('visible') }" class="flex justify-center">
+<div x-data="{ open: @entangle('visible').live }" class="flex justify-center">
     <div
         x-dialog
         x-model="open"
@@ -6,7 +6,7 @@
         class="fixed inset-0 overflow-hidden z-10"
     >
         <!-- Overlay -->
-        <div x-dialog:overlay x-transition.opacity class="fixed inset-0 bg-black/30 backdrop-blur-[1px]"></div>
+        <div x-dialog:overlay x-transition.opacity class="fixed inset-0 bg-black/60"></div>
  
         <!-- Panel -->
         <div class="fixed inset-y-0 right-0 p-4 max-w-lg w-full">
