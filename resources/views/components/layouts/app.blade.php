@@ -107,7 +107,7 @@
 	</div>
 
 	<livewire:media-manager.selector />
-    <livewire:media-manager.slideover />
+    <livewire:media-manager.slideover :deletable="Route::is('lux.media.index')" />
 
 	@livewireScriptConfig
 	@stack('js')

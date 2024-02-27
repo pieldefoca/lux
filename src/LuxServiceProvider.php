@@ -10,8 +10,8 @@ use Pieldefoca\Lux\Support\Lux;
 use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Support\Pages;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Pieldefoca\Lux\Support\Translator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
@@ -23,6 +23,7 @@ use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
 use Pieldefoca\Lux\Console\Commands\LuxInstall;
 use Pieldefoca\Lux\Console\Commands\LuxUploads;
+use Pieldefoca\Lux\Console\Commands\MigrateImages;
 use Pieldefoca\Lux\Http\Middleware\PageMiddleware;
 use Pieldefoca\Lux\Console\Commands\LuxProcessMedia;
 use Pieldefoca\Lux\Http\Middleware\LocaleMiddleware;
@@ -71,6 +72,7 @@ class LuxServiceProvider extends ServiceProvider
 				LuxPages::class,
 				LuxUploads::class,
 				LuxProcessMedia::class,
+				MigrateImages::class,
 			]);
 		}
 		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');

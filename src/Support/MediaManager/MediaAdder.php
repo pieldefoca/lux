@@ -104,6 +104,7 @@ class MediaAdder
                 DB::table('lux_mediables')
                     ->where('lux_mediable_id', $this->model->id)
                     ->where('lux_mediable_type', get_class($this->model))
+                    ->where('collection', $this->collection)
                     ->where('locale', $locale)
                     ->where('lux_media_id', $id)
                     ->where('key', $this->key)

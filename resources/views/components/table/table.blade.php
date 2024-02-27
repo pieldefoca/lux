@@ -15,7 +15,7 @@
                                 <span class="text-xs">Aceptar</span>
                             </button>
 
-                            <button x-show="!$wire.reordering" @click="$wire.reordering = true" title="Reordenar" type="button" class="group flex flex-col items-center p-1 rounded text-stone-600 -translate-x-1 transition-colors duration-300 hover:bg-black">
+                            <button x-show="!$wire.reordering" @click="$wire.startReordering()" title="Reordenar" type="button" class="group flex flex-col items-center p-1 rounded text-stone-600 -translate-x-1 transition-colors duration-300 hover:bg-black">
                                 <x-lux::tabler-icons.reorder class="w-5 h-5 transition-colors duration-300 group-hover:text-white" />
                             </button>
                         </div>

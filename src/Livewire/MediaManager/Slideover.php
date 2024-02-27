@@ -15,8 +15,7 @@ class Slideover extends LuxComponent
 
     public $visible = false;
 
-    #[Translatable]
-    public $name;
+    public $filename;
 
     #[Translatable]
     public $alt;
@@ -24,12 +23,19 @@ class Slideover extends LuxComponent
     #[Translatable]
     public $title;
 
+    public $deletable = false;
+
+    public function updatedFilename($value)
+    {
+        $this->filename = str($value)->slug()->toString();
+    }
+
     #[On('edit-media')]
     public function open(Media $media)
     {
         $this->media = $media;
 
-        $this->name = $media->getTranslations('name');
+        $this->filename = $media->filename;
         $this->alt = $media->getTranslations('alt');
         $this->title = $media->getTranslations('title');
         
@@ -48,8 +54,10 @@ class Slideover extends LuxComponent
     {
         $this->validate();
 
+        $this->media->rename($this->filename);
+
         $this->media->update([
-            'name' => $this->name,
+            'filename' => $this->filename,
             'alt' => $this->alt,
             'title' => $this->title,
         ]);
@@ -65,14 +73,14 @@ class Slideover extends LuxComponent
     public function rules()
     {
         return [
-            'name.*' => ['required'],
+            'filename' => ['required'],
         ];
     }
 
     public function messages()
     {
         return [
-            'name.*.required' => 'Escribe un nombre',
+            'filename.required' => 'Escribe un nombre',
         ];
     }
 

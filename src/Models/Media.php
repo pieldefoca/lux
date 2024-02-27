@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Models;
 
+use File;
 use Spatie\Image\Image;
 use Spatie\Image\Enums\Fit;
 use Pieldefoca\Lux\Enum\MediaType;
@@ -42,24 +43,33 @@ class Media extends Model
     {
         return Attribute::make(
             get: function() {
-                return Storage::disk('uploads')->size("{$this->filename}.{$this->extension}");
+                return Storage::disk('uploads')->size("{$this->id}/{$this->filename}.{$this->extension}");
+            }
+        );
+    }
+
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->filename . '.' . $this->extension;
             }
         );
     }
 
     public function getUrl()
     {
-        return Storage::disk('uploads')->url("{$this->filename}.{$this->extension}");
+        return Storage::disk('uploads')->url("{$this->id}/{$this->filename}.{$this->extension}");
     }
 
     public function getThumbUrl()
     {
-        return Storage::disk('uploads')->url("{$this->filename}-thumb.{$this->extension}");
+        return Storage::disk('uploads')->url("{$this->id}/{$this->filename}-thumb.{$this->extension}");
     }
 
     public function getPath()
     {
-        return Storage::disk('uploads')->path($this->filename);
+        return Storage::disk('uploads')->path($this->id);
     }
 
     public function getExtension()
@@ -89,58 +99,63 @@ class Media extends Model
 
     public function createVariations()
     {
-        if(! $this->isImage()) return $this->copyOriginal();
+        if(! $this->isImage()) return;
 
-        $originalPath = $this->getOriginalPath();
-        $extension = pathinfo($originalPath)['extension'];
-        $extension = ($extension === 'jpg' || $extension === 'jpeg')
-            ? 'webp'
-            : $extension;
-        
+        $convertibleExtensions = ['jpg', 'jpeg'];
+        $convertible = in_array($this->extension, $convertibleExtensions);
+        $newExtension = $convertible ? 'webp' : $this->extension;
+        $originalPath = public_path("uploads/{$this->id}/{$this->filename}.{$this->extension}");
+
+        // Optimize the original image
+        Image::load($originalPath)
+            ->optimize()
+            ->save(Storage::disk('uploads')->path("{$this->id}/{$this->filename}.{$this->extension}"));
+
+        if($convertible) {
+            // Convert the image to the new format
+            Image::load($originalPath)
+                ->save(Storage::disk('uploads')->path("{$this->id}/{$this->filename}.{$newExtension}"));
+        }
+
+        // Create the variations
         Image::load($originalPath)
             ->fit(Fit::Contain, 1920, 1080)
-            ->save(Storage::disk('uploads')->path("{$this->filename}.{$extension}"));
+            ->save(Storage::disk('uploads')->path("{$this->id}/{$this->filename}.{$newExtension}"));
         // Image::load($originalPath)
         //     ->fit(Fit::Contain, 1280, 720)
-        //     ->save(Storage::disk('uploads')->path("{$this->filename}-md.{$extension}"));
+        //     ->save(Storage::disk('uploads')->path("{$this->filename}-md.{$newExtension}"));
         // Image::load($originalPath)
         //     ->fit(Fit::Contain, 640, 360)
-        //     ->save(Storage::disk('uploads')->path("{$this->filename}-sm.{$extension}"));
+        //     ->save(Storage::disk('uploads')->path("{$this->filename}-sm.{$newExtension}"));
         Image::load($originalPath)
-            ->fit(Fit::Contain, 250, 180)
-            ->save(Storage::disk('uploads')->path("{$this->filename}-thumb.{$extension}"));
+            ->fit(Fit::Contain, 350, 200)
+            ->save(Storage::disk('uploads')->path("{$this->id}/{$this->filename}-thumb.{$newExtension}"));
 
-        $this->update(['extension' => $extension]);
+        if($convertible) {
+            // Delete the original image
+            Storage::disk('uploads')->delete("{$this->id}/{$this->filename}.{$this->extension}");
+        }
+
+        $this->update(['extension' => $newExtension]);
     }
 
-    public function copyOriginal()
+    public function rename($newName)
     {
-        return copy(
-            $this->getOriginalPath(), 
-            Storage::disk('uploads')->path("{$this->filename}.{$this->extension}")
-        );
-    }
+        $suffixes = ['', '-thumb'];
+        $previousFilename = $this->filename;
 
-    public function getOriginalPath()
-    {
-        return Storage::disk('uploads')->path("._ogs/{$this->original_image}");
+        foreach($suffixes as $suffix) {
+            $filename = "{$previousFilename}{$suffix}.{$this->extension}";
+            $newFilename = "{$newName}{$suffix}.{$this->extension}";
+            $path = public_path("uploads/{$this->id}/{$filename}");
+            $newPath = public_path("uploads/{$this->id}/{$newFilename}");
+
+            File::move($path, $newPath);
+        }
     }
 
     public function deleteAll()
     {
-        $this->deleteOriginal();
-
-        $this->deleteVariations();
-    }
-
-    protected function deleteOriginal()
-    {
-        Storage::disk('uploads')->delete("._ogs/{$this->original_image}");
-    }
-
-    protected function deleteVariations()
-    {
-        Storage::disk('uploads')->delete("{$this->filename}.{$this->extension}");
-        Storage::disk('uploads')->delete("{$this->filename}-thumb.{$this->extension}");
+        Storage::disk('uploads')->deleteDirectory($this->id);
     }
 }

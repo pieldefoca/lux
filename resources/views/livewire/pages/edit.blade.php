@@ -258,7 +258,7 @@
     </div>
 
     <x-lux::action-bar>
-        <x-lux::link link="" target="_blank">Ver página</x-lux::link>
+        <x-lux::link link="{{ route($page->id) }}" target="_blank">Ver página</x-lux::link>
         <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">Guardar</x-lux::button>    
     </x-lux::action-bar>
 </x-lux::admin-page>

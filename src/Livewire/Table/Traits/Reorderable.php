@@ -22,5 +22,4 @@ trait Reorderable
             $this->model::find($id)->update(['order' => $index]);
         }
     }
-
 }

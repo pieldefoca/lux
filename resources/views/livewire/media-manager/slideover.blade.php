@@ -9,8 +9,8 @@
 
         <img src="{{ $media?->getUrl() }}" class="w-48 aspect-square object-cover rounded-md" />
 
-        <x-lux::input.group required translatable label="Nombre">
-            <x-lux::input.text translatable wire:model="name" />
+        <x-lux::input.group required label="Nombre" :error="$errors->first('filename')">
+            <x-lux::input.text wire:model.blur="filename" />
         </x-lux::input.group>
 
         <x-lux::input.group translatable label="Alt (SEO)">
@@ -33,29 +33,33 @@
 
     <x-slot name="footer">
         <div class="flex items-center justify-between">
-            <x-lux::button.icon 
-                x-on:click.stop.prevent="
-                    Swal.fire({
-                        title: 'Eliminar archivo',
-                        text: '¿Seguro que quieres eliminar este archivo?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        customClass: {
-                            confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
-                            cancelButton: 'hover:underline',
-                            actions: 'space-x-6',
-                        },
-                        buttonsStyling: false,
-                        confirmButtonText: 'Eliminar',
-                        cancelButtonText: 'Cancelar',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $wire.call('deleteMedia')
-                        }
-                    })
-                "
-                action="delete" 
-            />
+            <div>
+                @if($deletable)
+                    <x-lux::button.icon 
+                        x-on:click.stop.prevent="
+                            Swal.fire({
+                                title: 'Eliminar archivo',
+                                text: '¿Seguro que quieres eliminar este archivo?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                customClass: {
+                                    confirmButton: 'px-4 py-2 rounded-lg border-2 border-red-500 bg-red-100 text-red-500 transition-colors duration-300 hover:bg-red-200 hover:border-red-600 hover:text-red-600',
+                                    cancelButton: 'hover:underline',
+                                    actions: 'space-x-6',
+                                },
+                                buttonsStyling: false,
+                                confirmButtonText: 'Eliminar',
+                                cancelButtonText: 'Cancelar',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $wire.call('deleteMedia')
+                                }
+                            })
+                        "
+                        action="delete" 
+                    />
+                @endif
+            </div>
 
             <div class="flex items-center space-x-6">
                 <x-lux::link x-on:click="$wire.visible = false">Cancelar</x-lux::link>

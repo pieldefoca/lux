@@ -12,7 +12,7 @@ class MediaObserver
      */
     public function created(Media $media): void
     {
-        $media->createVariations();
+        //
     }
 
     /**

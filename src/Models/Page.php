@@ -159,7 +159,7 @@ class Page extends Model
 
     public function isLegalPage(): bool
     {
-        $legalPages = ['accesibility', 'privacy-policy', 'cookies-policy', 'legal-notice'];
+        $legalPages = ['accessibility', 'privacy-policy', 'cookies-policy', 'legal-notice'];
 
         return in_array($this->id, $legalPages);
     }
