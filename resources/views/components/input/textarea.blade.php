@@ -100,7 +100,7 @@ $xModel = str('x-model')
         <textarea
             x-ref="input"
             {{ $xModel }} 
-            {{ $attributes->whereStartsWith('id') }} 
+            {{ $attributes->whereStartsWith(['id', 'rows']) }} 
             type="text" 
             :class="{'!bg-green-50': level === 'success', '!bg-orange-100': level === 'warning', '!bg-red-100': level === 'danger'}"
             @class([

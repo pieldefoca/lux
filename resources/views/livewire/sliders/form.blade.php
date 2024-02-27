@@ -8,7 +8,7 @@
     
         <x-lux::input.group required label="Posición" error="{{ $errors->first('position') }}">
             <x-lux::input.select native wire:model="position">
-                @foreach(Pieldefoca\Lux\Enum\SliderPosition::options() as $value => $label)
+                @foreach(App\Enum\SliderPosition::options() as $value => $label)
                     <option value="{{ $value }}">{{ $label }}</option>
                 @endforeach
             </x-lux::input.select>
@@ -32,7 +32,7 @@
                     @foreach($slider->slides as $slide)
                         <div class="flex items-end space-x-4 [&:not(:last-child)]:pb-4 [&:not(:first-child)]:pt-4 [&:not(:last-child)]:border-b border-stone-200">
                             <div>
-                                <x-lux::media-preview :media="$slide->getBackground($currentLocaleCode)" class="!w-64 aspect-video" />
+                                <x-lux::media-preview :media="$slide->getBackground($locale)" class="!w-64 aspect-video" />
                             </div>
                             <div class="flex-grow">
                                 @if($showTitle)
@@ -42,7 +42,7 @@
                                             <x-lux::tabler-icons.h-1 class="w-3 h-3 text-stone-400" />
                                         </div>
                                         @if($slide->title)
-                                            <p class="text-sm">{{ $slide->translate('title', $currentLocaleCode) }}</p>
+                                            <p class="text-sm">{{ $slide->translate('title', $locale) }}</p>
                                         @else
                                             <x-lux::tabler-icons.line-dashed class="text-stone-400" />
                                         @endif
@@ -55,7 +55,7 @@
                                             <x-lux::tabler-icons.h-2 class="w-3 h-3 text-stone-400" />
                                         </div>
                                         @if($slide->subtitle)
-                                            <p class="text-sm">{{ $slide->translate('subtitle', $currentLocaleCode) }}</p>
+                                            <p class="text-sm">{{ $slide->translate('subtitle', $locale) }}</p>
                                         @else
                                             <x-lux::tabler-icons.line-dashed class="text-stone-400" />
                                         @endif
@@ -68,18 +68,19 @@
                                             <x-lux::tabler-icons.hand-click class="w-3 h-3 text-stone-400" />
                                         </div>
                                         @if($slide->action_text)
-                                            <p class="text-sm">{{ $slide->translate('action_text', $currentLocaleCode) }}</p>
+                                            <p class="text-sm">{{ $slide->translate('action_text', $locale) }}</p>
                                         @else
                                             <x-lux::tabler-icons.line-dashed class="text-stone-400" />
                                         @endif
                                     </div>
+
                                     <div class="flex items-center space-x-2 min-h-[1rem]">
                                         <div class="flex items-center justify-end space-x-1 w-16">
                                             <span class="text-[8px] font-bold text-stone-500 uppercase">URL</span>
                                             <x-lux::tabler-icons.link class="w-3 h-3 text-stone-400" />
                                         </div>
                                         @if($slide->action_link)
-                                            <p class="text-sm">{{ $slide->translate('action_link', $currentLocaleCode) }}</p>
+                                            <p class="text-sm">{{ $slide->translate('action_link', $locale) }}</p>
                                         @else
                                             <x-lux::tabler-icons.line-dashed class="text-stone-400" />
                                         @endif
@@ -109,7 +110,8 @@
                                             }
                                         })
                                     "
-                                    small action="delete" />
+                                    small action="delete" 
+                                />
                             </div>
                         </div>
                     @endforeach

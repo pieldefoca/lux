@@ -5,7 +5,7 @@ namespace Pieldefoca\Lux\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Pieldefoca\Lux\Enum\SliderPosition;
+use App\Enum\SliderPosition;
 use Spatie\Translatable\HasTranslations;
 
 class Slider extends Model

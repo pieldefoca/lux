@@ -11,7 +11,7 @@ use Pieldefoca\Lux\Models\Locale;
 use Pieldefoca\Lux\Models\Slider;
 use Pieldefoca\Lux\Livewire\LuxForm;
 use Illuminate\Validation\Rules\Enum;
-use Pieldefoca\Lux\Enum\SliderPosition;
+use App\Enum\SliderPosition;
 use Pieldefoca\Lux\Traits\HasMediaFields;
 use Pieldefoca\Lux\Livewire\Attributes\Media;
 use Pieldefoca\Lux\Livewire\Attributes\Translatable;
