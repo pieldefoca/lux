@@ -3,7 +3,7 @@
 
     <x-lux::title-bar :title="trans('lux::lux.edit-page-title')" :subtitle="trans('lux::lux.edit-page-subtitle', ['name' => $page->name])" />
 
-    <div x-data="{activeTab: 0}" x-tabs x-model="activeTab" class="flex-grow w-3/4 max-w-6xl mx-auto mt-8">
+    <div x-data="{activeTab: 0}" x-tabs x-model="activeTab" class="flex-grow 2xl:w-3/4 2xl:max-w-6xl 2xl:mx-auto mt-8">
         <x-lux::form-header without-locale />
 
         <div x-tabs:list class="flex items-center justify-center mt-6">
