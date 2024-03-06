@@ -27,6 +27,14 @@ trait UsesLocale
         $this->hasMultipleLocales = Locale::count() > 1;
     }
 
+    public function updatedUsesLocale($field, $value)
+    {
+        if($field === 'locale') {
+            $this->dispatch('locale-changed', locale: $value);
+            $this->dispatch('refresh-drag');
+        }
+    }
+
     public function disableLocaleSelector()
     {
         $this->hasMultipleLocales = false;
