@@ -21,6 +21,7 @@ class PageMiddleware
 
         $locale = app()->currentLocale();
         $path = str($path)->remove("{$locale}/")->toString();
+        if($path === $locale) $path = '/';
 
         $currentPage = Page::where("slug->{$locale}", $path)->first();
         $pageParams = [];
