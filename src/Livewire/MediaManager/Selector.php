@@ -98,6 +98,7 @@ class Selector extends LuxModal
                         ->orWhere('filename', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('created_at', 'desc')
             ->take($this->perPage * $this->page)
             ->get();
     }

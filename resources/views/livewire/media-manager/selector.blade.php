@@ -117,7 +117,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="py-1">{{ $media->name }}</td>
+                                        <td class="py-1">{{ $media->filename }}</td>
                                         <td class="py-1">{{ filesize_for_humans($media->size) }}</td>
                                         <td class="py-1 rounded-r">
                                             <x-lux::media-manager.media-type-pill :type="$media->media_type" />
