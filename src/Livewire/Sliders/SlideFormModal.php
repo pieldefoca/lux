@@ -53,6 +53,7 @@ class SlideFormModal extends LuxModal
         $this->subtitle = [];
         $this->action_text = [];
         $this->action_link = [];
+        $this->background = [];
 
         $this->show();
     }

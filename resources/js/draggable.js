@@ -47,7 +47,10 @@ function drop(e) {
 
     let orderedIds = Array.from(activeDragRoot.querySelectorAll('[drag-item]')).map(itemEl => itemEl.getAttribute('drag-item'))
 
-    let dragParams = activeDragRoot.getAttribute('drag-params').split(' ')
+    let dragParams = activeDragRoot.getAttribute('drag-params') ?? []
+    if(dragParams.length > 0) {
+        dragParams.split(' ')
+    }
 
     let params = [...dragParams, orderedIds]
 

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('subtitle');
             $table->json('action_text');
             $table->json('action_link');
+            $table->unsignedInteger('sort')->nullable();
             $table->timestamps();
         });
     }

@@ -64,6 +64,13 @@ class Form extends LuxForm
         $this->notifySuccess('🤙🏽 Has eliminado la diapositiva correctamente');
     }
 
+    public function reorderSlides($orderedIds)
+    {
+        foreach($orderedIds as $index => $id) {
+            Slide::find($id)->update(['sort' => $index + 1]);
+        }
+    }
+
     #[On('save-slider')]
     public function save(): void
     {
