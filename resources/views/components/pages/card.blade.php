@@ -16,8 +16,7 @@
         </div>
 
         <p x-data="{ page: @js($page) }" class="flex text-[9px] text-stone-500 transition-colors duration-300 hover:text-black">
-            <span>{{ config('app.url') }}/</span>
-            {{-- <span>{{ $page->translate('key', $this->locale) }}</span> --}}
+            <span>{{ config('app.url') . '/' . $page->translate('slug', $this->locale) }}</span>
         </p>
     </div>
 
