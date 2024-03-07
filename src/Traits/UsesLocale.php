@@ -30,6 +30,8 @@ trait UsesLocale
     public function updatedUsesLocale($field, $value)
     {
         if($field === 'locale') {
+            session(['luxLocale' => $locale]);
+
             $this->dispatch('locale-changed', locale: $value);
             $this->dispatch('refresh-drag');
         }
