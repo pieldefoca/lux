@@ -5,6 +5,7 @@
         @if($item->isGroup())
             <x-lux::sidebar.group 
                 label="{{ $item->label }}"
+                :icon="$item->tablerIcon"
                 :active="$item->isActive()"
             >
                 @foreach($item->items as $child)

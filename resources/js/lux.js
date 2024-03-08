@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2'
-import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm'
 
 window.Swal = Swal
 
@@ -59,8 +58,6 @@ document.addEventListener('alpine:init', () => {
         tippy(el, { content: expression })
     })
 })
-
-Livewire.start()
 
 window.addEventListener('notify-success', e => {
     Swal.fire({

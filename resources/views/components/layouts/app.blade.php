@@ -8,11 +8,9 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-	{{-- <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet"> --}}
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
-	@livewireStyles
 	@vite(['resources/css/lux.css'])
 </head>
 <body class="font-body">
@@ -31,10 +29,10 @@
 	>
 		<div
 			x-data
-			class="fixed flex flex-col w-64 h-screen bg-stone-100 border-r border-stone-200 transition-all duration-500"
+			class="fixed flex flex-col w-72 h-screen bg-stone-100 border-r border-stone-200 transition-all duration-500"
 			x-cloak
 			x-bind:class="{
-				'-left-64 opacity-0': sidebarCollapsed,
+				'-left-72 opacity-0': sidebarCollapsed,
 				'left-0 opacity-100': !sidebarCollapsed,
 			}"
 		>
@@ -96,7 +94,7 @@
 		>
 			<div
 				x-bind:class="{
-					'px-12 ml-64': !sidebarCollapsed,
+					'px-12 ml-72': !sidebarCollapsed,
 					'px-8 ml-0': sidebarCollapsed,
 				}"
 				class="transition-all duration-300"
@@ -109,11 +107,10 @@
 	<livewire:media-manager.selector />
     <livewire:media-manager.slideover :deletable="Route::is('lux.media.index')" />
 
-	@livewireScriptConfig
 	@stack('js')
 	<script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
 	<script defer src="https://unpkg.com/@alpinejs/ui@3.13.2-beta.1/dist/cdn.min.js"></script>
-	@vite(['resources/js/lux.js', 'resources/js/draggable.js'])
+	@vite(['resources/js/lux.js'])
 </body>
 </html>

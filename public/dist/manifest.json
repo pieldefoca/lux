@@ -1,0 +1,12 @@
+{
+  "resources/css/lux.css": {
+    "file": "lux.css",
+    "isEntry": true,
+    "src": "resources/css/lux.css"
+  },
+  "resources/js/lux.js": {
+    "file": "lux2.js",
+    "isEntry": true,
+    "src": "resources/js/lux.js"
+  }
+}
