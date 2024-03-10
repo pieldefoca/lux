@@ -31,13 +31,7 @@ class Translator
     public function getTranslationString(array $translations)
     {
         $string = "<?php\n\nreturn [\n";
-        $currentLetter = '';
         foreach($translations as $key => $translation) {
-            $firstLetter = str($translation)->substr(0, 1)->upper()->toString();
-            if($currentLetter !== $firstLetter) {
-                $string .= "\n\t// @{$firstLetter}\n";
-                $currentLetter = $firstLetter;
-            }
             $translation = addslashes($translation);
             $string .= "\t\"{$key}\" => \"{$translation}\",\n";
         }

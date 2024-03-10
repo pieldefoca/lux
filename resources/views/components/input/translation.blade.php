@@ -1,5 +1,10 @@
 <div 
     x-data="{
+        init() {
+            $nextTick(() => {
+                this.$refs.input.parentNode.dataset.replicatedValue = this.$refs.input.value
+            })
+        },
         bold() { this.insert('<b>', '</b>', 3) },
         italic() { this.insert('<i>', '</i>', 3) },
         underline() { this.insert('<u>', '</u>', 3) },
@@ -52,10 +57,12 @@
         </div>
     </div>
 
-    <textarea 
-        x-ref="input" 
-        {{ $attributes->wire('model') }} 
-        rows="3" 
-        class="block w-full p-2 outline-none rounded-md resize-none text-xs focus:ring-1 focus:ring-black"
-    ></textarea>
+    <div class="grow-wrap">
+        <textarea
+            x-ref="input"
+            x-on:input="$el.parentNode.dataset.replicatedValue = $el.value"
+            {{ $attributes->wire('model') }}
+            class="block w-full p-2 outline-none rounded-md resize-none text-xs focus:ring-1 focus:ring-black"
+        ></textarea>
+    </div>
 </div>
