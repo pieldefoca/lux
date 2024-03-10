@@ -32,7 +32,7 @@ class Pages
                 $path = trim($page->translate('slug', $locale->code));
                 if($path === '/') $path = '';
                 $path = $locale->default ? $path : "{$locale->code}/{$path}";
-
+                $path = Str::unwrap($path, '/');
 
                 if($page->isControllerPage()) {
                     $content .= "Route::get('/{$path}', [\\{$page->controller}::class, '{$page->controller_action}'])->name('{$page->id}.{$locale->code}');\n";

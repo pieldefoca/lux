@@ -30,9 +30,9 @@ class PageMiddleware
             foreach(Page::all() as $page) {
                 if($page->isDynamic()) {
                     $params = $page->getSlugParams();
-                    
+
                     $regex = $page->getSlugRegex();
-                    
+
                     if(str($path)->isMatch($regex)) {
                         $paramValues = str($path)->matchAll($regex);
 
