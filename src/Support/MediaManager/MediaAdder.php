@@ -82,7 +82,14 @@ class MediaAdder
             $currentMediaIds = $currentMediables->pluck('lux_media_id');
 
             foreach($ids as $index => $id) {
-                if($currentMediaIds->contains($id)) continue;
+                if($currentMediaIds->contains($id)) {
+                    $mediableId = $currentMediables->where('lux_media_id', $id)->first()->id;
+                    DB::table('lux_mediables')
+                        ->where('id', $mediableId)
+                        ->update(['order' => ($index + 1)]);
+
+                    continue;
+                }
 
                 DB::table('lux_mediables')
                     ->insert([

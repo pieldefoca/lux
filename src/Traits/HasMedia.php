@@ -109,7 +109,9 @@ trait HasMedia
 
             $media = $this->media()
                 ->wherePivot('locale', $queryLocale)
-                ->wherePivot('collection', $collection)->get();
+                ->wherePivot('collection', $collection)
+                ->orderBy('order')
+                ->get();
             
             $translations[$locale->code] = $media->pluck('id')->toArray();
         }
