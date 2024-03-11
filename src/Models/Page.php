@@ -49,8 +49,10 @@ class Page extends Model
         return Str::of($this->slug)->isMatch('/.*{*}.*/');
     }
 
-    public function localizedUrl($locale, $params = [])
+    public function localizedUrl($locale = null, $params = [])
     {
+        if(is_null($locale)) $locale = app()->currentLocale();
+
         return route("{$this->id}.{$locale}", $params);
     }
 
