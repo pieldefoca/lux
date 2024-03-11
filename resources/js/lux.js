@@ -57,6 +57,15 @@ document.addEventListener('alpine:init', () => {
     Alpine.directive('tooltip', (el, { expression }) => {
         tippy(el, { content: expression })
     })
+
+    Alpine.data('adminPage', ($wire) => ({
+        init() {
+            Alpine.store('lux', {
+                locale: $wire.$entangle('locale').live,
+                selectLocale(locale) { this.locale = locale }
+            })
+        }
+    }))
 })
 
 window.addEventListener('notify-success', e => {
