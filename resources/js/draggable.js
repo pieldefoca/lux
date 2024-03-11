@@ -49,7 +49,7 @@ function drop(e) {
 
     let dragParams = activeDragRoot.getAttribute('drag-params') ?? []
     if(dragParams.length > 0) {
-        dragParams.split(' ')
+        dragParams = dragParams.split(' ')
     }
 
     let params = [...dragParams, orderedIds]
