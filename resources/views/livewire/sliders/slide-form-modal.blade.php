@@ -17,13 +17,13 @@
 
                 @if($showTitle)
                     <x-lux::input.group translatable label="Título" error="{{ $errors->first('title') }}">
-                        <x-lux::input.text wire:model="title" translatable />
+                        <x-lux::input.textarea rows="3" wire:model="title" translatable />
                     </x-lux::input.group>
                 @endif
 
                 @if($showSubtitle)
                     <x-lux::input.group translatable label="Subtítulo" error="{{ $errors->first('subtitle') }}">
-                        <x-lux::input.text wire:model="subtitle" translatable />
+                        <x-lux::input.textarea rows="3" wire:model="subtitle" translatable />
                     </x-lux::input.group>
                 @endif
 

@@ -48,6 +48,10 @@ $xModel = str('x-model')
             init() {
                 field = this.translatable ? `${this.field}.${$store.lux.locale}` : this.field
                 this.value = $wire.$get(field)
+
+                $wire.$watch(field, (value) => {
+                    this.value = value
+                })
     
                 this.$watch('value', value => { 
                     this.sync() 
@@ -64,7 +68,6 @@ $xModel = str('x-model')
                         this.$refs.input.style.paddingLeft = `calc(${width}px + 1.8rem)`
                     }
                 })
-
 
                 if(this.hasCharacterCount) {
                     this.$nextTick(() => {
