@@ -1,3 +1,4 @@
+import * as draggable from './draggable.js'
 import Swal from 'sweetalert2'
 
 window.Swal = Swal
