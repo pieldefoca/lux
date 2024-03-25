@@ -72,8 +72,8 @@
                 <div class="flex items-center space-x-4">
                     <div>
                         <x-lux::link x-on:click="$refs.input.click()" icon="upload">
-                            <span wire:loading.delay.remove>Añadir archivos</span>
-                            <span wire:loading.delay>Cargando...</span>
+                            <span wire:loading.delay.remove wire:target="uploads">Añadir archivos</span>
+                            <span wire:loading.delay wire:target="uploads">Cargando...</span>
                         </x-lux::link>
                         <input x-ref="input" wire:model.live="uploads" type="file" multiple style="display: none;" />
                     </div>
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <div wire:loading.delay.class="opacity-50 pointer-events-none">
+            <div wire:loading.delay.class="opacity-50 pointer-events-none" wire:target="uploads">
                 @if($this->mediaItems->isNotEmpty())
                     @if($view === 'list')
                         <table class="w-full table-fixed">

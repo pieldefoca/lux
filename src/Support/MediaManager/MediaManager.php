@@ -4,6 +4,7 @@ namespace Pieldefoca\Lux\Support\MediaManager;
 
 use Illuminate\Support\Str;
 use Pieldefoca\Lux\Models\Media;
+use Pieldefoca\Lux\Jobs\OptimizeImage;
 use Illuminate\Support\Facades\Storage;
 
 class MediaManager
@@ -56,7 +57,8 @@ class MediaManager
 
             $file->storeAs($media->id, $fullName, 'uploads');
 
-            $media->createVariations();
+            OptimizeImage::dispatch($media);
+            // $media->createVariations();
         }
     }
 }

@@ -64,7 +64,12 @@ class Media extends Model
 
     public function getThumbUrl()
     {
-        return Storage::disk('uploads')->url("{$this->id}/{$this->filename}-thumb.{$this->extension}");
+        $path = "{$this->id}/{$this->filename}-thumb.{$this->extension}";
+        if(Storage::disk('uploads')->exists($path)) {
+            return Storage::disk('uploads')->url($path);
+        } else {
+            return $this->getUrl();
+        }
     }
 
     public function getPath()
