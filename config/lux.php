@@ -9,17 +9,6 @@ return [
 
     'login_image' => '/img/firulais.webp',
 
-    'sidebar' => [
-        (new SidebarItem())->withLabel('Inicio')
-            ->withTablerIcon('home-2')
-            ->withRouteName('lux.dashboard')
-            ->activeOn('lux.dashboard'),
-        (new SidebarItem())->withLabel('Multimedia')
-            ->withTablerIcon('photo-video')
-            ->withRouteName('lux.media.index')
-            ->activeOn('lux.media.*'),
-    ],
-
     'sliders' => [
         'fields' => ['title', 'subtitle', 'action']
     ],
@@ -29,4 +18,8 @@ return [
     ],
 
     'fallback_locale' => 'es',
+
+    'node_binary' => env('NODE_BINARY'),
+
+    'npm_binary' => env('NPM_BINARY'),
 ];

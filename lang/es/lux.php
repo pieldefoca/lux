@@ -13,6 +13,7 @@ return [
     'cookies' => 'Cookies',
     'current_password' => 'Contraseña actual',
     'dashboard' => 'Escritorio',
+    'edit' => 'Editar',
     'edit_details' => 'Editar detalles',
     'email' => 'Email',
     'files' => 'Ficheros',

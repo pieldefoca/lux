@@ -30,8 +30,8 @@ class LuxPages extends Command
     {
         foreach(Page::all() as $page) {
             Browsershot::url($page->localizedUrl(config('lux.fallback_locale')))
-                ->setNodeBinary('/Users/pieldefoca/Library/Application\ Support/Herd/config/nvm/versions/node/v21.7.1/bin/node')
-                ->setNpmBinary('/Users/pieldefoca/Library/Application\ Support/Herd/config/nvm/versions/node/v21.7.1/bin/npm')
+                ->setNodeBinary(config('lux.node_binary'))
+                ->setNpmBinary(config('lux.npm_binary'))
                 ->windowSize(1920, 1080)
                 ->save(public_path('img/screenshots/'.$page->id.'.png'));
         }
