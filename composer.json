@@ -1,6 +1,6 @@
 {
 	"name": "pieldefoca/lux",
-	"description": "Admin panel for laravel",
+	"description": "Laravel admin panel",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
@@ -11,7 +11,8 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"Pieldefoca\\Lux\\": "src"
+			"Pieldefoca\\Lux\\": "src",
+			"Pieldefoca\\Lux\\Tests\\": "tests"
 		},
 		"files": [
 			"src/helpers.php"
@@ -20,21 +21,25 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Pieldefoca\\Lux\\LuxServiceProvider",
-				"Pieldefoca\\Lux\\Providers\\MediaManagerServiceProvider",
-				"Pieldefoca\\Lux\\Providers\\FortifyServiceProvider"
+				"Pieldefoca\\Lux\\LuxServiceProvider"
 			]
 		}
 	},
 	"require-dev": {
-		"orchestra/testbench": "^8.0"
+		"orchestra/testbench": "^8.0",
+		"pestphp/pest": "^2.34"
 	},
 	"require": {
 		"livewire/livewire": "^3.0",
-		"laravel/fortify": "^1.18",
 		"spatie/laravel-translatable": "^6.5",
 		"laravel/prompts": "^0.1.13",
 		"spatie/laravel-permission": "^6.1",
-		"spatie/image": "3.3.1"
+		"spatie/image": "^3.4",
+		"spatie/laravel-sitemap": "^7.2"
+	},
+	"config": {
+		"allow-plugins": {
+			"pestphp/pest-plugin": true
+		}
 	}
 }

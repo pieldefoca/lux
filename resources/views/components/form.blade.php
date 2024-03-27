@@ -1,7 +1,12 @@
-<form {{ $attributes }}>
-    <x-lux::locale-selector />
-
-    <div>
-        {{ $slot  }}
-    </div>
-</form>
+<div
+    x-data="{
+        init() {
+            $wire.$watch('', () => {
+                $store.lux.setDirtyState(true)
+            })
+        }
+    }"
+    {{ $attributes }}
+>
+    {{ $slot }}
+</div>

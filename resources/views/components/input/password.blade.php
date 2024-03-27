@@ -8,9 +8,8 @@
         x-bind:type="type"
         {{ $attributes }}
         class="
-            w-full px-2 py-2 pr-12 rounded-md border border-stone-300 outline-none text-sm transition-colors duration-300
+            w-full px-2 py-2 pr-12 rounded-md border border-stone-300 bg-transparent outline-none text-sm transition-colors duration-300
             focus:border-black
-            hover:border-black
         "
     />
 

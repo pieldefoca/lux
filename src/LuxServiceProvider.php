@@ -6,131 +6,99 @@ use Livewire\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Pieldefoca\Lux\Models\Page;
-use Pieldefoca\Lux\Support\Lux;
-use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Support\Pages;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Pieldefoca\Lux\Support\Translator;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\ComponentAttributeBag;
-use Pieldefoca\Lux\Livewire\MediaSelector;
-use Pieldefoca\Lux\Observers\MediaObserver;
-use Pieldefoca\Lux\Console\Commands\LuxPage;
-use Pieldefoca\Lux\Console\Commands\LuxUser;
-use Pieldefoca\Lux\Console\Commands\MakeLux;
 use Pieldefoca\Lux\Console\Commands\LuxPages;
+use Pieldefoca\Lux\Console\Commands\MakePage;
 use Pieldefoca\Lux\Console\Commands\LuxInstall;
-use Pieldefoca\Lux\Console\Commands\LuxUploads;
-use Pieldefoca\Lux\Console\Commands\MigrateImages;
 use Pieldefoca\Lux\Http\Middleware\PageMiddleware;
-use Pieldefoca\Lux\Console\Commands\LuxProcessMedia;
 use Pieldefoca\Lux\Http\Middleware\LocaleMiddleware;
 use Pieldefoca\Lux\Support\MediaManager\MediaManager;
 
 class LuxServiceProvider extends ServiceProvider
 {
-	public function register()
-	{
-		$this->mergeConfigFrom(__DIR__.'/../config/lux.php', 'lux');
-	}
+    public function register()
+    {
+        //
+    }
 
-	public function boot()
-	{
-		Media::observe(MediaObserver::class);
+    public function boot()
+    {
+        $this->registerFacades();
 
-		$this->configureLivewire();
+        $this->registerPageRoutes();
 
-		$this->registerFacades();
+        $this->configureLivewire();
 
-		$this->registerComponents();
+        $this->registerComponents();
 
-		Livewire::component('lux-media-selector', MediaSelector::class);
+        $this->resolveMissingRoutes();
 
-		$this->registerDisks();
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
-		if($this->app->runningInConsole()) {
-			$this->publishes([
-				__DIR__.'/../config/lux.php' => config_path('lux.php'),
-				__DIR__.'/../config/fortify.php' => config_path('fortify.php'),
-			], 'lux-config');
-
-            $this->publishes([
-                __DIR__.'/../database/seeders' => database_path('seeders')
-            ], 'lux-seeders');
-
-            $this->publishes([
-                __DIR__.'/../public' => public_path('vendor/lux'),
-            ], 'lux-assets');
-
-			$this->commands([
-				LuxInstall::class,
-				MakeLux::class,
-				LuxUser::class,
-				LuxPage::class,
-				LuxPages::class,
-				LuxUploads::class,
-				LuxProcessMedia::class,
-				MigrateImages::class,
-			]);
-		}
-		$this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 		$this->loadViewsFrom(__DIR__.'/../resources/views', 'lux');
+
 		$this->loadTranslationsFrom(__DIR__.'/../lang', 'lux');
+
 		$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-		ComponentAttributeBag::macro('localizedWireModel', function($locale) {
-			foreach($this->whereStartsWith('wire:model') as $attribute => $value) {
-				if(! Str::contains($attribute, '.blur')) {
-					$attribute .= '.blur';
-				}
-				return "{$attribute}={$value}.{$locale}";
-			}
-		});
+        if($this->app->runningInConsole()) {
+            $this->commands([
+                LuxInstall::class,
+                MakePage::class,
+                LuxPages::class,
+            ]);
+        }
 
-		$this->app->call(function() {
+        View::share([
+            'locale' => session('luxLocale', config('lux.fallback_locale')),
+        ]);
+    }
+
+    protected function registerFacades()
+	{
+		// $this->app->bind('lux', fn($app) => new Lux());
+
+		$this->app->bind('lux-translator', fn($app) => new Translator());
+
+		$this->app->bind('lux-pages', fn($app) => new Pages());
+
+		$this->app->singleton('lux-media-manager', fn($app) => new MediaManager());
+	}
+
+    protected function registerPageRoutes()
+    {
+        $this->app->call(function() {
     		if(file_exists(base_path('routes/pages.php'))) {
                 Route::middleware(['web', LocaleMiddleware::class, PageMiddleware::class])
                     ->group(base_path('routes/pages.php'));
             }
 		});
+    }
 
-		app('url')->resolveMissingNamedRoutesUsing(function($name, $parameters, $absolute) {
-            $page = Page::where('id', $name)->first();
+    protected function configureLivewire()
+    {
+        $shouldUseLuxComponents = str(request()->path())->startsWith(config('lux.prefix'))
+            || request()->path() === 'login';
 
-            if(is_null($page)) {
-                throw new \Exception("Page [{$name}] not found");
-            }
+        if($shouldUseLuxComponents) {
+            Livewire::setUpdateRoute(function ($handle) {
+                return Route::post('/admin/livewire/update', $handle)->middleware(['web']);
+            });
 
-            $routes = app('router')->getRoutes();
+            config([
+                'livewire.layout' => 'lux::components.layouts.app',
+                'livewire.class_namespace' => 'Pieldefoca\\Lux\\Livewire',
+            ]);
+        }
+    }
 
-            $locale = app()->currentLocale();
-
-            $route = $routes->getByName("{$page->id}.{$locale}");
-
-            return app('url')->toRoute($route, $parameters, $absolute);
-        });
-	}
-
-	protected function configureLivewire()
-	{
-		$path = request()->path();
-		if(str($path)->startsWith('admin')) {
-			Livewire::setUpdateRoute(function ($handle) {
-				return Route::post('/admin/livewire/update', $handle)->middleware(['web']);
-			});
-
-			if(str($path)->startsWith('admin')) {
-				config([
-					'livewire.layout' => 'lux::components.layouts.app',
-					'livewire.class_namespace' => 'Pieldefoca\\Lux\\Livewire',
-				]);
-			}
-		}
-	}
-
-	protected function registerComponents()
+    protected function registerComponents()
 	{
 		Blade::componentNamespace('Pieldefoca\\Lux\\Views\\Components', 'lux');
 
@@ -158,25 +126,22 @@ class LuxServiceProvider extends ServiceProvider
 		}
 	}
 
-	protected function registerFacades()
-	{
-		$this->app->bind('lux', fn($app) => new Lux());
+    protected function resolveMissingRoutes()
+    {
+        app('url')->resolveMissingNamedRoutesUsing(function($name, $parameters, $absolute) {
+            $page = Page::where('id', $name)->first();
 
-		$this->app->bind('lux-translator', fn($app) => new Translator());
+            if(is_null($page)) {
+                throw new \Exception("Page [{$name}] not found");
+            }
 
-		$this->app->bind('lux-pages', fn($app) => new Pages());
+            $routes = app('router')->getRoutes();
 
-		$this->app->bind('lux-media-manager', fn($app) => new MediaManager());
-	}
+            $locale = app()->currentLocale();
 
-	protected function registerDisks()
-	{
-		$this->app['config']['filesystems.disks.avatars'] = [
-			'driver' => 'local',
-			'root' => public_path('avatars'),
-			'url' => env('APP_URL').'/avatars',
-			'visibility' => 'public',
-			'throw' => false,
-		];
-	}
+            $route = $routes->getByName("{$page->id}.{$locale}");
+
+            return app('url')->toRoute($route, $parameters, $absolute);
+        });
+    }
 }

@@ -4,29 +4,27 @@ namespace Pieldefoca\Lux\Livewire\Pages;
 
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use Illuminate\Support\Number;
 use Illuminate\Validation\Rule;
 use Pieldefoca\Lux\Models\Page;
 use Livewire\Attributes\Computed;
-use Pieldefoca\Lux\Facades\Pages;
-use Pieldefoca\Lux\Models\Locale;
 use Illuminate\Support\Facades\DB;
 use Pieldefoca\Lux\Models\Mediable;
-use Illuminate\Support\Facades\File;
+use Spatie\Browsershot\Browsershot;
 use Pieldefoca\Lux\Facades\Translator;
 use Pieldefoca\Lux\Livewire\LuxComponent;
-use Pieldefoca\Lux\Traits\HasMediaFields;
-use Pieldefoca\Lux\Livewire\Attributes\MediaGallery;
-use Pieldefoca\Lux\Livewire\Attributes\Translatable;
+use Pieldefoca\Lux\Livewire\Traits\LuxForm;
 
 class Edit extends LuxComponent
 {
-    use HasMediaFields;
+    use LuxForm;
+
+    public $model = Page::class;
 
     public Page $page;
 
     public $name;
 
-    #[Translatable]
     public $slug;
 
     public $target;
@@ -37,74 +35,40 @@ class Edit extends LuxComponent
 
     public $livewire_component;
 
-    #[Translatable]
-    public $title;
+    public $seo_title;
 
-    #[Translatable]
-    public $description;
+    public $seo_description;
 
-    public $visible;
+    public $visible = true;
 
-    public $translations = [];
+    public $translations;
 
-    #[Translatable]
-    public $legalPageContent = [];
+    public $legalPageContent;
 
-    public $search = '';
+    public $translationSearch;
 
-    public int $swappingMediaId;
-    public string $swappingMediaKey;
+    public $swappingMediaId;
+
+    public $swappingMediaKey;
 
     public function mount()
     {
         $this->name = $this->page->name;
-        $this->slug = $this->page->getTranslations('slug');
+        $this->slug = $this->page->translate('slug', $this->locale);
         $this->target = is_null($this->page->controller) ? 'livewire' : 'controller';
         $this->controller = $this->page->controller;
         $this->controller_action = $this->page->controller_action;
         $this->livewire_component = $this->page->livewire_component;
-        $this->title = $this->page->getTranslations('title');
-        $this->description = $this->page->getTranslations('description');
-        $this->is_home_page = $this->page->is_home_page;
         $this->visible = $this->page->visible;
-
+        $this->seo_title = $this->page->translate('seo_title', $this->locale);
+        $this->seo_description = $this->page->translate('seo_description', $this->locale);
         $this->getTranslations();
-
-        $this->initMediaFields($this->page);
-    }
-
-    public function updatedSlug($value)
-    {
-        if($this->locale === $this->defaultLocaleCode) {
-            foreach(Locale::all() as $locale) {
-                if(array_key_exists($locale->code, $this->slug) && empty($this->slug[$locale->code])) {
-                    $this->slug[$locale->code] = $value;
-                }
-            }
-        }
-    }
-
-    #[On('locale-changed')]
-    public function onLocaleChanged()
-    {
-        $this->search = '';
     }
 
     #[Computed]
     public function filteredTranslations()
     {
-        $filteredTranslations = [];
-
-        foreach($this->translations as $locale => $translations) {
-            $filteredTranslations[$locale] = $this->filteredLocaleTranslations($locale);
-        }
-
-        return $filteredTranslations;
-    }
-
-    protected function filteredLocaleTranslations($locale)
-    {
-        return collect($this->translations[$locale])->when($this->search, function($collection, $search) {
+        return collect($this->translations)->when($this->translationSearch, function($collection, $search) {
             return $collection->filter(function($value, $key) use($search) {
                 $value = str($value)->ascii()->lower();
                 $key = str($key)->ascii()->lower();
@@ -118,7 +82,33 @@ class Edit extends LuxComponent
     #[Computed]
     public function images()
     {
-        return $this->page->getImages($this->locale);
+        $images = [];
+
+        $pageImages = $this->page->getImages($this->locale);
+
+        foreach($pageImages as $media) {
+            $images[] = [
+                'id' => $media->id,
+                'url' => $media->getUrl(),
+                'name' => $media->fullName,
+                'size' => Number::fileSize($media->size),
+                'key' => $media->pivot->key,
+            ];
+        }
+
+        $commonImages = $this->commonMedia->filter(fn($mediable) => $mediable->media->isImage());
+
+        foreach($commonImages as $mediable) {
+            $images[] = [
+                'id' => $mediable->media->id,
+                'url' => $mediable->media->getUrl(),
+                'name' => $mediable->media->fullName,
+                'size' => Number::fileSize($mediable->media->size),
+                'key' => $mediable->key,
+            ];
+        }
+
+        return $images;
     }
 
     #[Computed]
@@ -139,7 +129,7 @@ class Edit extends LuxComponent
         $query = Mediable::with('media')
             ->where('lux_mediable_type', 'BladeComponent');
 
-        if($this->locale === Locale::default()->code) {
+        if($this->locale === config('lux.fallback_locale')) {
             $query->where(function($query) {
                 return $query->where('locale', $this->locale)
                     ->orWhere('locale', null);
@@ -149,22 +139,6 @@ class Edit extends LuxComponent
         }
 
         return $query->get();
-    }
-
-    public function getTranslations()
-    {
-        $filename = $this->page->langFilePath;
-
-        foreach(Locale::all() as $locale) {
-            if(!$this->page->hasLangFileFor($locale->code)) {
-                $this->page->createLangFile($locale->code);
-            }
-            $this->translations[$locale->code] = include(lang_path("{$locale->code}/{$filename}"));
-
-            if($this->page->isLegalPage()) {
-                $this->legalPageContent[$locale->code] = $this->translations[$locale->code]['content'] ?? '';
-            }
-        }
     }
 
     public function swapMedia($id, $key)
@@ -201,63 +175,33 @@ class Edit extends LuxComponent
     {
         $validated = $this->validate();
 
-        $validated = $this->cleanSlug($validated);
-
-        $validated = $this->cleanController($validated);
-
-        $validated = $this->cleanLivewireComponent($validated);
+        $validated = $this->prepareTranslatableAttributes($validated);
 
         $this->page->update($validated);
 
-        foreach($this->translations as $locale => $localeTranslations) {
-            if($this->page->isLegalPage()) {
-                $localeTranslations['content'] = $this->legalPageContent[$locale];
-            }
-            Translator::saveTranslations($localeTranslations, lang_path($locale . '/' . $this->page->langFilePath));
+        if($this->page->isLegalPage()) {
+            $this->translations['content'] = $this->legalPageContent;
         }
+        Translator::saveTranslations($this->translations, lang_path($this->locale . '/' . $this->page->langFilePath));
 
-        Pages::generatePageRoutes();
+        $this->js("\$store.lux.setDirtyState(false)");
 
-        $this->notifySuccess('🤙🏾 Has editado la página correctamente');
+        $this->notifySuccess('🤙 Has editado la página correctamente');
     }
 
-    protected function cleanSlug($validated)
+    public function getTranslations()
     {
-        foreach($this->slug as $locale => $slug) {
-            if(empty($slug)) {
-                $validated['slug'][$locale] = '/';
-            }
+        $filename = $this->page->langFilePath;
+
+        if(!$this->page->hasLangFileFor($this->locale)) {
+            $this->page->createLangFile($this->locale);
         }
 
-        return $validated;
-    }
+        $this->translations = include(lang_path("{$this->locale}/{$filename}"));
 
-    protected function cleanController($validated)
-    {
-        if($this->target !== 'controller') {
-            $validated['controller'] = null;
-            $validated['controller_action'] = null;
-            return $validated;
+        if($this->page->isLegalPage()) {
+            $this->legalPageContent = $this->translations['content'] ?? '';
         }
-
-        if(!Str::startsWith($validated['controller'], 'App\Http\Controllers')) {
-            $validated['controller'] = "App\Http\Controllers\\{$validated['controller']}";
-            return $validated;
-        }
-
-        return $validated;
-    }
-
-    protected function cleanLivewireComponent($validated)
-    {
-        if($this->target !== 'livewire') {
-            $validated['livewire_component'] = null;
-            return $validated;
-        }
-
-        $validated['livewire_component'] = Pages::getLivewireComponentClassName($validated['livewire_component']);
-
-        return $validated;
     }
 
     public function rules()
@@ -265,12 +209,12 @@ class Edit extends LuxComponent
         return [
             'name' => ['required'],
             'slug' => ['required'],
-            'target' => ['required', Rule::in(['controller', 'livewire']), 'exclude'],
+            'target' => ['required', 'exclude'],
             'controller' => ['nullable', Rule::requiredIf($this->target === 'controller')],
             'controller_action' => ['nullable', Rule::requiredIf($this->target === 'controller')],
             'livewire_component' => ['nullable', Rule::requiredIf($this->target === 'livewire')],
-            'title' => ['nullable'],
-            'description' => ['nullable'],
+            'seo_title' => ['nullable'],
+            'seo_description' => ['nullable'],
             'visible' => ['boolean'],
         ];
     }
@@ -278,8 +222,9 @@ class Edit extends LuxComponent
     public function messages()
     {
         return [
-            'name.required' => 'Escribe un nombre descriptivo para la página',
+            'name.required' => 'Escribe un nombre',
             'slug.required' => 'Escribe una url',
+            'target.required' => 'Selecciona un destino',
             'target.required' => 'Elige un destino',
             'target.in' => 'Elige un destino válido',
             'controller.required' => 'Escribe el nombre del controlador',
@@ -290,10 +235,6 @@ class Edit extends LuxComponent
 
     public function render()
     {
-        return view('lux::livewire.pages.edit')
-            ->layout('lux::components.layouts.app', [
-                'title' => trans('lux::lux.edit-page-title'),
-                'subtitle' => trans('lux::lux.edit-page-subtitle', ['name' => $this->page->name]),
-            ]);
+        return view('lux::livewire.pages.edit');
     }
 }

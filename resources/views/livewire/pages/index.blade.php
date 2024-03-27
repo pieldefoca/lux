@@ -1,15 +1,22 @@
-<x-lux::admin-page>
-    <x-lux::title-bar :title="trans('lux::lux.pages-index-title')" :subtitle="trans('lux::lux.pages-index-subtitle')" />
+<div>
+    <x-lux::title-bar :title="trans('lux::pages.index_title')" :subtitle="trans('lux::pages.index_subtitle')"></x-lux::title-bar>
 
-    <x-lux::locale-selector />
+    <div class="my-12 space-y-4">
+        @foreach($pages as $page)
+            <div class="flex items-center justify-between w-full border border-gray-300 bg-white p-2 pr-6 rounded-lg transition-all duration-300 hover:shadow">
+                <div class="flex items-center space-x-6">
+                    <img src="{{ $page->screenshotUrl }}" class="w-36 aspect-video rounded-md" />
+                    
+                    <div class="space-y-3">
+                        <p class="text-xl font-bold">{{ $page->name }}</p>
+                        <p class="text-gray-400">{{ $page->localizedUrl($this->locale) }}</p>
+                    </div>
+                </div>
 
-    <div class="flex-grow w-1/2 max-w-3xl mx-auto">
-        <x-lux::card class="mt-8 p-6">
-            <div class="space-y-3">
-                @foreach($this->pages as $page)
-                    <x-lux::pages.card :$page />
-                @endforeach
+                <div>
+                    <a href="{{ route('lux.pages.edit', $page) }}">Editar</a>
+                </div>
             </div>
-        </x-lux::card>
+        @endforeach
     </div>
-</x-lux::admin-page>
+</div>

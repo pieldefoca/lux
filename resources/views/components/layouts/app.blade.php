@@ -29,7 +29,7 @@
 	>
 		<div
 			x-data
-			class="fixed flex flex-col w-72 h-screen bg-stone-100 border-r border-stone-200 transition-all duration-500"
+			class="fixed flex flex-col w-72 h-screen bg-background-light border-r border-stone-200 transition-all duration-500"
 			x-cloak
 			x-bind:class="{
 				'-left-72 opacity-0': sidebarCollapsed,
@@ -44,7 +44,7 @@
 			</div>
 
 			<div class="flex-grow px-3 py-3 overflow-y-auto">
-				<x-lux::sidebar />
+				<x-lux.sidebar />
 			</div>
 
 			<div class="p-3">
@@ -87,17 +87,13 @@
 			</div>
 		</div>
 
-		<div
-			x-data
-			class="w-full min-h-screen bg-gray-50 transition-all duration-300"
-			x-cloak
-		>
+		<div x-data class="w-full min-h-screen bg-background transition-all duration-300" x-cloak>
 			<div
 				x-bind:class="{
 					'px-12 ml-72': !sidebarCollapsed,
 					'px-8 ml-0': sidebarCollapsed,
 				}"
-				class="transition-all duration-300"
+				class="min-h-screen transition-all duration-300"
 			>
 				{{ $slot }}
 			</div>

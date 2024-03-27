@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pieldefoca\Lux\Models\Page;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\View;
 
 class PageMiddleware
 {
@@ -46,7 +46,7 @@ class PageMiddleware
             }
         }
 
-        \View::share([
+        View::share([
             'page' => $currentPage,
             'pageParams' => $pageParams,
         ]);

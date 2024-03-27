@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('controller')->nullable();
             $table->string('controller_action')->nullable();
             $table->string('livewire_component')->nullable();
-            $table->boolean('is_home_page')->default(false);
             $table->boolean('visible')->default(true);
-            $table->json('title')->nullable();
-            $table->json('description')->nullable();
+            $table->json('seo_title')->nullable();
+            $table->json('seo_description')->nullable();
             $table->timestamps();
 
             $table->primary('id');

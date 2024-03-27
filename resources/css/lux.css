@@ -1,73 +1,19 @@
-.loader {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: block;
-    margin:15px auto;
-    position: relative;
-    color: black;
-    box-sizing: border-box;
-    animation: animloader 1s linear infinite alternate;
+:root {
+    --background-color: #f3f4f6;
+    --background-light-color: #f9fafb;
+    --accent-color: #000000;
 }
 
-@keyframes animloader {
-    0% {
-        box-shadow: -38px -12px ,  -14px 0,  14px 0, 38px 0;
-    }
-    33% {
-        box-shadow: -38px 0px, -14px -12px,  14px 0, 38px 0;
-    }
-    66% {
-        box-shadow: -38px 0px , -14px 0, 14px -12px, 38px 0;
-    }
-    100% {
-        box-shadow: -38px 0 , -14px 0, 14px 0 , 38px -12px;
-    }
+.theme-red {
+    --accent-color: #ef4444;
 }
 
-select {
-    margin: 0;      
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 9l4 -4l4 4" /><path d="M16 15l-4 4l-4 -4" /></svg>');
-    background-repeat: no-repeat;
-    background-position: right 0.5rem top 50%;
-    background-size: 1rem auto;
+.tiptap ul {
+    list-style: disc;
+    padding-left: 1rem;
 }
 
-.lux-toggle button div {
-    @apply left-[2px] bg-stone-300;
-}
-
-.lux-toggle:has(input[type="checkbox"]:checked) button {
-    @apply border-stone-800 bg-stone-200;
-}
-
-.lux-toggle:has(input[type="checkbox"]:checked) button div {
-    @apply left-[1.15rem] bg-stone-800;
-}
-
-.grow-wrap {
-    display: grid;
-}
-
-.grow-wrap::after {
-    content: attr(data-replicated-value) " ";
-    white-space: pre-wrap;
-    visibility: hidden;
-}
-.grow-wrap > textarea {
-    resize: none;
-    overflow: hidden;
-}
-.grow-wrap > textarea,
-.grow-wrap::after {
-    border: 1px solid black;
-    padding: 0.5rem;
-    font: inherit;
-    grid-area: 1 / 1 / 2 / 2;
+.tiptap ol {
+    list-style: decimal;
+    padding-left: 1rem;
 }

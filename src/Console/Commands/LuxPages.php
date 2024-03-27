@@ -2,12 +2,10 @@
 
 namespace Pieldefoca\Lux\Console\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Pieldefoca\Lux\Models\Page;
-use Pieldefoca\Lux\Models\Locale;
-use Illuminate\Support\Facades\File;
 use Pieldefoca\Lux\Facades\Pages;
+use Spatie\Browsershot\Browsershot;
 
 class LuxPages extends Command
 {
@@ -23,45 +21,19 @@ class LuxPages extends Command
      *
      * @var string
      */
-    protected $description = 'Scan the pages folders and sync it with the database';
+    protected $description = 'Refresh pages data';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $allFiles = File::allFiles(resource_path('views/pages'));
-
-        $locales = Locale::all();
-
-        foreach($allFiles as $file) {
-            $relativePathname = $file->getRelativePathname();
-
-            if(str($relativePathname)->endsWith('.blade.php')) {
-                $relativePathWithoutExtension = str($relativePathname)->replace('/', '.')->replace('.blade.php', '')->toString();
-                $page = Page::where('key', $relativePathWithoutExtension)->first();
-                if(is_null($page)) {
-                    $name = str($file->getFilename())->replace('.blade.php', '')->replace('-', ' ')->toString();
-                    $slug = [];
-
-                    foreach($locales as $locale) {
-                        $slug[$locale->code] = ($name === 'home') ? '' : Str::slug($name);
-                    }
-
-                    $view = str($relativePathWithoutExtension)->replace('/', '.')->toString();
-                    $page = Page::create([
-                        'key' => $view,
-                        'name' => str($name)->title()->toString(),
-                        'slug' => $slug,
-                        'view' => $view,
-                        'is_home_page' => $name === 'home',
-                    ]);
-
-                    foreach($locales as $locale) {
-                        $page->createLangFile($locale->code);
-                    }
-                }
-            }
+        foreach(Page::all() as $page) {
+            Browsershot::url($page->localizedUrl(config('lux.fallback_locale')))
+                ->setNodeBinary('/Users/pieldefoca/Library/Application\ Support/Herd/config/nvm/versions/node/v21.7.1/bin/node')
+                ->setNpmBinary('/Users/pieldefoca/Library/Application\ Support/Herd/config/nvm/versions/node/v21.7.1/bin/npm')
+                ->windowSize(1920, 1080)
+                ->save(public_path('img/screenshots/'.$page->id.'.png'));
         }
 
         Pages::generatePageRoutes();

@@ -9,7 +9,7 @@
         $attributes
             ->merge(['type' => 'button'])
             ->class([
-                'flex items-center space-x-2 rounded-md transition-colors duration-300 disabled:opacity-50 disabled:pointer-events-none',
+                'flex items-center justify-center space-x-2 rounded-md transition-colors duration-300 disabled:opacity-50 disabled:pointer-events-none',
                 'px-6 py-2 text-sm' => !$small,
                 'px-4 py-1 text-[10px]' => $small,
                 'bg-stone-800 text-stone-100 hover:bg-stone-700' => $color === 'primary',

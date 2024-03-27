@@ -2,13 +2,13 @@
 
 namespace Pieldefoca\Lux\Models;
 
-use Livewire\Livewire;
 use Illuminate\Support\Str;
 use Pieldefoca\Lux\Facades\Pages;
 use Pieldefoca\Lux\Enum\MediaType;
 use Pieldefoca\Lux\Traits\HasMedia;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
+use Pieldefoca\Lux\Models\PageComponent;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,15 +28,20 @@ class Page extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'is_home_page' => 'boolean',
         'visible' => 'boolean',
     ];
 
-    public $translatable = ['slug', 'title', 'description'];
+    public $translatable = ['slug', 'seo_title', 'seo_description'];
 
     public function scopePublished($query)
     {
         return $query->where('visible', true);
+    }
+
+    public function components()
+    {
+        return $this->belongsToMany(PageComponent::class, 'lux_page_uses_components', 'page_id', 'page_component_id')
+            ->withPivot(['lang', 'content']);
     }
 
     public function isControllerPage()
@@ -49,10 +54,8 @@ class Page extends Model
         return Str::of($this->slug)->isMatch('/.*{*}.*/');
     }
 
-    public function localizedUrl($locale = null, $params = [])
+    public function localizedUrl($locale, $params = [])
     {
-        if(is_null($locale)) $locale = app()->currentLocale();
-
         return route("{$this->id}.{$locale}", $params);
     }
 
@@ -60,6 +63,13 @@ class Page extends Model
     {
         return Attribute::make(
             get: fn() => str($this->id)->replace('.', '/')->toString() . '.php',
+        );
+    }
+
+    public function screenshotUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => config('app.url') . "/img/screenshots/{$this->id}.png"
         );
     }
 
@@ -113,14 +123,14 @@ class Page extends Model
     {
         $this->createLangFilePath($locale);
 
-        $defaultLocale = Locale::default()->code;
+        $fallbackLocale = config('lux.fallback_locale');
 
-        if($this->hasLangFileFor($defaultLocale)) {
-            $from = lang_path($defaultLocale . '/' . $this->getLangFileRelativePath() . '/' . $this->getLangFilename() . '.php');
+        if($this->hasLangFileFor($fallbackLocale)) {
+            $from = lang_path($fallbackLocale . '/' . $this->getLangFileRelativePath() . '/' . $this->getLangFilename() . '.php');
             $to = lang_path($locale . '/' . $this->getLangFileRelativePath() . '/' . $this->getLangFilename() . '.php');
             copy($from, $to);
         } else {
-            $langFilePathname = lang_path($defaultLocale . '/' . $this->getLangFileRelativePath() . '/' . $this->getLangFilename() . '.php');
+            $langFilePathname = lang_path($fallbackLocale . '/' . $this->getLangFileRelativePath() . '/' . $this->getLangFilename() . '.php');
             if(!File::exists($langFilePathname)) {
                 file_put_contents($langFilePathname, "<?php\n\nreturn [\n\t\n];");
             }
@@ -188,23 +198,21 @@ class Page extends Model
         return $this->getMedia(collection: 'media', locale: $locale, mediaType: MediaType::File->value);
     }
 
-    public function getImageOrCreate($key)
+    public function getImageOrCreate($key, $locale = null)
     {
-        $media = $this->getMedia('media', locale: app()->currentLocale(), key: $key);
+        if(is_null($locale)) $locale = app()->currentLocale();
+
+        $media = $this->getMedia('media', locale: $locale, key: $key);
 
         if($media->isEmpty()) {
-            $ids = [];
-
-            foreach(Locale::all() as $locale) {
-                $ids[$locale->code] = [1];
-            }
+            $ids = [1];
 
             $this->addMedia($ids)
-                ->saveTranslations()
+                ->forLocale($locale)
                 ->withKey($key)
                 ->toCollection('media');
 
-            return $this->getMedia('media', locale: app()->currentLocale(), key: $key)->first();
+            return $this->getMedia('media', locale: $locale, key: $key)->first();
         }
 
         return $media->first();

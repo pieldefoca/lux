@@ -2,10 +2,17 @@
 
 namespace Pieldefoca\Lux\Livewire;
 
-use Pieldefoca\Lux\Livewire\LuxComponent;
+use Livewire\Component;
 
-class Dashboard extends LuxComponent
+class Dashboard extends Component
 {
+    public $text = '<p>cosas</p>';
+
+    public function save()
+    {
+        dd($this->text);
+    }
+
 	public function render()
 	{
 		return view('lux::livewire.dashboard');

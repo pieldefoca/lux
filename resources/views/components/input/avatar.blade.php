@@ -4,7 +4,7 @@
             <img src="{{ $this->avatarUrl }}" class="w-32 aspect-square rounded-full border-2 border-black object-cover" />
 
             <div class="flex items-center space-x-3">
-                <x-lux::button.link x-on:click="$refs.avatar.click()" class="!text-[10px]">{{ trans('lux::lux.change-image') }}</x-lux::button.link>
+                <x-lux::button.link x-on:click="$refs.avatar.click()" class="!text-[10px]">{{ trans('lux::lux.change_image') }}</x-lux::button.link>
                 <button 
                     type="button"
                     x-on:click.stop.prevent="
@@ -36,7 +36,7 @@
         <div class="flex flex-col items-center">
             <x-lux::tabler-icons.user-circle class="w-32 h-32 stroke-1 aspect-square" />
 
-            <x-lux::button.link x-on:click="$refs.avatar.click()" class="!text-[10px]">{{ trans('lux::lux.choose-image') }}</x-lux::button.link>
+            <x-lux::button.link x-on:click="$refs.avatar.click()" class="!text-[10px]">{{ trans('lux::lux.choose_image') }}</x-lux::button.link>
         </div>
     @endif
 

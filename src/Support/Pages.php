@@ -28,16 +28,16 @@ class Pages
         TXT;
 
         foreach(Page::published()->get() as $page) {
-            foreach(Locale::active()->get() as $locale) {
-                $path = trim($page->translate('slug', $locale->code));
+            foreach(config('lux.locales') as $locale) {
+                $path = trim($page->translate('slug', $locale));
                 if($path === '/') $path = '';
-                $path = $locale->default ? $path : "{$locale->code}/{$path}";
+                $path = $locale === config('lux.fallback_locale') ? $path : "{$locale}/{$path}";
                 $path = Str::unwrap($path, '/');
 
                 if($page->isControllerPage()) {
-                    $content .= "Route::get('/{$path}', [\\{$page->controller}::class, '{$page->controller_action}'])->name('{$page->id}.{$locale->code}');\n";
+                    $content .= "Route::get('/{$path}', [\\{$page->controller}::class, '{$page->controller_action}'])->name('{$page->id}.{$locale}');\n";
                 } else {
-                    $content .= "Route::get('/{$path}', \\{$page->livewire_component}::class)->name('{$page->id}.{$locale->code}');\n";
+                    $content .= "Route::get('/{$path}', \\{$page->livewire_component}::class)->name('{$page->id}.{$locale}');\n";
                 }
 
             }

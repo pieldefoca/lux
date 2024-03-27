@@ -16,25 +16,26 @@ $media = null;
 
 if($isComponentImage) {
     $mediables = DB::table('lux_mediables')->where('key', $key)->get();
-
+    
     if($mediables->isEmpty()) {
-        foreach(Locale::all() as $locale) {
+        foreach(config('lux.locales') as $locale) {
             DB::table('lux_mediables')->insert([
                 'lux_media_id' => 1,
                 'lux_mediable_id' => null,
                 'lux_mediable_type' => 'BladeComponent',
                 'collection' => null,
-                'locale' => $locale->code,
+                'locale' => $locale,
                 'key' => $key,
             ]);
         }
 
         $media = Media::find(1);
+
     } else {
         $mediable = $mediables->where('locale', app()->currentLocale())->first();
 
         if(is_null($mediable)) {
-            $mediable = $mediables->where('locale', Locale::default()->code)->first();
+            $mediable = $mediables->where('locale', config('lux.fallback_locale'))->first();
         }
 
         $media = Media::find($mediable->lux_media_id);

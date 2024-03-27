@@ -18,7 +18,7 @@ class LocaleMiddleware
     {
         $pathStart = explode('/', $request->path())[0];
         
-        if(Locale::where('code', $pathStart)->where('active', true)->exists()) {
+        if(in_array($pathStart, config('lux.locales'))) {
             app()->setLocale($pathStart);
         }
 

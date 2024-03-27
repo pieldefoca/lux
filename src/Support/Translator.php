@@ -35,7 +35,7 @@ class Translator
             $translation = addslashes($translation);
             $string .= "\t\"{$key}\" => \"{$translation}\",\n";
         }
-        $string .= "\n];";
+        $string .= "];";
 
         return $string;
     }

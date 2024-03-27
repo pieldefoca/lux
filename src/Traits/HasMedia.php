@@ -10,6 +10,8 @@ use Pieldefoca\Lux\Support\MediaManager\MediaCollection;
 
 trait HasMedia
 {
+    private $mediaManager;
+
     public function media()
     {
         return $this->morphToMany(Media::class, 'lux_mediable', 'lux_mediables', 'lux_mediable_id', 'lux_media_id')
@@ -19,7 +21,11 @@ trait HasMedia
 
     protected function mediaManager()
     {
-        return app()->make(MediaManager::class);
+        if($this->mediaManager) return $this->mediaManager;
+
+        $this->mediaManager = app()->make(MediaManager::class);
+
+        return $this->mediaManager;
     }
 
     protected function mediaAdder()
@@ -48,7 +54,7 @@ trait HasMedia
         if(!$this->isTranslatableCollection($collection)) {
             $locale = null;
         } else {
-            if(is_null($locale)) $locale = Locale::default()->code;
+            if(is_null($locale)) $locale = config('lux.fallback_locale');
         }
 
         $query = $this->media()
@@ -73,7 +79,7 @@ trait HasMedia
         if($locale) {
             $query->where(function($query) use($locale) {
                 $query->where('lux_mediables.locale', $locale);
-                if($locale === Locale::default()->code) {
+                if($locale === config('lux.fallback_locale')) {
                     $query->orWhere('lux_mediables.locale', null);
                 }
                 return $query;
@@ -102,7 +108,7 @@ trait HasMedia
     {
         $translations = [];
 
-        foreach(Locale::all() as $locale) {
+        foreach(config('lux.locales') as $locale) {
             $queryLocale = $this->isTranslatableCollection($collection)
                 ? $locale->code
                 : null;

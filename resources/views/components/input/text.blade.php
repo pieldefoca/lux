@@ -1,5 +1,4 @@
 @props([
-    'translatable' => false,
     'leadingIcon' => null,
     'trailingIcon' => null,
     'leadingAddon' => null,
@@ -8,31 +7,6 @@
     'inlineTrailingAddon' => null,
     'characterLevels' => null,
 ])
-
-@php
-$wireModelData = $attributes->whereStartsWith('wire:model')->getAttributes();
-$wireModelName = array_key_first($wireModelData);
-$wireModelValue = $wireModelData[$wireModelName];
-$modifiers = array_slice(explode('.', $wireModelName), 1);
-$live = in_array('live', $modifiers);
-$blur = in_array('blur', $modifiers);
-$debounce = in_array('debounce', $modifiers);
-$debounceMs = null;
-if($debounce) {
-    $index = array_search('debounce', $modifiers);
-    try {
-        $possibleDebounceMs = $modifiers[$index + 1];
-        if(str($possibleDebounceMs)->contains('ms')) {
-            $debounceMs = $possibleDebounceMs;
-        }
-    } catch(\Exception $e) {}
-}
-$xModel = str('x-model')
-    ->when(!$live, fn($str) => $str->append('.lazy'))
-    ->when($live || $debounce, fn($str) => $str->append('.debounce'))
-    ->when(!is_null($debounceMs), fn($str) => $str->append(".{$debounceMs}"))
-    ->append('=value');
-@endphp
 
 <div 
     x-data="{
@@ -56,30 +30,10 @@ $xModel = str('x-model')
     <div
         x-data="{
             value: null,
-            field: @js($wireModelValue),
-            live: @js($live),
-            blur: @js($blur),
-            translatable: @js($translatable),
             hasCharacterCount: @js($characterLevels) !== null,
             characterLevels: @js($characterLevels),
             characterCount: 0,
             init() {
-                field = this.translatable ? `${this.field}.${$store.lux.locale}` : this.field
-                this.value = $wire.$get(field)
-
-                $wire.$watch(field, (value) => {
-                    this.value = value
-                })
-    
-                this.$watch('value', value => { 
-                    this.sync() 
-                })
-    
-                this.$watch('$store.lux.locale', (locale) => {
-                    field = this.translatable ? `${this.field}.${locale}` : this.field
-                    this.value = $wire.$get(field) 
-                })
-
                 if(this.hasCharacterCount) {
                     this.$nextTick(() => {
                         this.refreshCharacterCount()
@@ -89,11 +43,7 @@ $xModel = str('x-model')
                     })
                 }
             },
-            sync() {
-                field = this.translatable ? `${this.field}.${$store.lux.locale}` : this.field
-                $wire.$set(field, this.value, this.live || this.blur)
-            },
-            refreshCharacterCount() {
+             refreshCharacterCount() {
                 value = this.$refs.input.value
                 this.characterCount = value.length
                 warningLevel = this.characterLevels[0]
@@ -109,7 +59,7 @@ $xModel = str('x-model')
                 }
             }
         }"
-        class="flex items-center w-full"
+        class="flex items-center w-full rounded-md group-[.has-error]:bg-red-50"
     >
         @if($leadingAddon)
             <div class="px-2 text-sm opacity-50">
@@ -125,8 +75,7 @@ $xModel = str('x-model')
 
         <input
             x-ref="input"
-            {{ $xModel }} 
-            {{ $attributes->whereStartsWith('id') }} 
+            {{ $attributes }} 
             type="text" 
             :class="{'!bg-green-50': level === 'success', '!bg-orange-100': level === 'warning', '!bg-red-100': level === 'danger'}"
             @class([

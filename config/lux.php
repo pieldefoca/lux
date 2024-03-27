@@ -7,6 +7,8 @@ return [
 
     'logo' => '/img/fire.svg',
 
+    'login_image' => '/img/firulais.webp',
+
     'sidebar' => [
         (new SidebarItem())->withLabel('Inicio')
             ->withTablerIcon('home-2')
@@ -26,5 +28,5 @@ return [
         'es', 'eu',
     ],
 
-    'default_locale' => 'es',
+    'fallback_locale' => 'es',
 ];

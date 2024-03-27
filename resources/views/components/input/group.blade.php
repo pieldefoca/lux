@@ -25,8 +25,8 @@
     
             @if($translatable)
                 <div class="flex items-center space-x-1 px-2 border border-gray-300 rounded text-[10px]">
-                    <img :src="`/vendor/lux/img/flags/${$store.lux.locale}.svg`" class="w-2 h-2" />
-                    <span x-text="$store.lux.locale"></span>
+                    <img src="{{ asset("vendor/lux/img/flags/{$locale}.svg") }}" class="w-2 h-2" />
+                    <span>{{ $locale }}</span>
                 </div>
             @endif
         </div>

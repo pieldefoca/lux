@@ -2,9 +2,6 @@
 
 namespace Pieldefoca\Lux\Support\MediaManager;
 
-use Pieldefoca\Lux\Models\Locale;
-use Illuminate\Support\Facades\DB;
-
 class MediaAdder
 {
     public $model;
@@ -13,7 +10,7 @@ class MediaAdder
 
     public string $collection;
 
-    public bool $translatable = false;
+    public string $locale;
 
     public ?string $key = null;
 
@@ -31,9 +28,9 @@ class MediaAdder
         return $this;
     }
 
-    public function saveTranslations()
+    public function forLocale($locale)
     {
-        $this->translatable = true;
+        $this->locale = $locale;
 
         return $this;
     }
@@ -53,71 +50,7 @@ class MediaAdder
             $this->model->clearMedia($collection);
         }
 
-        if($this->translatable) {
-            $this->saveWithTranslations();
-        } else {
-            $this->save();
-        }
-    }
-
-    protected function saveWithTranslations()
-    {
-        $keys = array_keys($this->mediaIds);
-
-        $localeCount = Locale::whereIn('code', $keys)->count();
-
-        if($localeCount != count($keys)) {
-            throw new \Exception('The array of ids that you are trying to add is not correctly formed');
-        }
-        
-        foreach($this->mediaIds as $locale => $ids) {
-            $currentMediables = DB::table('lux_mediables')
-                ->where('lux_mediable_id', $this->model->id)
-                ->where('lux_mediable_type', get_class($this->model))
-                ->where('collection', $this->collection)
-                ->where('locale', $locale)
-                ->where('key', $this->key)
-                ->get();
-
-            $currentMediaIds = $currentMediables->pluck('lux_media_id');
-
-            foreach($ids as $index => $id) {
-                if($currentMediaIds->contains($id)) {
-                    $mediableId = $currentMediables->where('lux_media_id', $id)->first()->id;
-                    DB::table('lux_mediables')
-                        ->where('id', $mediableId)
-                        ->update(['order' => ($index + 1)]);
-
-                    continue;
-                }
-
-                DB::table('lux_mediables')
-                    ->insert([
-                        'lux_media_id' => $id,
-                        'lux_mediable_id' => $this->model->id,
-                        'lux_mediable_type' => get_class($this->model),
-                        'locale' => $locale, 
-                        'collection' => $this->collection, 
-                        'key' => $this->key, 
-                        'order' => ($index + 1),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-            }
-
-            $idsToBeDeleted = $currentMediaIds->diff($ids);
-
-            $idsToBeDeleted->each(function($id) use($locale) {
-                DB::table('lux_mediables')
-                    ->where('lux_mediable_id', $this->model->id)
-                    ->where('lux_mediable_type', get_class($this->model))
-                    ->where('collection', $this->collection)
-                    ->where('locale', $locale)
-                    ->where('lux_media_id', $id)
-                    ->where('key', $this->key)
-                    ->delete();
-            });
-        }
+        $this->save();
     }
 
     protected function save()
@@ -127,7 +60,7 @@ class MediaAdder
         $mediaIds = array_unique($mediaIds);
 
         foreach($mediaIds as $index => $id) {
-            $data[$id] = ['collection' => $this->collection, 'key' => $this->key, 'order' => ($index + 1)];
+            $data[$id] = ['collection' => $this->collection, 'locale' => $this->locale, 'key' => $this->key, 'order' => ($index + 1)];
         }
         
         $this->model->media()->attach($data);

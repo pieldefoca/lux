@@ -5,7 +5,7 @@
             <p class="text-[11px] text-amber-500">Ten en cuenta que los cambios que hagas aquí se aplicarán en todos los sitios en los que se esté utilizando esta imagen</p>
         </div>
 
-        <x-lux::form-header />
+        <x-lux::required-fields />
 
         <img src="{{ $media?->getUrl() }}" class="w-48 aspect-square object-cover rounded-md" />
 
@@ -62,7 +62,7 @@
             </div>
 
             <div class="flex items-center space-x-6">
-                <x-lux::link x-on:click="$wire.visible = false">Cancelar</x-lux::link>
+                <x-lux::button.link x-on:click="$wire.visible = false">Cancelar</x-lux::button.link>
                 <x-lux::button wire:click="save">Guardar</x-lux::button>
             </div>
         </div>

@@ -1,5 +1,5 @@
-<x-lux::admin-page>
-    <x-lux::title-bar :title="trans('lux::lux.media-manager-title')" :subtitle="trans('lux::lux.media-manager-subtitle')" />
+<div>
+    <x-lux::title-bar :title="trans('lux::lux.media_manager_title')" :subtitle="trans('lux::lux.media_manager_subtitle')" />
 
     <div class="flex-grow mt-8">
         <div class="grid grid-cols-4 gap-4">
@@ -7,7 +7,7 @@
                 <div class="flex items-center justify-between pb-4 mb-4 border-b border-stone-200">
                     <div class="flex items-center">
                         <div>
-                            <div
+                            <div 
                                 x-data="{
                                     view: @entangle('view'),
                                 }"
@@ -21,48 +21,48 @@
                                 </button>
                             </div>
                         </div>
-
+    
                         <div class="h-6 w-px bg-stone-300 mx-4"></div>
-
+    
                         <div class="space-x-2">
-                            <button
-                                wire:click="$set('type', null)"
-                                type="button"
+                            <button 
+                                wire:click="$set('type', null)" 
+                                type="button" 
                                 @class([
-                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300',
+                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300', 
                                     'bg-black text-white' => is_null($type),
                                     'hover:bg-stone-200 hover:text-stone-600' => !is_null($type),
                                 ])
                             >
                                 Todo
                             </button>
-                            <button
-                                wire:click="$set('type', '{{ Pieldefoca\Lux\Enum\MediaType::Image->value }}')"
-                                type="button"
+                            <button 
+                                wire:click="$set('type', '{{ Pieldefoca\Lux\Enum\MediaType::Image->value }}')" 
+                                type="button" 
                                 @class([
-                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300',
+                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300', 
                                     'bg-black text-white' => $type === Pieldefoca\Lux\Enum\MediaType::Image->value,
                                     'hover:bg-stone-200 hover:text-stone-600' => $type !== Pieldefoca\Lux\Enum\MediaType::Image->value,
                                 ])
                             >
                                 Imágenes
                             </button>
-                            <button
-                                wire:click="$set('type', '{{ Pieldefoca\Lux\Enum\MediaType::Video->value }}')"
-                                type="button"
+                            <button 
+                                wire:click="$set('type', '{{ Pieldefoca\Lux\Enum\MediaType::Video->value }}')" 
+                                type="button" 
                                 @class([
-                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300',
+                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300', 
                                     'bg-black text-white' => $type === Pieldefoca\Lux\Enum\MediaType::Video->value,
                                     'hover:bg-stone-200 hover:text-stone-600' => $type !== Pieldefoca\Lux\Enum\MediaType::Video->value,
                                 ])
                             >
                                 Vídeos
                             </button>
-                            <button
-                                wire:click="$set('type', '{{ Pieldefoca\Lux\Enum\MediaType::File->value }}')"
-                                type="button"
+                            <button 
+                                wire:click="$set('type', '{{ Pieldefoca\Lux\Enum\MediaType::File->value }}')" 
+                                type="button" 
                                 @class([
-                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300',
+                                    'rounded px-2 py-1 text-sm text-stone-500 transition-colors duration-300', 
                                     'bg-black text-white' => $type ===  Pieldefoca\Lux\Enum\MediaType::File->value,
                                     'hover:bg-stone-200 hover:text-stone-600' => $type !== Pieldefoca\Lux\Enum\MediaType::File->value,
                                 ])
@@ -71,39 +71,39 @@
                             </button>
                         </div>
                     </div>
-
+    
                     <div class="flex items-center space-x-4">
                         <x-lux::input.search wire:model.live="search" />
-
+    
                         <div x-data>
-                            <x-lux::button x-on:click="$refs.input.click()" icon="upload">Subir ficheros</x-lux::button>
+                            <x-lux::button x-on:click="$refs.input.click()" icon="upload">{{ trans('lux::lux.upload_files') }}</x-lux::button>
                             <input x-ref="input" wire:model="uploads" type="file" multiple style="display: none;"/>
                         </div>
                     </div>
                 </div>
-
+    
                 <div class="relative">
-                    <div wire:loading.delay.longest wire:target="uploads">
+                    <div wire:loading.delay>
                         <div class="absolute inset-0 grid place-items-center h-full bg-black/10 rounded z-10">
                             <span class="loader"></span>
                         </div>
                     </div>
-
-                    <div wire:loading.delay.longest.class="opacity-30" wire:target="uploads">
+    
+                    <div wire:loading.delay.class="opacity-30">
                         @if($this->mediaItems->isEmpty())
                             <div class="grid place-items-center w-full py-12 space-y-6">
                                 @if(is_null($type))
                                     <x-lux::tabler-icons.photo-video class="w-36 h-36 opacity-10" />
-                                    <p class="text-stone-600">{{ trans('lux::lux.there-are-no-files') }}</p>
+                                    <p class="text-stone-600">{{ trans('lux::lux.there_are_no_files') }}</p>
                                 @elseif($type === Pieldefoca\Lux\Enum\MediaType::Image->value)
                                     <x-lux::tabler-icons.photo class="w-36 h-36 opacity-10" />
-                                    <p class="text-stone-600">{{ trans('lux::lux.there-are-no-images') }}</p>
+                                    <p class="text-stone-600">{{ trans('lux::lux.there_are_no_images') }}</p>
                                 @elseif($type === Pieldefoca\Lux\Enum\MediaType::Video->value)
                                     <x-lux::tabler-icons.movie class="w-36 h-36 opacity-10" />
-                                    <p class="text-stone-600">{{ trans('lux::lux.there-are-no-videos') }}</p>
+                                    <p class="text-stone-600">{{ trans('lux::lux.there_are_no_videos') }}</p>
                                 @elseif($type === Pieldefoca\Lux\Enum\MediaType::File->value)
                                     <x-lux::tabler-icons.file-invoice class="w-36 h-36 opacity-10" />
-                                    <p class="text-stone-600">{{ trans('lux::lux.there-are-no-files') }}</p>
+                                    <p class="text-stone-600">{{ trans('lux::lux.there_are_no_files') }}</p>
                                 @endif
                             </div>
                         @else
@@ -134,11 +134,11 @@
                                                 <td class="py-2">
                                                     <x-lux::media-manager.media-type-pill :type="$media->media_type" />
                                                 </td>
-                                                <td class="py-2">{{ filesize_for_humans($media->size) }}</td>
+                                                <td class="py-2">{{ Number::fileSize($media->size) }}</td>
                                                 <td class="py-2 text-center">
                                                     <div class="space-x-2">
                                                         <x-lux::button.icon x-on:click="$dispatch('edit-media', { media: {{ $media->id }} })" action="edit" />
-                                                        <x-lux::button.icon
+                                                        <x-lux::button.icon 
                                                             x-on:click.stop.prevent="
                                                                 Swal.fire({
                                                                     title: 'Eliminar archivo',
@@ -159,7 +159,7 @@
                                                                     }
                                                                 })
                                                             "
-                                                            action="delete"
+                                                            action="delete" 
                                                         />
                                                     </div>
                                                 </td>
@@ -173,11 +173,12 @@
                                         <div>
                                             <x-lux::media-preview :media="$media" editable removable class="!w-36" />
                                             <span class="block text-xs text-gray-400 w-36">{{ $media->fullName }}</span>
+                                            <span class="block text-xs text-gray-400">{{ Number::fileSize($media->size) }}</span>
                                         </div>
                                     @endforeach
                                 </div>
                             @endif
-
+    
                             <div class="flex items-center space-x-8 mt-8 w-full">
                                 <div>
                                     <x-lux::input.select native wire:model.live="perPage" class="!w-24">
@@ -197,4 +198,4 @@
             </x-lux::card>
         </div>
     </div>
-</x-lux::admin-page>
+</div>

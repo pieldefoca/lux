@@ -1,7 +1,7 @@
 <div>
     <x-lux::modal>
         <x-lux::modal.panel size="lg">
-            <x-lux::modal.title>{{ trans('lux::lux.select-media') }}</x-lux::modal.title>
+            <x-lux::modal.title>{{ trans('lux::lux.select_media') }}</x-lux::modal.title>
 
             <input type="text" wire:model="selected" style="display: none;" />
 
@@ -71,10 +71,10 @@
 
                 <div class="flex items-center space-x-4">
                     <div>
-                        <x-lux::link x-on:click="$refs.input.click()" icon="upload">
-                            <span wire:loading.delay.remove wire:target="uploads">Añadir archivos</span>
-                            <span wire:loading.delay wire:target="uploads">Cargando...</span>
-                        </x-lux::link>
+                        <x-lux::button.link x-on:click="$refs.input.click()" icon="upload">
+                            <span wire:loading.delay.remove>Añadir archivos</span>
+                            <span wire:loading.delay>Cargando...</span>
+                        </x-lux::button.link>
                         <input x-ref="input" wire:model.live="uploads" type="file" multiple style="display: none;" />
                     </div>
 
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <div wire:loading.delay.class="opacity-50 pointer-events-none" wire:target="uploads">
+            <div wire:loading.delay.class="opacity-50 pointer-events-none">
                 @if($this->mediaItems->isNotEmpty())
                     @if($view === 'list')
                         <table class="w-full table-fixed">
@@ -118,7 +118,7 @@
                                             </div>
                                         </td>
                                         <td class="py-1">{{ $media->filename }}</td>
-                                        <td class="py-1">{{ filesize_for_humans($media->size) }}</td>
+                                        <td class="py-1">{{ Number::fileSize($media->size) }}</td>
                                         <td class="py-1 rounded-r">
                                             <x-lux::media-manager.media-type-pill :type="$media->media_type" />
                                         </td>
@@ -188,7 +188,7 @@
             <x-lux::modal.footer>
                 <div class="flex items-center justify-end w-full">
                     <div class="flex items-center space-x-8">
-                        <x-lux::link x-on:click="$wire.hide()">Cancelar</x-lux::link>
+                        <x-lux::button.link x-on:click="$wire.hide()">Cancelar</x-lux::button.link>
                         <x-lux::button wire:click="confirmSelection" icon="check" :disabled="count($selected) === 0" class="relative">
                             Seleccionar
                             @if($multiple && count($selected) > 0)

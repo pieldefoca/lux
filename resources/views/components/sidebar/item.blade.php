@@ -1,13 +1,13 @@
 @props([
     'link',
-    'icon' => null,
+    'icon',
     'active' => false,
 ])
 
 <li
     @class([
         'rounded-md transition-colors duration-300 hover:bg-black hover:text-white',
-        'bg-black text-white' => $active,
+        'bg-accent text-white' => $active,
     ])
 >
     <a href="{{ $link }}" class="flex items-center space-x-2 px-2 py-1.5">

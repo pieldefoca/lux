@@ -17,40 +17,40 @@ trait HasMediaFields
 
         foreach($mediaProperties as $property) {
             if($field === $property['name']) {
-                if($property['translatable']) {
-                    $fallbackToDefault = [];
+                // if($property['translatable']) {
+                //     $fallbackToDefault = [];
 
-                    if($this->locale === $this->defaultLocaleCode) {
-                        $defaultLocaleValue = array_unique($this->$field[$this->defaultLocaleCode]);
+                //     if($this->locale === $this->defaultLocaleCode) {
+                //         $defaultLocaleValue = array_unique($this->$field[$this->defaultLocaleCode]);
 
-                        foreach($this->$field as $locale => $ids) {
-                            if($locale === $this->defaultLocaleCode) continue;
+                //         foreach($this->$field as $locale => $ids) {
+                //             if($locale === $this->defaultLocaleCode) continue;
 
-                            $idsNotPresentInDefaultLocaleValue = array_diff(array_unique($ids), $defaultLocaleValue);
+                //             $idsNotPresentInDefaultLocaleValue = array_diff(array_unique($ids), $defaultLocaleValue);
 
-                            if(count($idsNotPresentInDefaultLocaleValue) === 0) {
-                                $fallbackToDefault[] = $locale;
-                            }
-                        }
-                    }
+                //             if(count($idsNotPresentInDefaultLocaleValue) === 0) {
+                //                 $fallbackToDefault[] = $locale;
+                //             }
+                //         }
+                //     }
 
-                    $newValue = $mediaIds;
+                //     $newValue = $mediaIds;
 
-                    if($property['multiple']) {
-                        $newValue = array_merge($this->$field[$this->locale], $mediaIds);
-                        $newValue = array_unique($newValue);
-                        $newValue = array_values($newValue);
-                        $this->$field[$this->locale] = $newValue;
-                    } else {
-                        $this->$field[$this->locale] = $mediaIds;
-                    }
+                //     if($property['multiple']) {
+                //         $newValue = array_merge($this->$field[$this->locale], $mediaIds);
+                //         $newValue = array_unique($newValue);
+                //         $newValue = array_values($newValue);
+                //         $this->$field[$this->locale] = $newValue;
+                //     } else {
+                //         $this->$field[$this->locale] = $mediaIds;
+                //     }
 
-                    foreach($fallbackToDefault as $locale) {
-                        $this->$field[$locale] = $newValue;
-                    }
-                } else {
+                //     foreach($fallbackToDefault as $locale) {
+                //         $this->$field[$locale] = $newValue;
+                //     }
+                // } else {
                     $this->$field = $mediaIds;
-                }
+                // }
             }
         }
     }
@@ -60,18 +60,14 @@ trait HasMediaFields
         $mediaProperties = $this->getMediaProperties();
 
         foreach($mediaProperties as $property) {
-            extract($property); // $name, $collection, $translatable, $multiple
+            extract($property); // $name, $collection, $multiple
 
-            if($translatable) {
-                $this->$name = $model->getMediaTranslations($collection);
+            if($multiple) {
+                // TODO
             } else {
-                if($multiple) {
-                    // TODO
-                } else {
-                    $media = $model->getFirstMedia($collection);
-    
-                    $this->$name = is_null($media) ? [] : [$media->id];
-                }
+                $media = $model->getFirstMedia($collection);
+
+                $this->$name = is_null($media) ? [] : [$media->id];
             }
         }
     }
@@ -89,12 +85,10 @@ trait HasMediaFields
             $attributes = $property->getAttributes($attributeClass);
             if(!empty($attributes)) {
                 $collection = $attributes[0]->getArguments()['collection'];
-                $translatable = $attributes[0]->newInstance()->isTranslatable();
                 $multiple = $attributes[0]->newInstance()->isMultiple();
                 $properties[] = [
                     'name' => $property->getName(), 
                     'collection' => $collection,
-                    'translatable' => $translatable,
                     'multiple' => $multiple,
                 ];
             }

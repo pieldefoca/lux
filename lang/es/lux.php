@@ -1,99 +1,49 @@
 <?php
 
 return [
-    // @A
-    'actions' => 'Acciones',
-    'admin-panel' => 'Panel de administración',
-
-    // @C
+    'admin_panel' => 'Panel de administración',
+    'analytics' => 'Analytics',
+    'auth_failed' => '😢 Parece que esos datos no son correctos',
     'cancel' => 'Cancelar',
-    'change-image' => 'Cambiar imagen',
-    'change-password' => 'Cambiar contraseña',
-    'choose-image' => 'Elegir imagen',
-    'common-elements-multiple-pages' => 'Elementos comunes a varias páginas',
-    'contact-data' => '📬 Datos de contacto',
-    'contact-phones' => 'Teléfonos de contacto',
-    'contact-subtitle' => 'Estás editando los datos de contacto',
-    'contact-title' => 'Datos de contacto',
-
-    // @D
-    'dynamic-page' => '🤸🏽‍♀️ Página dinámica',
-
-    // @E
-    'edit-page-subtitle' => 'Estás editando la página ":name"',
-    'edit-page-title' => 'Editar página',
-    'edit-slider-subtitle' => 'Estás editando el slider ":name"',
-    'edit-slider-title' => 'Editar slider',
-    'elegir-fichero' => 'Elegir fichero',
-    'elegir-imagen' => 'Elegir imagen',
-    'elegir-video' => 'Elegir vídeo',
-    'eliminar-fichero' => 'Eliminar fichero',
-    'eliminar-imagen' => 'Eliminar imagen',
-    'eliminar-video' => 'Eliminar vídeo',
+    'change_image' => 'Cambiar imagen',
+    'change_password' => 'Cambiar contraseña',
+    'choose_image' => 'Elegir imagen',
+    'common-elements-multiple-pages' => 'Elementos comunes',
+    'confirm_new_password' => 'Confirma la nueva contraseña',
+    'cookies' => 'Cookies',
+    'current_password' => 'Contraseña actual',
+    'dashboard' => 'Escritorio',
+    'edit_details' => 'Editar detalles',
     'email' => 'Email',
-    'estas-editando-tu-perfil' => 'Estás editando tu perfil',
-
-    // @F
-    'files' => 'Archivos',
-    'fix-errors' => 'Corrige los errores',
-
-    // @H
+    'files' => 'Ficheros',
+    'generate_sitemap' => 'Generar sitemap',
     'hello' => '👋🏽 Hola',
-    'home-page' => '🏠 Página de inicio',
-    
-    // @I
     'images' => 'Imágenes',
     'input-danger' => '¡Cuidado! Peligro',
-
-    // @L
-    'locales-index-subtitle' => 'Lista de idiomas',
-    'locales-index-title' => 'Idiomas',
-    'locations' => '📍 Ubicaciones',
-
-    // @M
-    'media-manager-subtitle' => 'Gestiona las imágenes, vídeos y ficheros de la web',
-    'media-manager-title' => 'Medios',
-    'mi-perfil' => 'Mi perfil',
-
-    // @N
+    'media' => 'Multimedia',
+    'media_manager_subtitle' => 'Gestiona las imágenes, vídeos y ficheros de la web',
+    'media_manager_title' => 'Multimedia',
     'name' => 'Nombre',
-    'new-locale' => 'Nuevo idioma',
-    'new-slider' => 'Nuevo slider',
-    'new-user' => 'Nuevo usuario',
-
-	// @P
-    'pages-index-title' => 'Páginas',
-    'pages-index-subtitle' => 'Lista de páginas del sitio web',
+    'new_password' => 'Nueva contraseña',
+    'pages' => 'Páginas',
     'password' => 'Contraseña',
-    'password-confirmation' => 'Confirma la contraseña',
-    'posts-titulo' => 'Posts',
-    'posts-subtitulo' => 'Lista de posts del blog',
-    'profile-subtitle' => 'Estás editando tu información de usuario',
-    'profile-title' => 'Perfil de usuario',
-
-    // @S
+    'profile_subtitle' => 'Estás editando tu perfil',
+    'profile_title' => 'Mi perfil',
+    'required_fields' => 'Campos obligatorios',
+    'robots' => 'Robots',
     'save' => 'Guardar',
-    'saving' => 'Guardando',
-    'select-media' => 'Seleccionar',
-    'selected-rows' => 'Fila seleccionada|Filas seleccionadas',
-    'sliders-subtitle' => 'Lista de sliders',
-    'sliders-title' => 'Sliders',
-
-    // @T
-    'there-are-no-files' => 'No existe ningún archivo',
-    'there-are-no-images' => 'No existe ninguna imagen',
-    'there-are-no-videos' => 'No existe ningún vídeo',
-
-    // @U
-    'unsaved-changes' => ':count cambio sin guardar|:count cambios sin guardar',
+    'search' => 'Buscar',
+    'select_media' => 'Seleccionar',
+    'seo' => 'SEO',
+    'seo_index_subtitle' => 'Información SEO',
+    'seo_index_title' => 'SEO',
+    'sitemap' => 'Sitemap',
+    'there_are_no_files' => 'No existe ningún archivo',
+    'there_are_no_images' => 'No existe ninguna imagen',
+    'there_are_no_videos' => 'No existe ningún vídeo',
+    'upload_files' => 'Subir ficheros',
     'username' => 'Nombre de usuario',
-    'users-create-subtitle' => 'Estás creando un nuevo usuario',
-    'users-create-title' => 'Nuevo usuario',
-    'users-edit-subtitle' => 'Estás editando el usuario',
-    'users-edit-title' => 'Editar usuario',
-    'users-index-subtitle' => 'Lista de usuarios',
-    'users-index-title' => 'Usuarios',
-
-    // @V
     'videos' => 'Vídeos',
+    'you_are_editing' => 'Estás editando',
+    'you_have_unsaved_changes' => 'Tienes cambios sin guardar',
 ];

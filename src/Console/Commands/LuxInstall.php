@@ -2,12 +2,8 @@
 
 namespace Pieldefoca\Lux\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Pieldefoca\Lux\Models\Media;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 
 class LuxInstall extends Command
 {
@@ -30,19 +26,11 @@ class LuxInstall extends Command
      */
     public function handle()
     {
-        // Create the uploads folder
-
-        // Copy placeholder image
-
         Media::create([
-            'name' => ['es' => 'Placeholder'],
-            'filename' => '_placeholder.jpg',
-            'mime_type' => 'image/jpeg',
+            'filename' => '_placeholder',
+            'mime_type' => 'image/webp',
             'media_type' => 'image',
-            'extension' => 'jpg',
-            'original_image' => '_placeholder.jpg',
+            'extension' => 'webp',
         ]);
-
-        // Artisan::call('lux:pages');
     }
 }
