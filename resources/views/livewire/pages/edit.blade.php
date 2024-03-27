@@ -148,7 +148,7 @@
                                     @foreach($this->images as $image)
                                         <div class="flex items-center justify-between gap-6 p-2 border border-gray-200 rounded-md">
                                             <div class="flex space-x-4">
-                                                <img src="{{ $image['url'] }}" class="w-36 rounded-md aspect-video" />
+                                                <img src="{{ $image['url'] }}" class="w-36 rounded-md aspect-video object-cover" />
 
                                                 <div class="flex flex-col justify-between">
                                                     <div>
