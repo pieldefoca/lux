@@ -7,7 +7,6 @@ use Livewire\Attributes\On;
 use Illuminate\Validation\Rules\Enum;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
-use Pieldefoca\Lux\Enum\SliderPosition;
 use Pieldefoca\Lux\Livewire\Attributes\Media;
 use Pieldefoca\Lux\Livewire\LuxModal;
 use Pieldefoca\Lux\Models\Slide;

@@ -7,14 +7,6 @@
                 <x-lux::input.text wire:model="name" />
             </x-lux::input.group>
 
-            <x-lux::input.group required :label="trans('lux::sliders.position')" error="{{ $errors->first('position') }}">
-                <x-lux::input.select wire:model="position">
-                    @foreach(Pieldefoca\Lux\Enum\SliderPosition::options() as $value => $label)
-                        <option value="{{ $value }}">{{ $label }}</option>
-                    @endforeach
-                </x-lux::input.select>
-            </x-lux::input.group>
-
             <x-lux::modal.footer>
                 <div class="flex items-center justify-end space-x-8 w-full">
                     <x-lux::modal.button.cancel />
