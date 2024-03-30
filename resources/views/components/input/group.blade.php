@@ -31,13 +31,19 @@
             @endif
         </div>
 
-        <div>
+        <div class="flex items-center space-x-4">
             @if($danger)
                 <p class="flex items-center space-x-1 text-xs text-orange-400">
                     <x-lux::tabler-icons.alert-circle class="w-4 h-4" />
                     <span>{{ trans('lux::lux.input-danger') }}</span>
                 </p>
             @endif
+
+            @isset($labelAddon)
+                <div>
+                    {{ $labelAddon }}
+                </div>
+            @endisset
         </div>
     </div>
 

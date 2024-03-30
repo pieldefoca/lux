@@ -11,7 +11,7 @@ use Livewire\Livewire;
 
 class LuxMiddleware
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         config([
             'livewire.layout' => 'lux::components.layouts.app',
@@ -19,7 +19,7 @@ class LuxMiddleware
         ]);
 
         View::share([
-            'lang' => session('luxLang', config('lux.locales')[0]),
+            'locale' => session('luxLocale', config('lux.fallback_locale')),
         ]);
 
         return $next($request);

@@ -77,8 +77,13 @@
 
                     @if(!$page->isDynamic())
                         <x-lux::input.group translatable label="Título (SEO)" :error="$errors->first('seo_title')" help="Se recomienda entre 50 y 60 caracteres">
+                            <x-slot:labelAddon>
+                                <button type="button">
+                                    <x-lux::tabler-icons.sparkles class="w-5 h-5" />
+                                </button>
+                            </x-slot:labelAddon>
+
                             <x-lux::input.seo-title wire:model="seo_title" />
-                            {{ $page->translate('seo_title', 'es') }}
                         </x-lux::input.group>
 
                         <x-lux::input.group translatable label="Descripción (SEO)" :error="$errors->first('seo_description')" help="Se recomienda entre 120 y 150 caracteres">
@@ -276,10 +281,10 @@
         </x-slot:leftSide>
 
         <div class="flex items-center space-x-8">
-            <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">{{ trans('lux::lux.save') }}</x-lux::button>
             <a href="{{ route('lux.pages.index') }}">
                 <x-lux::button.link>{{ trans('lux::lux.cancel') }}</x-lux::button.link>
             </a>
+            <x-lux::button x-on:click="$dispatch('save-page')" icon="device-floppy">{{ trans('lux::lux.save') }}</x-lux::button>
         </div>
     </x-lux::action-bar>
 </x-lux::form>

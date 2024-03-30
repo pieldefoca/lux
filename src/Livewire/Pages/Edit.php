@@ -51,7 +51,7 @@ class Edit extends LuxComponent
 
     public $swappingMediaKey;
 
-    public function mount()
+    public function mount(): void
     {
         $this->name = $this->page->name;
         $this->slug = $this->page->translate('slug', $this->locale);

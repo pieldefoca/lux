@@ -1,5 +1,5 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 h-screen">
-    <div class="hidden lg:block relative">
+    <div class="hidden lg:block relative max-h-screen">
         <div class="absolute inset-0 w-full h-full bg-black opacity-30"></div>
 
         <img src="{{ config('lux.login_image') }}" class="w-full h-full object-cover" />

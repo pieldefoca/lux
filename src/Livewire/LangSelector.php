@@ -8,12 +8,12 @@ class LangSelector extends Component
 {
     public $lang;
 
-    public function mount()
+    public function mount(): void
     {
         $this->lang = session('luxLocale', config('lux.fallback_locale'));
     }
 
-    public function select($locale)
+    public function select($locale): void
     {
         session(['luxLocale' => $locale]);
     }

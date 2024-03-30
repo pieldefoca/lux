@@ -1,7 +1,7 @@
 <div>
     <x-lux::title-bar :title="trans('lux::lux.profile_title')" :subtitle="trans('lux::lux.profile_subtitle')" />
 
-    <div class="flex-grow w-1/2 max-w-xl mx-auto mt-8 space-y-6">
+    <div class="flex-grow min-h-screen w-1/2 max-w-xl mx-auto mt-8 space-y-6">
         <x-lux::card class="p-6">
             <div class="space-y-6">
                 <x-lux::input.group label="Avatar">

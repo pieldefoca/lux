@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Livewire\Auth;
 
+use Illuminate\Foundation\Auth\User;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
@@ -35,14 +36,12 @@ class Login extends Component
     {
         $this->ensureIsNotRateLimited();
 
+        $field = filter_var($this->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
         $credentials = [
-            'username' => $this->username,
+            $field => $this->username,
             'password' => $this->password
         ];
-
-        $user = \App\Models\User::where('email', $this->username)
-                ->orWhere('username', $this->username)
-                ->first();
 
         if (!Auth::attempt($credentials, $this->remember)) {
             RateLimiter::hit($this->throttleKey());
@@ -51,6 +50,10 @@ class Login extends Component
                 'username' => trans('lux::lux.auth_failed'),
             ]);
         }
+
+        $user = User::where('email', $this->username)
+            ->orWhere('username', $this->username)
+            ->first();
 
         Auth::login($user);
     }

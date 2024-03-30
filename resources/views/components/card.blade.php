@@ -5,7 +5,7 @@
 <div
     {{
         $attributes->class([
-            'w-full rounded-lg border border-gray-100 shadow-sm bg-white',
+            'w-full rounded-lg border border-line-color shadow-sm bg-card-bg-color',
         ])
     }}
 >

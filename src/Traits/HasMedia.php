@@ -2,6 +2,7 @@
 
 namespace Pieldefoca\Lux\Traits;
 
+use Pieldefoca\Lux\Facades\Lux;
 use Pieldefoca\Lux\Models\Media;
 use Pieldefoca\Lux\Models\Locale;
 use Pieldefoca\Lux\Support\MediaManager\MediaAdder;
@@ -42,33 +43,47 @@ trait HasMedia
         return $collection;
     }
 
-    public function addMedia(array $mediaIds)
+    public function addMedia(array $mediaIds): ?MediaAdder
     {
         $this->registerMediaCollections();
 
         return $this->mediaAdder()->addMedia($mediaIds);
     }
 
-    public function getFirstMedia(string $collection, ?string $locale = null, ?string $key = null): ?Media
+    public function getFirstMedia(string $collection, ?string $locale = null, ?string $key = null, $retry = true): ?Media
     {
-        if(!$this->isTranslatableCollection($collection)) {
-            $locale = null;
-        } else {
-            if(is_null($locale)) $locale = config('lux.fallback_locale');
-        }
+        $this->registerMediaCollections();
 
         $query = $this->media()
             ->wherePivot('collection', $collection)
-            ->wherePivot('locale', $locale);
+            ->where(function($query) use($locale) {
+                $query->where('lux_mediables.locale', $locale);
+                if($locale === Lux::fallbackLocale()) {
+                    $query->orWhere('lux_mediables.locale', null);
+                }
+                return $query;
+            });
 
         if($key) {
             $query->wherePivot('key', $key);
         }
-        
-        return $query->first();
+
+        $result = $query->first();
+
+        if($result) {
+            return $result;
+        } else if($retry) {
+            if(is_null($locale)) {
+                return $this->getFirstMedia($collection, Lux::currentLocale());
+            } else if($locale !== Lux::fallbackLocale()) {
+                return $this->getFirstMedia($collection, Lux::fallbackLocale(), retry: false);
+            }
+        }
+
+        return null;
     }
 
-    public function getMedia(string $collection, $locale = null, $mediaType = null, ?string $key = null)
+    public function getMedia(string $collection, $locale = null, $mediaType = null, ?string $key = null, $retry = true)
     {
         $query = $this->media()->wherePivot('collection', $collection)->orderBy('lux_mediables.order');
 
@@ -79,7 +94,7 @@ trait HasMedia
         if($locale) {
             $query->where(function($query) use($locale) {
                 $query->where('lux_mediables.locale', $locale);
-                if($locale === config('lux.fallback_locale')) {
+                if($locale === Lux::fallbackLocale()) {
                     $query->orWhere('lux_mediables.locale', null);
                 }
                 return $query;
@@ -90,10 +105,22 @@ trait HasMedia
             $query->wherePivot('key', $key);
         }
         
-        return $query->get();
+        $result = $query->get();
+
+        if($result->isNotEmpty()) {
+            return $result;
+        } else if($retry) {
+            if(is_null($locale)) {
+                return $this->getMedia($collection, Lux::currentLocale(), $mediaType, $key, retry: true);
+            } else if($locale !== Lux::fallbackLocale()) {
+                return $this->getMedia($collection, Lux::fallbackLocale(), $mediaType, $key, retry: false);
+            }
+        }
+
+        return collect();
     }
 
-    public function getMediaIds(string $collection)
+    public function getMediaIds(string $collection): array
     {
         $mediaIds = [];
 
@@ -104,22 +131,18 @@ trait HasMedia
         return $mediaIds;
     }
 
-    public function getMediaTranslations(string $collection)
+    public function getMediaTranslations(string $collection): array
     {
         $translations = [];
 
         foreach(config('lux.locales') as $locale) {
-            $queryLocale = $this->isTranslatableCollection($collection)
-                ? $locale->code
-                : null;
-
             $media = $this->media()
-                ->wherePivot('locale', $queryLocale)
+                ->wherePivot('locale', $locale)
                 ->wherePivot('collection', $collection)
                 ->orderBy('order')
                 ->get();
             
-            $translations[$locale->code] = $media->pluck('id')->toArray();
+            $translations[$locale] = $media->pluck('id')->toArray();
         }
 
         return $translations;
@@ -130,10 +153,19 @@ trait HasMedia
         return $this->mediaManager()->getCollection($name, get_class($this));
     }
 
-    public function clearMedia(string $collection)
+    public function clearMedia(string $collection, $locale = null): void
     {
+        if($this->isTranslatableCollection($collection)) {
+            $media = $this->media()->wherePivot('collection', $collection)->wherePivot('locale', null)->get();
+
+            foreach($media as $m) { $m->pivot->delete(); }
+        }
+
         $media = $this->media()
             ->wherePivot('collection', $collection)
+            ->when($locale, function($query, $locale) {
+                return $query->where('locale', $locale);
+            })
             ->get();
 
         foreach($media as $m) {
@@ -141,14 +173,12 @@ trait HasMedia
         }
     }
 
-    public function isTranslatableCollection(string $collection)
+    public function isTranslatableCollection(string $collection): bool
     {
-        $media = $this->getMedia($collection);
-
-        return $media->count() > 0 && $media->where('pivot.locale', null)->count() === 0;
+        return $this->getCollection($collection)->isTranslatable();
     }
 
-    public function isSingleFileCollection(string $collection)
+    public function isSingleFileCollection(string $collection): bool
     {
         return $this->getCollection($collection)->isSingleFile();
     }

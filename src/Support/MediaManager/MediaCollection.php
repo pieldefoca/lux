@@ -6,6 +6,8 @@ class MediaCollection
 {
     public $singleFile = false;
 
+    public $translatable = false;
+
     public function __construct(
         public string $name,
     ) {}
@@ -17,8 +19,20 @@ class MediaCollection
         return $this;
     }
 
+    public function translatable()
+    {
+        $this->translatable = true;
+
+        return $this;
+    }
+
     public function isSingleFile()
     {
         return $this->singleFile;
+    }
+
+    public function isTranslatable()
+    {
+        return $this->translatable;
     }
 }

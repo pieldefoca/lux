@@ -10,7 +10,7 @@ return [
     'login_image' => '/img/firulais.webp',
 
     'sliders' => [
-        'fields' => ['title', 'subtitle', 'action']
+        'positions' => ['lectures']
     ],
 
     'locales' => [

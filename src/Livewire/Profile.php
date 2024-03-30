@@ -9,10 +9,12 @@ use Livewire\Attributes\Computed;
 use Pieldefoca\Lux\Livewire\LuxComponent;
 use Illuminate\Validation\Rule as RuleValidation;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Pieldefoca\Lux\Livewire\Traits\LuxForm;
 
 class Profile extends LuxComponent
 {
 	use WithFileUploads;
+    use LuxForm;
 
 	public $user;
 
@@ -58,12 +60,6 @@ class Profile extends LuxComponent
 	#[On('save-profile')]
 	public function save()
 	{
-		$this->withValidator(function($validator) {
-			if($validator->fails()) {
-				$this->dispatch('show-error-feedback');
-			}
-		});
-
 		$validated = $this->validate();
 
 		if(is_null($this->avatar)) {

@@ -13,7 +13,14 @@
 
 	@vite(['resources/css/lux.css'])
 </head>
-<body class="font-body">
+<body
+	x-data="{
+		dark: localStorage.getItem('luxDarkMode', false),
+	}"
+	x-on:toggle-dark-mode.window="dark = !dark; localStorage.setItem('luxDarkMode', dark)"
+	class="font-body text-text-color"
+	x-bind:class="{'dark': dark}"
+>
 	<div
 		x-data="{
 			sidebarCollapsed: false,
@@ -29,14 +36,14 @@
 	>
 		<div
 			x-data
-			class="fixed flex flex-col w-72 h-screen bg-background-light border-r border-stone-200 transition-all duration-500"
+			class="fixed flex flex-col w-72 h-screen bg-background-light border-r border-line-color transition-all duration-500"
 			x-cloak
 			x-bind:class="{
 				'-left-72 opacity-0': sidebarCollapsed,
 				'left-0 opacity-100': !sidebarCollapsed,
 			}"
 		>
-			<div class="flex items-center justify-between p-3 border-b border-stone-200">
+			<div class="flex items-center justify-between p-3 border-b border-line-color">
 				<a href="/" target="_blank" class="flex items-center justify-between w-full">
 					<h1>{{ config('app.name') }}</h1>
 					<x-lux::logo class="h-9" />
@@ -48,8 +55,14 @@
 			</div>
 
 			<div class="p-3">
+{{--				<div>--}}
+{{--					<button x-on:click="$dispatch('toggle-dark-mode')">--}}
+{{--						<x-lux::tabler-icons.sun x-show="dark" />--}}
+{{--						<x-lux::tabler-icons.moon-stars x-show="!dark" />--}}
+{{--					</button>--}}
+{{--				</div>--}}
 				<div x-data="{open: false}" x-on:click.outside="open = false" class="relative">
-					<button x-on:click="open = !open" type="button" class="group flex items-center justify-between space-x-2 w-full px-3 py-1.5 bg-white shadow rounded cursor-pointer transition-colors duration-300 hover:bg-stone-50">
+					<button x-on:click="open = !open" type="button" class="group flex items-center justify-between space-x-2 w-full px-3 py-1.5 bg-card-bg-color dark:border dark:border-line-color shadow rounded cursor-pointer transition-colors duration-300 hover:bg-stone-50">
 						<div class="flex items-center space-x-2">
 							<div class="grid place-items-center w-7 h-7 rounded-full bg-stone-300 overflow-hidden">
 								@if($avatarUrl = auth()->user()->avatarUrl)

@@ -5,7 +5,9 @@ namespace Pieldefoca\Lux;
 use Livewire\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Pieldefoca\Lux\Http\Middleware\LuxMiddleware;
 use Pieldefoca\Lux\Models\Page;
+use Pieldefoca\Lux\Support\Lux;
 use Pieldefoca\Lux\Support\Pages;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
@@ -37,6 +39,8 @@ class LuxServiceProvider extends ServiceProvider
 
         $this->registerComponents();
 
+        $this->registerDisks();
+
         $this->resolveMissingRoutes();
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
@@ -54,15 +58,11 @@ class LuxServiceProvider extends ServiceProvider
                 LuxPages::class,
             ]);
         }
-
-        View::share([
-            'locale' => session('luxLocale', config('lux.fallback_locale')),
-        ]);
     }
 
     protected function registerFacades()
 	{
-		// $this->app->bind('lux', fn($app) => new Lux());
+		 $this->app->bind('lux', fn($app) => new Lux());
 
 		$this->app->bind('lux-translator', fn($app) => new Translator());
 
@@ -88,7 +88,7 @@ class LuxServiceProvider extends ServiceProvider
 
         if($shouldUseLuxComponents) {
             Livewire::setUpdateRoute(function ($handle) {
-                return Route::post('/admin/livewire/update', $handle)->middleware(['web']);
+                return Route::post('/admin/livewire/update', $handle)->middleware(['web', LuxMiddleware::class]);
             });
 
             config([
@@ -144,4 +144,15 @@ class LuxServiceProvider extends ServiceProvider
             return app('url')->toRoute($route, $parameters, $absolute);
         });
     }
+
+    protected function registerDisks(): void
+    {
+		$this->app['config']['filesystems.disks.avatars'] = [
+			'driver' => 'local',
+			'root' => public_path('avatars'),
+			'url' => env('APP_URL').'/avatars',
+			'visibility' => 'public',
+			'throw' => false,
+		];
+	}
 }

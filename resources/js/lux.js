@@ -1,3 +1,5 @@
+import * as draggable from './draggable.js'
+
 import { Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'

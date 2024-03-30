@@ -4,6 +4,7 @@ namespace Pieldefoca\Lux\Traits;
 
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
+use Pieldefoca\Lux\Facades\Lux;
 use Pieldefoca\Lux\Livewire\Attributes\Media;
 
 trait HasMediaFields
@@ -63,7 +64,7 @@ trait HasMediaFields
             extract($property); // $name, $collection, $multiple
 
             if($multiple) {
-                // TODO
+                $this->$name = $model->getMedia($collection, Lux::currentLocale())->pluck('id')->toArray();
             } else {
                 $media = $model->getFirstMedia($collection);
 
