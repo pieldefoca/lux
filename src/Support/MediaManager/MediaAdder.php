@@ -95,7 +95,7 @@ class MediaAdder
                     }
                 }
             } else {
-                $this->model->clearMedia($this->collection, $this->locale);
+//                $this->model->clearMedia($this->collection, $this->locale);
 
                 $data = [];
 

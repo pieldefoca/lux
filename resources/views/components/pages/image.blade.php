@@ -16,7 +16,7 @@ $media = null;
 
 if($isComponentImage) {
     $mediables = DB::table('lux_mediables')->where('key', $key)->get();
-    
+
     if($mediables->isEmpty()) {
         foreach(config('lux.locales') as $locale) {
             DB::table('lux_mediables')->insert([
@@ -30,7 +30,6 @@ if($isComponentImage) {
         }
 
         $media = Media::find(1);
-
     } else {
         $mediable = $mediables->where('locale', app()->currentLocale())->first();
 

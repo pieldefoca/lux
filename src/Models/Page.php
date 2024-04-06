@@ -205,9 +205,7 @@ class Page extends Model
         $media = $this->getMedia('media', locale: $locale, key: $key);
 
         if($media->isEmpty()) {
-            $ids = [1];
-
-            $this->addMedia($ids)
+            $this->addMedia([1])
                 ->forLocale($locale)
                 ->withKey($key)
                 ->toCollection('media');
@@ -237,6 +235,6 @@ class Page extends Model
 
     public function registerMediaCollections()
     {
-        $this->addMediaCollection('media');
+        $this->addMediaCollection('media')->translatable();
     }
 }
