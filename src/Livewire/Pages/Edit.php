@@ -10,6 +10,7 @@ use Pieldefoca\Lux\Models\Page;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Pieldefoca\Lux\Models\Mediable;
+use Pieldefoca\Lux\Facades\Pages;
 use Spatie\Browsershot\Browsershot;
 use Pieldefoca\Lux\Facades\Translator;
 use Pieldefoca\Lux\Livewire\LuxComponent;
@@ -178,6 +179,8 @@ class Edit extends LuxComponent
         $validated = $this->prepareTranslatableAttributes($validated);
 
         $this->page->update($validated);
+
+        Pages::generatePageRoutes();
 
         if($this->page->isLegalPage()) {
             $this->translations['content'] = $this->legalPageContent;
