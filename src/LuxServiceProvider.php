@@ -21,6 +21,7 @@ use Pieldefoca\Lux\Console\Commands\LuxInstall;
 use Pieldefoca\Lux\Http\Middleware\PageMiddleware;
 use Pieldefoca\Lux\Http\Middleware\LocaleMiddleware;
 use Pieldefoca\Lux\Support\MediaManager\MediaManager;
+use Symfony\Component\Yaml\Yaml;
 
 class LuxServiceProvider extends ServiceProvider
 {
@@ -62,7 +63,7 @@ class LuxServiceProvider extends ServiceProvider
 
     protected function registerFacades()
 	{
-		 $this->app->bind('lux', fn($app) => new Lux());
+        $this->app->bind('lux', fn($app) => new Lux());
 
 		$this->app->bind('lux-translator', fn($app) => new Translator());
 
