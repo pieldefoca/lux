@@ -3,9 +3,9 @@
 
     <div class="my-12 mx-auto space-y-4 max-w-4xl">
         @foreach($pages as $page)
-            <a href="{{ route('lux.pages.edit', $page) }}" class="flex items-center justify-between w-full border border-gray-300 bg-white p-2 pr-6 rounded-lg transition-all duration-300 hover:shadow-lg">
+            <a href="{{ route('lux.pages.edit', $page) }}" class="flex items-center justify-between w-full border border-gray-300 bg-white py-3 pl-4 pr-6 rounded-lg transition-all duration-300 hover:shadow-lg">
                 <div class="flex items-center space-x-6">                    
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         <p class="text-xl font-bold">{{ $page->name }}</p>
                         <p class="text-gray-400">{{ $page->localizedUrl($this->locale) }}</p>
                     </div>
